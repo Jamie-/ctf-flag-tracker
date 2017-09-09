@@ -1,0 +1,33 @@
+{% extends "template.html" %}
+
+{% block content %}
+    <div class="container" id="leaderboard">
+        <h1>Global Leaderboard</h1>
+        <table class="table table-striped table-inverse">
+            <thead>
+                <tr>
+                    <th style="width: 10%;">Position</th>
+                    <th class="name">Name</th>
+                    {% if config.team is defined %}
+                        <th>Team</th>
+                    {% endif %}
+                    <th style="width: 20%;">Challenge Rank</th>
+                    <th style="width: 20%;">Score</th>
+                </tr>
+            </thead>
+            {% if users is defined %}
+            {% for u in users %}
+                <tr>
+                    <td>{{ u.position }}</td>
+                    <td class="name"><a href="#{{ u.id }}">{{ u.name }}</a></td>
+                    {% if config.team is defined %}
+                        <td>{{ u.team }}</td>
+                    {% endif %}
+                    <td>{{ u.get_rank_html() }}</td>
+                    <td>{{ u.score }}</td>
+                </tr>
+            {% endfor %}
+            {% endif %}
+        </table>
+    </div>
+{% endblock %}

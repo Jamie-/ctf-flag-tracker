@@ -1,0 +1,46 @@
+body {
+    background: #333333;
+    color: #ffffff;
+}
+
+body > div.container {
+    padding-top: 2rem;
+}
+
+div.container > h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/*
+    PAGE SPECIFICS
+########################################################################################################################
+ */
+
+/* LEADERBOARD */
+
+#leaderboard td,
+#leaderboard th {
+    text-align: center;
+}
+
+#leaderboard .name {
+    text-align: left;
+}
+
+/* LOGIN */
+
+/*#login table {*/
+    /*margin-left: auto;*/
+    /*margin-right: auto;*/
+/*}*/
+
+/*#login input {*/
+    /*width: 100%;*/
+/*}*/
+
+/* FLAG */
+
+#flag input {
+    font-size: 2em;
+}
