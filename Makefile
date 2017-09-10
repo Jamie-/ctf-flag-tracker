@@ -9,7 +9,11 @@ clean-db:
 	rm -rf *.db
 
 init:
-	python3 -c 'from tracker.db import init_db; init_db()'
+	flask/bin/python3 -c 'from tracker.db import init_db; init_db()'
+
+venv:
+	virtualenv -p python3 flask
+	flask/bin/pip3 install flask flask_login flask_wtf ldap3
 
 run:
-	./run.py
+	flask/bin/python3 run.py
