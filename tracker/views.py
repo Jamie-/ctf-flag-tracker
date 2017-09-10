@@ -4,6 +4,7 @@ from tracker import app
 from tracker.forms import FlagForm, LoginForm
 from tracker.user import User
 import tracker.auth as auth
+import tracker.flag as flag
 
 @app.route('/')
 def index():
@@ -32,10 +33,13 @@ def logout():
 
 @app.route('/flag', methods=['GET', 'POST'])
 @flask_login.login_required
-def flag():
+def check_flag():
     form = FlagForm()
     if form.validate_on_submit():
-        return flask.redirect('/flag/boom', code=307)
+        if flag.check(form.flag.data, None):
+            return flask.redirect('/flag/boom', code=307)
+        else:
+            flask.flash('Oh, that\'s not a valid flag :(', 'warning')
     return flask.render_template('flag.html', title='Submit Flag', form=form)
 
 @app.route('/flag/boom', methods=['GET', 'POST'])
