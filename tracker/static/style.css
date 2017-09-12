@@ -45,6 +45,10 @@ div.container > h1 {
     text-align: center;
 }
 
+#flag input {
+    text-align: left;
+}
+
 .flag-large {
     font-size: 6em;
 }
