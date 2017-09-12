@@ -3,13 +3,14 @@ import flask_login
 from tracker import app
 from tracker.forms import FlagForm, LoginForm
 from tracker.user import User
+import tracker.leaderboard as leaderboard
 import tracker.auth as auth
 import tracker.flag as flag
 
 @app.route('/')
 def index():
-
-    return flask.render_template('leaderboard.html', title='Leaderboard')
+    users = leaderboard.get_data()
+    return flask.render_template('leaderboard.html', title='Leaderboard', users=users)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -36,9 +37,12 @@ def logout():
 def check_flag():
     form = FlagForm()
     if form.validate_on_submit():
-        if flag.check(form.flag.data, None):
+        f = flag.check(form.flag.data, flask_login.current_user.get_id())
+        if f: # Flag is valid and user has not previously found it
             return flask.redirect('/flag/boom', code=307)
-        else:
+        elif f is None: # User already has flag
+            flask.flash('You\'ve already submitted that flag.', 'primary')
+        elif not f: # Not valid flag
             flask.flash('Oh, that\'s not a valid flag :(', 'warning')
     return flask.render_template('flag.html', title='Submit Flag', form=form)
 
@@ -46,7 +50,8 @@ def check_flag():
 @flask_login.login_required
 def flag_success():
     if flask.request.method == 'POST':
-        return flask.render_template('flag_success.html', title='Yay! Flag Added', flag=flask.request.form['flag'])
+        f = flag.get_flag(flask.request.form['flag'])
+        return flask.render_template('flag_success.html', title='Yay! Flag Added', flag=f, user=flask_login.current_user)
     else:
         return flask.redirect('/flag', code=302)
 

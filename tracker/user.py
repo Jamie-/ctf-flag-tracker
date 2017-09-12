@@ -1,10 +1,12 @@
+import tracker.db as db
+
 class User():
 
     def __init__(self, id, name):
         self.id = id
         self.name = name
-        self.score = 0
 
+    ## FLASK_LOGIN #################
     def is_authenticated(self):
         return True
 
@@ -19,12 +21,10 @@ class User():
 
     def get_name(self):
         return self.name
+    ## /FLASK_LOGIN ################
 
-    def add_score(self, n):
-        self.score += n
-
-    def get_rank_html(self):
-        return 'noob'
+    def get_global_score(self):
+        return db.query_db('SELECT SUM(f.value) FROM flagsfound ff LEFT JOIN flags f ON f.flag = ff.flag_id LEFT JOIN users u ON u.id = ff.user_id WHERE ff.user_id = ?', [self.id], one=True)[0]
 
     def __repr__(self):
         return '<User %r>' % self.id
