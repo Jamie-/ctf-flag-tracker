@@ -6,6 +6,7 @@ from tracker.user import User
 import tracker.leaderboard as leaderboard
 import tracker.auth as auth
 import tracker.flag as flag
+import tracker.user as user
 
 @app.route('/')
 def index():
@@ -55,8 +56,17 @@ def flag_success():
     else:
         return flask.redirect('/flag', code=302)
 
+@app.route('/profile')
+def profile():
+    if flask_login.current_user.is_authenticated:
+        return flask.redirect('/profile/' + flask_login.current_user.get_id())
+    flask.abort(404)
+
 @app.route('/profile/<string:user_id>')
-def profile(user_id):
+def profile_user(user_id):
+    if not user.exists(user_id):
+        flask.abort(404)
+
     if flask_login.current_user.is_authenticated and flask_login.current_user.get_id() == user_id:
         return flask.render_template('profile.html', title=user_id, user='This is your profile', text=flask_login.current_user.get_name())
     else:

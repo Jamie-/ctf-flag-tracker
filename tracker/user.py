@@ -28,3 +28,12 @@ class User():
 
     def __repr__(self):
         return '<User %r>' % self.id
+
+
+# Check whether a user exists
+def exists(id):
+    u = db.query_db('SELECT * FROM users WHERE id = ?', [id])
+    if u:
+        return True
+    else:
+        return False
