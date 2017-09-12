@@ -61,3 +61,26 @@ def profile(user_id):
         return flask.render_template('profile.html', title=user_id, user='This is your profile', text=flask_login.current_user.get_name())
     else:
         return flask.render_template('profile.html', title=user_id, user=user_id, text='I am a user!')
+
+
+## Error Handlers
+
+@app.errorhandler(400)
+def error_400(error):
+    return flask.render_template('error.html', title='400', heading='Error 400')
+
+@app.errorhandler(401)
+def error_401(error):
+    return flask.render_template('error.html', title='401', heading='Error 401')
+
+@app.errorhandler(403)
+def error_403(error):
+    return flask.render_template('error.html', title='403', heading='Error 403')
+
+@app.errorhandler(404)
+def error_404(error):
+    return flask.render_template('error.html', title='404', heading='Error 404')
+
+@app.errorhandler(500)
+def error_500(error):
+    return flask.render_template('error.html', title='500', heading='Error 500')

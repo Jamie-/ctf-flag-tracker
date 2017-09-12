@@ -1,0 +1,9 @@
+{% extends "template.html" %}
+
+{% block content %}
+    <div class="container" id="error">
+        <h1>{{ heading }}</h1>
+        <h4>Oh no, that's an error!</h4>
+        <h3><a href="javascript:history.back()">Try going back?</a></h3>
+    </div>
+{% endblock %}
