@@ -29,7 +29,7 @@ class User():
 
     # Get list of events attended by user (by looking at flags found)
     def get_events_attended(self):
-        events = db.query_db('SELECT e.id AS id, e.name AS name FROM events e LEFT JOIN flags f ON f.event_id = e.id LEFT JOIN flagsfound ff ON ff.flag_id = f.flag LEFT JOIN users u ON u.id = ff.user_id WHERE u.id IS NOT NULL AND u.id = ?', [self.id])
+        events = db.query_db('SELECT e.id AS id, e.name AS name FROM events e LEFT JOIN flags f ON f.event_id = e.id LEFT JOIN flagsfound ff ON ff.flag_id = f.flag LEFT JOIN users u ON u.id = ff.user_id WHERE u.id IS NOT NULL AND u.id = ? GROUP BY e.id', [self.id])
         if events is None:
             return None
         else:
