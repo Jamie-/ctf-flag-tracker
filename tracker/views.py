@@ -87,11 +87,8 @@ def profile():
 def profile_user(user_id):
     if not user.exists(user_id):
         flask.abort(404)
-
-    if flask_login.current_user.is_authenticated and flask_login.current_user.get_id() == user_id:
-        return flask.render_template('profile.html', title=user_id, user='This is your profile', text=flask_login.current_user.get_name())
-    else:
-        return flask.render_template('profile.html', title=user_id, user=user_id, text='I am a user!')
+    u = user.get_user(user_id)
+    return flask.render_template('profile.html', title=u.name, user=u, events=u.get_events_attended())
 
 
 ## Error Handlers

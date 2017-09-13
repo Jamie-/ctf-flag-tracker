@@ -12,6 +12,18 @@ div.container > h1 {
     margin-bottom: 2rem;
 }
 
+.super-large {
+    font-size: 6em;
+}
+
+.pretty-large {
+    font-size: 4em;
+}
+
+.center {
+    text-align: center;
+}
+
 /*
     PAGE SPECIFICS
 ########################################################################################################################
@@ -49,10 +61,12 @@ div.container > h1 {
     text-align: left;
 }
 
-.flag-large {
-    font-size: 6em;
-}
-
 #flag input {
     font-size: 2em;
+}
+
+/* PROFILE*/
+
+#profile h3 {
+    text-align: center;
 }
