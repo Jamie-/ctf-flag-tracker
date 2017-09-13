@@ -1,0 +1,25 @@
+{% extends "template.html" %}
+
+{% block content %}
+    <div class="container" id="event-list">
+        <h1>Events</h1>
+        <table class="leaderboard table table-striped table-inverse">
+            <thead>
+                <tr>
+                    <th class="name">Name</th>
+                    <th style="width: 20%;">No. Flags</th>
+                    <th style="width: 20%;">Points Available</th>
+                </tr>
+            </thead>
+            {% if events is defined and events is not none %}
+            {% for e in events %}
+                <tr>
+                    <td class="name"><a href="/event/{{ e.id }}">{{ e.name }}</a></td>
+                    <td>{{ e.no_flags }}</td>
+                    <td>{{ e.points }}</td>
+                </tr>
+            {% endfor %}
+            {% endif %}
+        </table>
+    </div>
+{% endblock %}

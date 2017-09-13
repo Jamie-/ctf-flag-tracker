@@ -22,15 +22,21 @@ div.container > h1 {
     text-align: center;
 }
 
-/* LEADERBOARD */
+/* LEADERBOARDS */
 
-#leaderboard td,
-#leaderboard th {
+.leaderboard td,
+.leaderboard th {
     text-align: center;
 }
 
-#leaderboard .name {
+.leaderboard .name {
     text-align: left;
+}
+
+/* EVENT LEADERBOARD */
+
+#event h4 {
+    text-align: center;
 }
 
 /* FLAG */
