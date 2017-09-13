@@ -5,6 +5,7 @@ from tracker.forms import FlagForm, LoginForm
 from tracker.user import User
 import tracker.leaderboard as leaderboard
 import tracker.auth as auth
+import tracker.event as event
 import tracker.flag as flag
 import tracker.user as user
 
@@ -32,6 +33,26 @@ def login():
 def logout():
     flask_login.logout_user()
     return flask.redirect('/')
+
+@app.route('/event')
+def current_event():
+    e = event.get_active()
+    if e is not None:
+        return flask.redirect('/event/' + str(e.id), code=302)
+    return flask.render_template('error.html', title='Current Event', heading=':(', text="We currently aren't running an event right now. Check back later!")
+
+@app.route('/event/<int:event_id>')
+def get_event(event_id):
+    e = event.get_event(event_id)
+    if e is None:
+        flask.abort(404)
+
+    users = event.get_leaderboard(event_id)
+    return flask.render_template('event.html', title=e.name, event=e, users=users, no_flags=e.no_flags)
+
+@app.route('/events')
+def get_events():
+    return flask.render_template('event_list.html', title='Events', events=event.get_all_events())
 
 @app.route('/flag', methods=['GET', 'POST'])
 @flask_login.login_required
@@ -77,20 +98,20 @@ def profile_user(user_id):
 
 @app.errorhandler(400)
 def error_400(error):
-    return flask.render_template('error.html', title='400', heading='Error 400')
+    return flask.render_template('error.html', title='400', heading='Error 400', text="Oh no, that's an error!")
 
 @app.errorhandler(401)
 def error_401(error):
-    return flask.render_template('error.html', title='401', heading='Error 401')
+    return flask.render_template('error.html', title='401', heading='Error 401', text="Oh no, that's an error!")
 
 @app.errorhandler(403)
 def error_403(error):
-    return flask.render_template('error.html', title='403', heading='Error 403')
+    return flask.render_template('error.html', title='403', heading='Error 403', text="Oh no, that's an error!")
 
 @app.errorhandler(404)
 def error_404(error):
-    return flask.render_template('error.html', title='404', heading='Error 404')
+    return flask.render_template('error.html', title='404', heading='Error 404', text="Oh no, that's an error!")
 
 @app.errorhandler(500)
 def error_500(error):
-    return flask.render_template('error.html', title='500', heading='Error 500')
+    return flask.render_template('error.html', title='500', heading='Error 500', text="Oh no, that's an error!")
