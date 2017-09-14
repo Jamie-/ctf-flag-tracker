@@ -44,7 +44,14 @@ class User():
 
     # Get user's score for current event
     def get_current_event_score(self):
-        return 0 #todo
+        score = db.query_db(
+            'SELECT SUM(f.value) FROM users u LEFT JOIN flagsfound ff ON ff.user_id = u.id LEFT JOIN flags f ON f.flag = ff.flag_id WHERE f.event_id = ? AND u.id = ?',
+            (event.get_active().id, self.id),
+            one=True
+        )[0]
+        if score is None:
+            return 0
+        return score
 
     def __repr__(self):
         return '<User %r>' % self.id
