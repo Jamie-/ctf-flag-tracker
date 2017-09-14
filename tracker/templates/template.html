@@ -18,18 +18,6 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/">Leaderboard</a>
                         </li>
-                        {% if team is defined %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="/team" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Team</a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <a class="dropdown-item" href="#">Teams</a>
-                                <a class="dropdown-item" href="#">Individual</a>
-                                <a class="dropdown-item" href="#">My Team</a>
-                                <a class="dropdown-item" href="#">Join/Create Team</a>
-                                <a class="dropdown-item" href="#">Leave Team</a>
-                            </div>
-                        </li>
-                        {% else %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="/event" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Event</a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
@@ -37,7 +25,6 @@
                                 <a class="dropdown-item" href="/events">Event List</a>
                             </div>
                         </li>
-                        {% endif %}
                         <li class="nav-item">
                             <a class="nav-link" href="/flag">Submit Flag</a>
                         </li>

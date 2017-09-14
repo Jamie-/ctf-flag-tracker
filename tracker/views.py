@@ -1,11 +1,12 @@
 import flask
 import flask_login
 from tracker import app
-from tracker.forms import FlagForm, LoginForm
 from tracker.user import User
+import tracker.forms as forms
 import tracker.leaderboard as leaderboard
 import tracker.auth as auth
 import tracker.event as event
+import tracker.team as team
 import tracker.flag as flag
 import tracker.user as user
 
@@ -16,12 +17,12 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginForm()
+    form = forms.LoginForm()
     if form.validate_on_submit():
         name = auth.check_login(form.username.data, form.password.data)
         if name:
             flask_login.login_user(User(form.username.data, name))
-            flask.flash('Welcome back, %s.' % name, 'success')
+            flask.flash('Welcome back, %s.' % flask.escape(name), 'success')
 
             return flask.redirect('/')
         else:
@@ -47,8 +48,44 @@ def get_event(event_id):
     if e is None:
         flask.abort(404)
 
-    users = event.get_leaderboard(event_id)
-    return flask.render_template('event.html', title=e.name, event=e, users=users, no_flags=e.no_flags)
+    if e.has_teams():
+        if flask_login.current_user.is_authenticated:
+            t = flask_login.current_user.get_team(e.id)
+            if t is None:
+                return flask.render_template('event_teams.html', title='Events', event=e, user=flask_login.current_user, form=forms.TeamForm())
+            else:
+                return flask.render_template('event_teams.html', title='Events', event=e, user=flask_login.current_user, team=t)
+        else:
+            return flask.render_template('event_teams.html', title='Events', event=e)
+    else:
+        users = event.get_leaderboard(event_id)
+        return flask.render_template('event.html', title=e.name, event=e, users=users, no_flags=e.no_flags)
+
+@app.route('/event/<int:event_id>/team', methods=['GET', 'POST'])
+def event_team(event_id):
+    if not flask_login.current_user.is_authenticated:
+        flask.abort(404) # User not logged in so has no team nor can create/join a team
+
+    if flask.request.method == 'POST':
+        team_form = forms.TeamForm()
+        if team_form.validate_on_submit(): # Check form completed properly
+            team_data = flask.escape(team_form.team.data)
+            if team_form.create.data: # Create a team (Create button pressed)
+                if team.create_team(team_data, event_id): # Team created okay
+                    flask.flash('Created team %s successfully!' % team_data, 'success')
+                else: # Unable to create team
+                    flask.flash('Unable to create team %s, that name may already be taken in this event.' % team_data, 'danger')
+                    return flask.render_template('event_teams.html', title='Events', event=event.get_event(event_id), user=flask_login.current_user, form=team_form)
+            # Add user to team if just created or if Join button pressed
+            t = team.join_team(flask_login.current_user.id, team_data, event_id)
+            if t: # Team joined okay
+                flask.flash('Joined team %s successfully!' % team_data, 'success')
+            else: # Unable to join team
+                flask.flash('Unable to join team %s, it may not exist in this event.' % team_data, 'danger')
+            return flask.redirect('/event/' + str(event_id), code=302)
+        return flask.render_template('event_teams.html', title='Events', event=event.get_event(event_id), user=flask_login.current_user, form=team_form)
+    else: # flask.request.method == 'GET'
+        return flask.redirect('/event/' + str(event_id) + '/team/' + flask_login.current_user.get_team(event_id).name, code=302)
 
 @app.route('/events')
 def get_events():
@@ -57,7 +94,7 @@ def get_events():
 @app.route('/flag', methods=['GET', 'POST'])
 @flask_login.login_required
 def check_flag():
-    form = FlagForm()
+    form = forms.FlagForm()
     if form.validate_on_submit():
         f = flag.check(form.flag.data, flask_login.current_user.get_id())
         if f: # Flag is valid and user has not previously found it

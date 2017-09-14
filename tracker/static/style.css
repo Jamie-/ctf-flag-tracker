@@ -52,8 +52,25 @@ div.container > h1 {
 
 /* EVENTS */
 
-#event h4 {
+#event h4,
+#event-team h3,
+#event-team h4,
+#event-team h5 {
     text-align: center;
+}
+
+#join-team {
+    width: 100%;
+}
+
+#join-team .btn-cell {
+    width: 50%;
+}
+
+#join-team .btn {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    width: 80%;
 }
 
 /* FLAG */

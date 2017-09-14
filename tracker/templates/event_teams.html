@@ -1,0 +1,114 @@
+{% extends "template.html" %}
+
+{% block content %}
+    <div class="container" id="event-team">
+        <h1>{{ event.name }}</h1>
+        {% if event.no_flags is not none %}
+            <h4>There are {{ event.no_flags }} total flags to find.</h4>
+            <br />
+        {% endif %}
+
+        <div class="row">
+            {% if user is defined %}
+                {% if team is defined %}
+                    <div class="col-sm">
+                        <h3><a href="/event/{{ event.id }}/team/{{ team.name }}">My Team</a></h3>
+                        <h5>Top 6</h5>
+                        <table class="leaderboard table table-striped table-inverse">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%;">Pos</th>
+                                    <th class="name">Name</th>
+                                    <th style="width: 20%;">Score</th>
+                                </tr>
+                            </thead>
+                            {% if users is defined and users is not none %}
+                            {% for u in users %}
+                                <tr>
+                                    <td>{{ u.pos }}</td>
+                                    <td class="name"><a href="/profile/{{ u.id }}">{{ u.name }}</a></td>
+                                    <td>{{ u.score }}</td>
+                                </tr>
+                            {% endfor %}
+                            {% endif %}
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="col-sm">
+                        <h3>Create/Join a Team</h3>
+                        <form action="/event/{{ event.id }}/team" method="post" name="team">
+                            {{ form.hidden_tag() }}
+                            <table id="join-team">
+                                <tr>
+                                    <td colspan="2" class="center">
+                                        <label for="team-name">Team name:</label>
+                                        {% if form.team.errors %}
+                                            {{ form.team(class='form-control is-invalid') }}
+                                        {% else %}
+                                            {{ form.team(class='form-control') }}
+                                        {% endif %}
+                                        {% for error in form.team.errors %}
+                                            <div class="invalid-feedback">{{ error }}</div>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="center btn-cell">
+                                        {{ form.create(class='btn btn-primary') }}
+                                    </td>
+                                    <td class="center btn-cell">
+                                        {{ form.join(class='btn btn-primary') }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                {% endif %}
+            {% endif %}
+            <div class="col-sm">
+                <h3><a href="/event/{{ event.id }}/team">Team Leaderboard</a></h3>
+                <h5>Top 6</h5>
+                <table class="leaderboard table table-striped table-inverse">
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;">Pos</th>
+                            <th class="name">Name</th>
+                            <th style="width: 20%;">Score</th>
+                        </tr>
+                    </thead>
+                    {% if users is defined and users is not none %}
+                    {% for u in users %}
+                        <tr>
+                            <td>{{ u.pos }}</td>
+                            <td class="name"><a href="/profile/{{ u.id }}">{{ u.name }}</a></td>
+                            <td>{{ u.score }}</td>
+                        </tr>
+                    {% endfor %}
+                    {% endif %}
+                </table>
+            </div>
+            <div class="col-sm">
+                <h3><a href="/event/{{ event.id }}/individual">Individual Leaderboard</a></h3>
+                <h5>Top 6</h5>
+                <table class="leaderboard table table-striped table-inverse">
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;">Pos</th>
+                            <th class="name">Name</th>
+                            <th style="width: 20%;">Score</th>
+                        </tr>
+                    </thead>
+                    {% if users is defined and users is not none %}
+                    {% for u in users %}
+                        <tr>
+                            <td>{{ u.pos }}</td>
+                            <td class="name"><a href="/profile/{{ u.id }}">{{ u.name }}</a></td>
+                            <td>{{ u.score }}</td>
+                        </tr>
+                    {% endfor %}
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

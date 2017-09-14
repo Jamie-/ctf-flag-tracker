@@ -1,5 +1,6 @@
 import tracker.db as db
 import tracker.event as event
+import tracker.team as team
 
 class User():
 
@@ -52,6 +53,17 @@ class User():
         if score is None:
             return 0
         return score
+
+    # Get team this user is in for given event ID
+    def get_team(self, event_id):
+        q = db.query_db(
+            'SELECT t.name AS name, t.event_id AS event_id FROM teams t LEFT JOIN teamusers tu ON t.name = tu.team_name AND t.event_id = tu.event_id WHERE tu.user_id = ? AND t.event_id = ?',
+            (self.id, event_id),
+            one=True
+        )
+        if q is None:
+            return None
+        return team.Team(q['name'], q['event_id'])
 
     def __repr__(self):
         return '<User %r>' % self.id
