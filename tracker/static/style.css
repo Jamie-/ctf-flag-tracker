@@ -1,3 +1,8 @@
+/*
+    GENERIC STYLES
+########################################################################################################################
+ */
+
 body {
     background: #333333;
     color: #ffffff;
@@ -45,7 +50,7 @@ div.container > h1 {
     text-align: left;
 }
 
-/* EVENT LEADERBOARD */
+/* EVENTS */
 
 #event h4 {
     text-align: center;
