@@ -42,6 +42,10 @@ class User():
     def get_no_flags(self):
         return db.query_db('SELECT COUNT(*) FROM flagsfound WHERE user_id = ?', [self.id], one=True)[0]
 
+    # Get user's score for current event
+    def get_current_event_score(self):
+        return 0 #todo
+
     def __repr__(self):
         return '<User %r>' % self.id
 

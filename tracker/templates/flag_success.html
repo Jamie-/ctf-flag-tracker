@@ -6,8 +6,8 @@
         <h4>That flag had a value of:</h4>
         <h1 class="super-large">{{ flag.value }}</h1>
 
-        <h5>Your new session score:</h5>
-        <h3>n/a</h3>
+        <h5>Your current event score:</h5>
+        <h3>{{ user.get_current_event_score() }}</h3>
 
         <h5>Your new global score:</h5>
         <h3>{{ user.get_global_score() }}</h3>
