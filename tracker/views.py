@@ -86,7 +86,10 @@ def event_team(event_id):
                 return flask.render_template('event_teams.html', title='Events', event=event.get_event(event_id), user=flask_login.current_user, form=team_form)
         return flask.render_template('event_teams.html', title='Events', event=event.get_event(event_id), user=flask_login.current_user, form=team_form)
     else: # flask.request.method == 'GET'
-        return flask.redirect('/event/' + str(event_id) + '/team/' + flask_login.current_user.get_team(event_id).name, code=302)
+        t = flask_login.current_user.get_team(event_id)
+        if t is None:
+            flask.abort(404)
+        return flask.redirect('/event/' + str(event_id) + '/team/' + t.name, code=302)
 
 @app.route('/events')
 def get_events():
