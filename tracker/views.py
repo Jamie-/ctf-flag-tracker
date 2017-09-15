@@ -48,18 +48,18 @@ def get_event(event_id):
     if e is None:
         flask.abort(404)
 
+    indiv_lb = event.get_leaderboard(event_id, limit=6)  # Individual leaderboard
     if e.has_teams():
         if flask_login.current_user.is_authenticated:
             t = flask_login.current_user.get_team(e.id)
             if t is None:
-                return flask.render_template('event_teams.html', title='Events', event=e, user=flask_login.current_user, form=forms.TeamForm())
+                return flask.render_template('event_teams.html', title='Events', event=e, user=flask_login.current_user, form=forms.TeamForm(), indiv_lb=indiv_lb)
             else:
-                return flask.render_template('event_teams.html', title='Events', event=e, user=flask_login.current_user, team=t)
+                return flask.render_template('event_teams.html', title='Events', event=e, user=flask_login.current_user, team=t, indiv_lb=indiv_lb)
         else:
-            return flask.render_template('event_teams.html', title='Events', event=e)
+            return flask.render_template('event_teams.html', title='Events', event=e, indiv_lb=indiv_lb)
     else:
-        users = event.get_leaderboard(event_id)
-        return flask.render_template('event.html', title=e.name, event=e, users=users, no_flags=e.no_flags)
+        return flask.render_template('event.html', title=e.name, event=e, users=event.get_leaderboard(event_id), no_flags=e.no_flags)
 
 @app.route('/event/<int:event_id>/team', methods=['GET', 'POST'])
 def event_team(event_id):

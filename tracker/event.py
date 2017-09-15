@@ -34,7 +34,9 @@ def get_active():
         return Event(q['id'], q['name'])
 
 # Get event leaderboard (from leaderboard builder)
-def get_leaderboard(event_id):
+def get_leaderboard(event_id, limit=None):
+    if limit is not None: # Limit number of users returned
+        return leaderboard.get_leaderboard('SELECT u.id, u.name, SUM(f.value) AS score FROM flagsfound ff LEFT JOIN flags f ON f.flag = ff.flag_id LEFT JOIN users u ON u.id = ff.user_id WHERE f.event_id = ? GROUP BY u.id ORDER BY score DESC LIMIT ?', (event_id, limit))
     return leaderboard.get_leaderboard('SELECT u.id, u.name, SUM(f.value) AS score FROM flagsfound ff LEFT JOIN flags f ON f.flag = ff.flag_id LEFT JOIN users u ON u.id = ff.user_id WHERE f.event_id = ? GROUP BY u.id ORDER BY score DESC', [event_id])
 
 def get_all_events():
