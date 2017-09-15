@@ -74,15 +74,16 @@ def event_team(event_id):
                 if team.create_team(team_data, event_id): # Team created okay
                     flask.flash('Created team %s successfully!' % team_data, 'success')
                 else: # Unable to create team
-                    flask.flash('Unable to create team %s, that name may already be taken in this event.' % team_data, 'danger')
+                    team_form.team.errors.append('Unable to create team %s, it may already exist in this event.' % team_data)
                     return flask.render_template('event_teams.html', title='Events', event=event.get_event(event_id), user=flask_login.current_user, form=team_form)
             # Add user to team if just created or if Join button pressed
             t = team.join_team(flask_login.current_user.id, team_data, event_id)
             if t: # Team joined okay
                 flask.flash('Joined team %s successfully!' % team_data, 'success')
+                return flask.redirect('/event/' + str(event_id), code=302)
             else: # Unable to join team
-                flask.flash('Unable to join team %s, it may not exist in this event.' % team_data, 'danger')
-            return flask.redirect('/event/' + str(event_id), code=302)
+                team_form.team.errors.append('Unable to join team %s, it may not exist in this event.' % team_data)
+                return flask.render_template('event_teams.html', title='Events', event=event.get_event(event_id), user=flask_login.current_user, form=team_form)
         return flask.render_template('event_teams.html', title='Events', event=event.get_event(event_id), user=flask_login.current_user, form=team_form)
     else: # flask.request.method == 'GET'
         return flask.redirect('/event/' + str(event_id) + '/team/' + flask_login.current_user.get_team(event_id).name, code=302)
