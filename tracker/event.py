@@ -16,6 +16,12 @@ class Event():
             return True
         return False
 
+    # Get event leaderboard (from leaderboard builder)
+    def get_leaderboard(self, limit=None):
+        if limit is not None:  # Limit number of users returned
+            return leaderboard.get_leaderboard('SELECT u.id, u.name, SUM(f.value) AS score FROM flagsfound ff LEFT JOIN flags f ON f.flag = ff.flag_id LEFT JOIN users u ON u.id = ff.user_id WHERE f.event_id = ? GROUP BY u.id ORDER BY score DESC LIMIT ?', (self.id, limit))
+        return leaderboard.get_leaderboard('SELECT u.id, u.name, SUM(f.value) AS score FROM flagsfound ff LEFT JOIN flags f ON f.flag = ff.flag_id LEFT JOIN users u ON u.id = ff.user_id WHERE f.event_id = ? GROUP BY u.id ORDER BY score DESC', [self.id])
+
 
 # Get an event object from an event ID
 def get_event(id):
@@ -32,12 +38,6 @@ def get_active():
         return None
     else:
         return Event(q['id'], q['name'])
-
-# Get event leaderboard (from leaderboard builder)
-def get_leaderboard(event_id, limit=None):
-    if limit is not None: # Limit number of users returned
-        return leaderboard.get_leaderboard('SELECT u.id, u.name, SUM(f.value) AS score FROM flagsfound ff LEFT JOIN flags f ON f.flag = ff.flag_id LEFT JOIN users u ON u.id = ff.user_id WHERE f.event_id = ? GROUP BY u.id ORDER BY score DESC LIMIT ?', (event_id, limit))
-    return leaderboard.get_leaderboard('SELECT u.id, u.name, SUM(f.value) AS score FROM flagsfound ff LEFT JOIN flags f ON f.flag = ff.flag_id LEFT JOIN users u ON u.id = ff.user_id WHERE f.event_id = ? GROUP BY u.id ORDER BY score DESC', [event_id])
 
 def get_all_events():
     events = db.query_db('SELECT e.id AS id, e.name AS name, COUNT(e.name) AS num, SUM(f.value) as points FROM events e LEFT JOIN flags f ON f.event_id = e.id GROUP BY e.name ORDER BY e.id DESC')

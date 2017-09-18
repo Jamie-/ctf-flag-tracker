@@ -13,7 +13,7 @@ import tracker.user as user
 @app.route('/')
 def index():
     users = leaderboard.get_data()
-    return flask.render_template('leaderboard.html', title='Leaderboard', users=users)
+    return flask.render_template('leaderboard.html', title='Leaderboard', heading='Global Leaderboard', users=users)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -48,7 +48,7 @@ def get_event(event_id):
     if e is None:
         flask.abort(404)
 
-    indiv_lb = event.get_leaderboard(event_id, limit=6)  # Individual leaderboard
+    indiv_lb = e.get_leaderboard(limit=6)  # Individual leaderboard
     if e.has_teams():
         if flask_login.current_user.is_authenticated:
             t = flask_login.current_user.get_team(e.id)
@@ -59,7 +59,7 @@ def get_event(event_id):
         else:
             return flask.render_template('event_teams.html', title=e.name + ' Event', event=e, indiv_lb=indiv_lb)
     else:
-        return flask.render_template('event.html', title=e.name + ' Event', event=e, users=event.get_leaderboard(event_id), no_flags=e.no_flags)
+        return flask.render_template('leaderboard.html', title=e.name + ' Event', event=e, users=e.get_leaderboard(event_id), no_flags=e.no_flags)
 
 @app.route('/event/<int:event_id>/team', methods=['GET', 'POST'])
 def event_team(event_id):
@@ -99,7 +99,7 @@ def event_individual(event_id):
         return flask.redirect('/event/' + str(event_id), code=302)
 
     e = event.get_event(event_id)
-    return flask.render_template('event.html', title=e.name + ' Individual Leaderboard', event=e, users=event.get_leaderboard(event_id), no_flags=e.no_flags)
+    return flask.render_template('leaderboard.html', title=e.name + ' Individual Leaderboard', event=e, users=e.get_leaderboard(event_id), no_flags=e.no_flags)
 
 @app.route('/events')
 def get_events():
