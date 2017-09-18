@@ -92,6 +92,15 @@ def event_team(event_id):
             flask.abort(404)
         return flask.redirect('/event/' + str(event_id) + '/team/' + t.name, code=302)
 
+@app.route('/event/<int:event_id>/individual')
+def event_individual(event_id):
+    # Redirect to normal event (which shows individual leaderboard) when event has no teams
+    if not event.get_event(event_id).has_teams():
+        return flask.redirect('/event/' + str(event_id), code=302)
+
+    e = event.get_event(event_id)
+    return flask.render_template('event.html', title=e.name + ' Individual Leaderboard', event=e, users=event.get_leaderboard(event_id), no_flags=e.no_flags)
+
 @app.route('/events')
 def get_events():
     return flask.render_template('event_list.html', title='Events', events=event.get_all_events())
