@@ -59,7 +59,7 @@ def get_event(event_id):
         else:
             return flask.render_template('event_teams.html', title=e.name + ' Event', event=e, indiv_lb=indiv_lb)
     else:
-        return flask.render_template('leaderboard.html', title=e.name + ' Event', event=e, users=e.get_leaderboard(event_id), no_flags=e.no_flags)
+        return flask.render_template('leaderboard.html', title=e.name + ' Event', event=e, users=e.get_leaderboard(), no_flags=e.no_flags)
 
 @app.route('/event/<int:event_id>/team', methods=['GET', 'POST'])
 def event_team(event_id):
@@ -99,7 +99,7 @@ def event_individual(event_id):
         return flask.redirect('/event/' + str(event_id), code=302)
 
     e = event.get_event(event_id)
-    return flask.render_template('leaderboard.html', title=e.name + ' Individual Leaderboard', event=e, users=e.get_leaderboard(event_id), no_flags=e.no_flags)
+    return flask.render_template('leaderboard.html', title=e.name + ' Individual Leaderboard', event=e, users=e.get_leaderboard(), no_flags=e.no_flags)
 
 @app.route('/events')
 def get_events():
