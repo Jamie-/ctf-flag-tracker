@@ -54,13 +54,14 @@ def get_event(event_id):
         if flask_login.current_user.is_authenticated:
             t = flask_login.current_user.get_team(e.id)
             if t is None:
-                return flask.render_template('event_teams.html', title=e.name + ' Event', event=e, user=flask_login.current_user, form=forms.TeamForm(), team_lb=team_lb, indiv_lb=indiv_lb)
+                return flask.render_template('event_teams.html', title=e.name, event=e, user=flask_login.current_user, form=forms.TeamForm(), team_lb=team_lb, indiv_lb=indiv_lb)
             else:
-                return flask.render_template('event_teams.html', title=e.name + ' Event', event=e, user=flask_login.current_user, team=t, team_lb=team_lb, indiv_lb=indiv_lb)
+                return flask.render_template('event_teams.html', title=e.name, event=e, user=flask_login.current_user, team=t, team_lb=team_lb, indiv_lb=indiv_lb)
         else:
-            return flask.render_template('event_teams.html', title=e.name + ' Event', event=e, indiv_lb=indiv_lb)
+            return flask.render_template('event_teams.html', title=e.name, event=e, team_lb=team_lb, indiv_lb=indiv_lb)
     else:
-        return flask.render_template('leaderboard.html', title=e.name + ' Event', event=e, users=e.get_leaderboard(), no_flags=e.no_flags)
+        title = e.name + ' Leaderboard'
+        return flask.render_template('leaderboard.html', title=title, heading=title, users=e.get_leaderboard(), no_flags=e.no_flags)
 
 @app.route('/event/<int:event_id>/team', methods=['GET', 'POST'])
 def event_team(event_id):
@@ -77,7 +78,7 @@ def event_team(event_id):
                     flask.flash('Created team %s successfully!' % team_data, 'success')
                 else: # Unable to create team
                     team_form.team.errors.append('Unable to create team %s, it may already exist in this event.' % team_data)
-                    return flask.render_template('event_teams.html', title=e.name + ' Event', event=e, user=flask_login.current_user, form=team_form)
+                    return flask.render_template('event_teams.html', title=e.name, event=e, user=flask_login.current_user, form=team_form)
             # Add user to team if just created or if Join button pressed
             t = team.join_team(flask_login.current_user.id, team_data, event_id)
             if t: # Team joined okay
@@ -85,8 +86,8 @@ def event_team(event_id):
                 return flask.redirect('/event/' + str(event_id), code=302)
             else: # Unable to join team
                 team_form.team.errors.append('Unable to join team %s, it may not exist in this event.' % team_data)
-                return flask.render_template('event_teams.html', title=e.name + ' Event', event=e, user=flask_login.current_user, form=team_form)
-        return flask.render_template('event_teams.html', title=e.name + ' Event', event=e, user=flask_login.current_user, form=team_form)
+                return flask.render_template('event_teams.html', title=e.name, event=e, user=flask_login.current_user, form=team_form)
+        return flask.render_template('event_teams.html', title=e.name, event=e, user=flask_login.current_user, form=team_form)
     else: # flask.request.method == 'GET'
         t = flask_login.current_user.get_team(event_id)
         if t is None:
@@ -100,7 +101,8 @@ def event_individual(event_id):
         return flask.redirect('/event/' + str(event_id), code=302)
 
     e = event.get_event(event_id)
-    return flask.render_template('leaderboard.html', title=e.name + ' Individual Leaderboard', event=e, users=e.get_leaderboard(), no_flags=e.no_flags)
+    title = e.name + ' Individual Leaderboard'
+    return flask.render_template('leaderboard.html', title=title, heading=title, users=e.get_leaderboard(), no_flags=e.no_flags)
 
 @app.route('/events')
 def get_events():

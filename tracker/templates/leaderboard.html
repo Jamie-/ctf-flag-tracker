@@ -2,14 +2,10 @@
 
 {% block content %}
     <div class="container" id="leaderboard">
-        {% if heading is defined %}
-            <h1>{{ heading }}</h1>
-        {% else %}
-            <h1>{{ event.name }} Leaderboard</h1>
-            {% if no_flags is defined %}
-                <h4>There are {{ no_flags }} total flags to find.</h4>
-                <br />
-            {% endif %}
+        <h1>{{ heading }}</h1>
+        {% if no_flags is defined %}
+            <h4>There are {{ no_flags }} total flags to find.</h4>
+            <br />
         {% endif %}
         <table class="leaderboard table table-striped table-inverse">
             <thead>
