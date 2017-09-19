@@ -22,15 +22,13 @@
                                     <th style="width: 20%;">Score</th>
                                 </tr>
                             </thead>
-                            {% if users is defined and users is not none %}
-                            {% for u in users %}
+                            {% for u in team.get_leaderboard(limit=6) %}
                                 <tr>
                                     <td>{{ u.pos }}</td>
                                     <td class="name"><a href="/profile/{{ u.id }}">{{ u.name }}</a></td>
                                     <td>{{ u.score }}</td>
                                 </tr>
                             {% endfor %}
-                            {% endif %}
                         </table>
                     </div>
                 {% else %}

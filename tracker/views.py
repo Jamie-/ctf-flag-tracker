@@ -114,6 +114,17 @@ def event_individual(event_id):
     title = e.name + ' Individual Leaderboard'
     return flask.render_template('leaderboard.html', title=title, heading=title, users=e.get_leaderboard(), no_flags=e.no_flags)
 
+@app.route('/event/<int:event_id>/team/<string:team_name>')
+def event_inter_team(event_id, team_name):
+    e = event.get_event(event_id)
+    if e is None:
+        flask.abort(404)
+    t = e.get_team(team_name)
+    if (not e.has_teams()) or t is None:
+        flask.abort(404)
+    title = team_name + ' Leaderboard'
+    return flask.render_template('leaderboard.html', title=title, heading=title, users=t.get_leaderboard())
+
 @app.route('/events')
 def get_events():
     return flask.render_template('event_list.html', title='Events', events=event.get_all_events())

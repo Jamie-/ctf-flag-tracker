@@ -1,5 +1,6 @@
 import tracker.db as db
 import tracker.leaderboard as leaderboard
+import tracker.team as team
 
 class Event():
 
@@ -15,6 +16,10 @@ class Event():
         if teams is not None and teams == 1:
             return True
         return False
+
+    # Get team given name in this event
+    def get_team(self, team_name):
+        return team.get_team(team_name, self.id)
 
     # Get event leaderboard (from leaderboard builder)
     def get_leaderboard(self, limit=None):
