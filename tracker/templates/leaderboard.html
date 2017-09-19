@@ -12,10 +12,9 @@
                 <tr>
                     <th style="width: 10%;">Position</th>
                     <th class="name">Name</th>
-                    {% if config.team is defined %}
-                        <th>Team</th>
-                    {% endif %}
+                    {% if users is defined %}
                     <th style="width: 20%;">Rank</th>
+                    {% endif %}
                     <th style="width: 20%;">Score</th>
                 </tr>
             </thead>
@@ -24,11 +23,16 @@
                 <tr>
                     <td>{{ u.pos }}</td>
                     <td class="name"><a href="/profile/{{ u.id }}">{{ u.name }}</a></td>
-                    {% if config.team is defined %}
-                        <td>{{ u.team }}</td>
-                    {% endif %}
                     <td>{{ u.rank }}</td>
                     <td>{{ u.score }}</td>
+                </tr>
+            {% endfor %}
+            {% elif teams is defined and teams is not none %}
+            {% for t in teams %}
+                <tr>
+                    <td>{{ t.pos }}</td>
+                    <td class="name"><a href="/event/{{ e.id }}/team/{{ t.id }}">{{ t.name }}</a></td>
+                    <td>{{ t.score }}</td>
                 </tr>
             {% endfor %}
             {% endif %}

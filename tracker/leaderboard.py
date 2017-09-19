@@ -24,7 +24,7 @@ def get_leaderboard(query, args=(), rank=True):
 
     pos = 1
     for d in data:
-        out.append(Position(pos, d[0], d[1], get_rank(d[2]) if rank else None, d[2]))
+        out.append(Position(pos, d['id'], d['name'], get_rank(d['score']) if rank else None, d['score']))
         pos += 1
 
     return out

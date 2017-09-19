@@ -101,8 +101,8 @@ def event_teams(event_id):
         return flask.redirect('/event/' + str(event_id), code=302)
 
     e = event.get_event(event_id)
-    title = e.name + ' Team Leaderboard'
-    return flask.render_template('leaderboard.html', title=title, heading=title, users=e.get_team_leaderboard(), no_flags=e.no_flags)
+    title = e.name + ' Teams Leaderboard'
+    return flask.render_template('leaderboard.html', title=title, heading=title, e=e, teams=e.get_team_leaderboard(), no_flags=e.no_flags)
 
 @app.route('/event/<int:event_id>/individual')
 def event_individual(event_id):
