@@ -24,8 +24,18 @@ class User():
         return self.name
     ## /FLASK_LOGIN ################
 
+    # Get global score for this user
     def get_global_score(self):
-        return db.query_db('SELECT SUM(f.value) FROM flagsfound ff LEFT JOIN flags f ON f.flag = ff.flag_id LEFT JOIN users u ON u.id = ff.user_id WHERE ff.user_id = ?', [self.id], one=True)[0]
+        score = db.query_db('''
+            SELECT SUM(f.value)
+            FROM flagsfound ff
+            LEFT JOIN flags f ON f.flag = ff.flag_id
+            LEFT JOIN users u ON u.id = ff.user_id
+            WHERE ff.user_id = ?
+        ''', [self.id], one=True)[0]
+        if score is None:
+            score = 0
+        return score
 
     # Get list of events attended by user (by looking at flags found)
     def get_events_attended(self):
