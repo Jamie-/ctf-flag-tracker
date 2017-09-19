@@ -76,12 +76,12 @@
                             <th style="width: 20%;">Score</th>
                         </tr>
                     </thead>
-                    {% if users is defined and users is not none %}
-                    {% for u in users %}
+                    {% if team_lb is defined and team_lb is not none %}
+                    {% for t in team_lb %}
                         <tr>
-                            <td>{{ u.pos }}</td>
-                            <td class="name"><a href="/profile/{{ u.id }}">{{ u.name }}</a></td>
-                            <td>{{ u.score }}</td>
+                            <td>{{ t.pos }}</td>
+                            <td class="name"><a href="/event/{{ event.id }}/team/{{ t.name }}">{{ t.name }}</a></td>
+                            <td>{{ t.score }}</td>
                         </tr>
                     {% endfor %}
                     {% endif %}

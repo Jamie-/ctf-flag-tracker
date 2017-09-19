@@ -22,6 +22,28 @@ class Event():
             return leaderboard.get_leaderboard('SELECT u.id, u.name, SUM(f.value) AS score FROM flagsfound ff LEFT JOIN flags f ON f.flag = ff.flag_id LEFT JOIN users u ON u.id = ff.user_id WHERE f.event_id = ? GROUP BY u.id ORDER BY score DESC LIMIT ?', (self.id, limit))
         return leaderboard.get_leaderboard('SELECT u.id, u.name, SUM(f.value) AS score FROM flagsfound ff LEFT JOIN flags f ON f.flag = ff.flag_id LEFT JOIN users u ON u.id = ff.user_id WHERE f.event_id = ? GROUP BY u.id ORDER BY score DESC', [self.id])
 
+    # Get leaderboard for team in this event (from the leaderboard builder)
+    def get_team_leaderboard(self, limit=None):
+        q = '''
+            SELECT name, id, SUM(score) AS score
+            FROM (
+                SELECT tu.team_name AS name, tu.team_name as id, SUM(f.value) AS score
+                FROM flagsfound ff
+                LEFT JOIN flags f ON f.flag = ff.flag_id
+                LEFT JOIN teamusers tu ON tu.event_id = f.event_id AND tu.user_id = ff.user_id
+                WHERE tu.event_id = ?
+                GROUP BY tu.team_name
+                UNION
+                SELECT t.name as name, t.name as id, 0 AS score
+                FROM teams t
+                WHERE event_id = ?
+            ) GROUP BY name
+            ORDER BY score DESC
+        '''
+        if limit is not None: # Limit number of teams returned
+            return leaderboard.get_leaderboard(q + ' LIMIT ?', (self.id, self.id, limit), rank=False)
+        return leaderboard.get_leaderboard(q, (self.id, self.id), rank=False)
+
 
 # Get an event object from an event ID
 def get_event(id):

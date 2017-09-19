@@ -15,19 +15,19 @@ def get_data():
     return get_leaderboard('SELECT u.id, u.name, SUM(f.value) AS score FROM flagsfound ff LEFT JOIN flags f ON f.flag = ff.flag_id LEFT JOIN users u ON u.id = ff.user_id GROUP BY u.id ORDER BY score DESC')
 
 # Create list of positions from SQL query
-def get_leaderboard(query, args=()):
-    users = []
+def get_leaderboard(query, args=(), rank=True):
+    out = []
     data = db.query_db(query, args)
 
     if len(data) == 0:  # If no flags found yet send None to template (render empty table)
         return None
 
     pos = 1
-    for u in data:
-        users.append(Position(pos, u[0], u[1], get_rank(u[2]), u[2]))
+    for d in data:
+        out.append(Position(pos, d[0], d[1], get_rank(d[2]) if rank else None, d[2]))
         pos += 1
 
-    return users
+    return out
 
 # Get rank from user's score
 def get_rank(score):

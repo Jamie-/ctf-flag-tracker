@@ -49,13 +49,14 @@ def get_event(event_id):
         flask.abort(404)
 
     indiv_lb = e.get_leaderboard(limit=6)  # Individual leaderboard
+    team_lb = e.get_team_leaderboard(limit=6) # Team leaderboard
     if e.has_teams():
         if flask_login.current_user.is_authenticated:
             t = flask_login.current_user.get_team(e.id)
             if t is None:
-                return flask.render_template('event_teams.html', title=e.name + ' Event', event=e, user=flask_login.current_user, form=forms.TeamForm(), indiv_lb=indiv_lb)
+                return flask.render_template('event_teams.html', title=e.name + ' Event', event=e, user=flask_login.current_user, form=forms.TeamForm(), team_lb=team_lb, indiv_lb=indiv_lb)
             else:
-                return flask.render_template('event_teams.html', title=e.name + ' Event', event=e, user=flask_login.current_user, team=t, indiv_lb=indiv_lb)
+                return flask.render_template('event_teams.html', title=e.name + ' Event', event=e, user=flask_login.current_user, team=t, team_lb=team_lb, indiv_lb=indiv_lb)
         else:
             return flask.render_template('event_teams.html', title=e.name + ' Event', event=e, indiv_lb=indiv_lb)
     else:
