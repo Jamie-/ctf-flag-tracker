@@ -1,5 +1,4 @@
 import tracker.db as db
-import tracker.leaderboard as leaderboard
 
 class User():
 
@@ -71,26 +70,3 @@ def get_user(id):
         return None
     else:
         return User(u['id'], u['name'])
-
-# Leaderboard builder for user entities
-def make_leaderboard(query, args=()):
-    out = []
-    data = db.query_db(query, args)
-    if len(data) == 0: # If no flags found yet send None to template (render empty table)
-        return []
-    pos = 1
-    for d in data:
-        out.append(leaderboard.Position(pos, User(d['id'], d['name']), d['score']))
-        pos += 1
-    return out
-
-# Get global leaderboard data
-def get_global_leaderboard():
-    return make_leaderboard('''
-        SELECT u.id, u.name, SUM(f.value) AS score
-        FROM flagsfound ff
-        LEFT JOIN flags f ON f.flag = ff.flag_id
-        LEFT JOIN users u ON u.id = ff.user_id
-        GROUP BY u.id
-        ORDER BY score DESC
-    ''')

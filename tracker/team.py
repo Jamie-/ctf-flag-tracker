@@ -21,8 +21,8 @@ class Team():
             ORDER BY score DESC
         '''
         if limit is not None:  # Limit number of users returned
-            return user.make_leaderboard(q + ' LIMIT ?', (self.event_id, self.event_id, self.name, limit))
-        return user.make_leaderboard(q, (self.event_id, self.event_id, self.name))
+            return leaderboard.make_leaderboard(q + ' LIMIT ?', (self.event_id, self.event_id, self.name, limit))
+        return leaderboard.make_leaderboard(q, (self.event_id, self.event_id, self.name))
 
     # Get number of members in this team
     def get_num_members(self):

@@ -12,7 +12,7 @@ import tracker.user as user
 
 @app.route('/')
 def index():
-    return flask.render_template('leaderboard.html', title='Leaderboard', heading='Global Leaderboard', users=user.get_global_leaderboard())
+    return flask.render_template('leaderboard.html', title='Leaderboard', heading='Global Leaderboard', users=leaderboard.get_global())
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
