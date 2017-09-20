@@ -87,7 +87,7 @@ def get_event(event_id):
         title = e.name + ' Leaderboard'
         return flask.render_template('leaderboard.html', title=title, heading=title, users=e.get_leaderboard(), no_flags=e.no_flags)
 
-@app.route('/event/<int:event_id>/team', methods=['GET', 'POST'])
+@app.route('/event/<int:event_id>/team')
 def event_team(event_id):
     if not flask_login.current_user.is_authenticated:
         flask.abort(404) # User not logged in so has no team nor can create/join a team
