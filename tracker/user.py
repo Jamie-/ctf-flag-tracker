@@ -1,6 +1,5 @@
 import tracker.db as db
-import tracker.event as event
-import tracker.team as team
+import tracker.leaderboard as leaderboard
 
 class User():
 
@@ -25,19 +24,15 @@ class User():
         return self.name
     ## /FLASK_LOGIN ################
 
+    # Get user's global score
     def get_global_score(self):
-        return db.query_db('SELECT SUM(f.value) FROM flagsfound ff LEFT JOIN flags f ON f.flag = ff.flag_id LEFT JOIN users u ON u.id = ff.user_id WHERE ff.user_id = ?', [self.id], one=True)[0]
-
-    # Get list of events attended by user (by looking at flags found)
-    def get_events_attended(self):
-        events = db.query_db('SELECT e.id AS id, e.name AS name FROM events e LEFT JOIN flags f ON f.event_id = e.id LEFT JOIN flagsfound ff ON ff.flag_id = f.flag LEFT JOIN users u ON u.id = ff.user_id WHERE u.id IS NOT NULL AND u.id = ? GROUP BY e.id', [self.id])
-        if events is None:
-            return None
-        else:
-            elist = []
-            for e in events:
-                elist.append(event.Event(e['id'], e['name']))
-            return elist
+        return db.query_db('''
+            SELECT SUM(f.value)
+            FROM flagsfound ff
+            LEFT JOIN flags f ON f.flag = ff.flag_id
+            LEFT JOIN users u ON u.id = ff.user_id
+            WHERE ff.user_id = ?
+        ''', [self.id], one=True)[0]
 
     # Get number of flags found by user
     def get_no_flags(self):
@@ -45,25 +40,17 @@ class User():
 
     # Get user's score for current event
     def get_current_event_score(self):
-        score = db.query_db(
-            'SELECT SUM(f.value) FROM users u LEFT JOIN flagsfound ff ON ff.user_id = u.id LEFT JOIN flags f ON f.flag = ff.flag_id WHERE f.event_id = ? AND u.id = ?',
-            (event.get_active().id, self.id),
-            one=True
-        )[0]
+        score = db.query_db('''
+            SELECT SUM(f.value) FROM users u
+            LEFT JOIN flagsfound ff ON ff.user_id = u.id
+            LEFT JOIN flags f ON f.flag = ff.flag_id
+            LEFT JOIN events e ON f.event_id = e.id
+            WHERE e.active = 1
+            AND u.id = ?
+        ''', [self.id], one=True)[0]
         if score is None:
             return 0
         return score
-
-    # Get team this user is in for given event ID
-    def get_team(self, event_id):
-        q = db.query_db(
-            'SELECT t.name AS name, t.event_id AS event_id FROM teams t LEFT JOIN teamusers tu ON t.name = tu.team_name AND t.event_id = tu.event_id WHERE tu.user_id = ? AND t.event_id = ?',
-            (self.id, event_id),
-            one=True
-        )
-        if q is None:
-            return None
-        return team.Team(q['name'], q['event_id'])
 
     def __repr__(self):
         return '<User %r>' % self.id
@@ -84,3 +71,26 @@ def get_user(id):
         return None
     else:
         return User(u['id'], u['name'])
+
+# Leaderboard builder for user entities
+def make_leaderboard(query, args=()):
+    out = []
+    data = db.query_db(query, args)
+    if len(data) == 0: # If no flags found yet send None to template (render empty table)
+        return []
+    pos = 1
+    for d in data:
+        out.append(leaderboard.Position(pos, User(d['id'], d['name']), d['score']))
+        pos += 1
+    return out
+
+# Get global leaderboard data
+def get_global_leaderboard():
+    return make_leaderboard('''
+        SELECT u.id, u.name, SUM(f.value) AS score
+        FROM flagsfound ff
+        LEFT JOIN flags f ON f.flag = ff.flag_id
+        LEFT JOIN users u ON u.id = ff.user_id
+        GROUP BY u.id
+        ORDER BY score DESC
+    ''')
