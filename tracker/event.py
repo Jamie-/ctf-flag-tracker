@@ -1,6 +1,5 @@
 import tracker.db as db
 import tracker.leaderboard as leaderboard
-import tracker.user as user
 import tracker.team as team
 
 class Event():
@@ -20,9 +19,24 @@ class Event():
 
     # Get team given name in this event
     def get_team(self, team_name):
-        return team.get_team(team_name, self.id)
+        q = db.query_db('SELECT * FROM teams WHERE name = ? AND event_id = ?', (team_name, self.id), one=True)
+        if q is None:
+            return None
+        return team.Team(q['name'], q['event_id'])
 
-    # Get team this user is in for given event ID
+    # Add a user to a team in this event
+    def add_user_to_team(self, user_id, team_name):
+        # See if team exists
+        t = self.get_team(team_name)
+        if t is None:
+            return False
+        try:
+            db.query_db('INSERT INTO teamusers (team_name, event_id, user_id) VALUES (?, ?, ?)', (team_name, self.id, user_id))
+        except db.IntegrityError:
+            return False
+        return True
+
+    # Get team given user is in for this event
     def get_users_team(self, user_id):
         q = db.query_db('''
             SELECT t.name AS name, t.event_id AS event_id
@@ -35,13 +49,22 @@ class Event():
             return None
         return team.Team(q['name'], q['event_id'])
 
-    # Get event leaderboard (from leaderboard builder)
+    # Get event individual leaderboard (from user leaderboard builder)
     def get_leaderboard(self, limit=None):
+        q = '''
+            SELECT u.id, u.name, SUM(f.value) AS score
+            FROM flagsfound ff
+            LEFT JOIN flags f ON f.flag = ff.flag_id
+            LEFT JOIN users u ON u.id = ff.user_id
+            WHERE f.event_id = ?
+            GROUP BY u.id
+            ORDER BY score DESC
+        '''
         if limit is not None:  # Limit number of users returned
-            return leaderboard.make_leaderboard('SELECT u.id, u.name, SUM(f.value) AS score FROM flagsfound ff LEFT JOIN flags f ON f.flag = ff.flag_id LEFT JOIN users u ON u.id = ff.user_id WHERE f.event_id = ? GROUP BY u.id ORDER BY score DESC LIMIT ?', (self.id, limit))
-        return leaderboard.make_leaderboard('SELECT u.id, u.name, SUM(f.value) AS score FROM flagsfound ff LEFT JOIN flags f ON f.flag = ff.flag_id LEFT JOIN users u ON u.id = ff.user_id WHERE f.event_id = ? GROUP BY u.id ORDER BY score DESC', [self.id])
+            return leaderboard.make_leaderboard(q + ' LIMIT ?', (self.id, limit))
+        return leaderboard.make_leaderboard(q, [self.id])
 
-    # Get leaderboard for team in this event (from the leaderboard builder)
+    # Get leaderboard of teams in this event (from team leaderboard builder)
     def get_team_leaderboard(self, limit=None):
         q = '''
             SELECT name, event_id, SUM(score) AS score
@@ -66,11 +89,17 @@ class Event():
 
 # Get an event object from an event ID
 def get_event(id):
-    q = db.query_db('SELECT * FROM events WHERE id = ?', [id], one=True)
+    q = db.query_db('''
+        SELECT e.id AS id, e.name AS name, COUNT(*) AS num
+        FROM events e
+        LEFT JOIN flags f ON f.event_id = e.id
+        WHERE e.id = ?
+        GROUP BY e.id
+    ''', [id], one=True)
     if q is None:
         return None
     else:
-        return Event(q['id'], q['name'], _get_no_flags(id))
+        return Event(q['id'], q['name'], q['num'])
 
 # Get list of events attended by user (by looking at flags found)
 def by_user(user_id):
@@ -83,13 +112,11 @@ def by_user(user_id):
         WHERE u.id IS NOT NULL AND u.id = ?
         GROUP BY e.id
     ''', [user_id])
-    if events is None:
-        return None
-    else:
-        elist = []
+    elist = []
+    if events is not None:
         for e in events:
             elist.append(Event(e['id'], e['name']))
-        return elist
+    return elist
 
 # Get currently active event
 def get_active():
@@ -99,17 +126,17 @@ def get_active():
     else:
         return Event(q['id'], q['name'])
 
+# Get list of all events
 def get_all_events():
-    events = db.query_db('SELECT e.id AS id, e.name AS name, COUNT(e.name) AS num, SUM(f.value) as points FROM events e LEFT JOIN flags f ON f.event_id = e.id GROUP BY e.name ORDER BY e.id DESC')
-    if events is None:
-        return None
-
-    e_list = []
-    for e in events:
-        e_list.append(Event(e['id'], e['name'], e['num'], e['points']))
-
-    return e_list
-
-# Get number of flags in an event
-def _get_no_flags(event_id):
-    return db.query_db('SELECT COUNT(*) AS num FROM flags WHERE event_id = ?', [event_id], one=True)['num']
+    events = db.query_db('''
+        SELECT e.id AS id, e.name AS name, COUNT(e.name) AS num, SUM(f.value) AS points
+        FROM events e
+        LEFT JOIN flags f ON f.event_id = e.id
+        GROUP BY e.name
+        ORDER BY e.id DESC
+    ''')
+    elist = []
+    if events is not None:
+        for e in events:
+            elist.append(Event(e['id'], e['name'], e['num'], e['points']))
+    return elist

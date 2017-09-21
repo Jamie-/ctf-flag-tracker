@@ -65,8 +65,7 @@ def get_event(event_id):
                     team_form.team.errors.append('Unable to create team %s, it may already exist in this event.' % team_data)
                     return flask.render_template('event_teams.html', title=e.name, event=e, user=flask_login.current_user, form=team_form, team_lb=team_lb, indiv_lb=indiv_lb)
             # Add user to team if just created or if Join button pressed
-            t = team.join_team(flask_login.current_user.id, team_data, event_id)
-            if t: # Team joined okay
+            if e.add_user_to_team(flask_login.current_user.id, team_data): # Team joined okay
                 flask.flash('Joined team %s successfully!' % team_data, 'success')
                 return flask.redirect('/event/' + str(event_id), code=302)
             else: # Unable to join team
