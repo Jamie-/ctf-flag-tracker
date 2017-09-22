@@ -2,6 +2,8 @@ import sqlite3
 import flask
 import tracker
 
+IntegrityError = sqlite3.IntegrityError
+
 # USAGE
 # >>> from tracker.db import init_db
 # >>> init_db()

@@ -1,5 +1,4 @@
 import tracker.db as db
-import tracker.event as event
 
 class User():
 
@@ -37,28 +36,34 @@ class User():
             score = 0
         return score
 
-    # Get list of events attended by user (by looking at flags found)
-    def get_events_attended(self):
-        events = db.query_db('SELECT e.id AS id, e.name AS name FROM events e LEFT JOIN flags f ON f.event_id = e.id LEFT JOIN flagsfound ff ON ff.flag_id = f.flag LEFT JOIN users u ON u.id = ff.user_id WHERE u.id IS NOT NULL AND u.id = ? GROUP BY e.id', [self.id])
-        if events is None:
-            return None
-        else:
-            elist = []
-            for e in events:
-                elist.append(event.Event(e['id'], e['name']))
-            return elist
-
     # Get number of flags found by user
     def get_no_flags(self):
         return db.query_db('SELECT COUNT(*) FROM flagsfound WHERE user_id = ?', [self.id], one=True)[0]
 
     # Get user's score for current event
     def get_current_event_score(self):
-        score = db.query_db(
-            'SELECT SUM(f.value) FROM users u LEFT JOIN flagsfound ff ON ff.user_id = u.id LEFT JOIN flags f ON f.flag = ff.flag_id WHERE f.event_id = ? AND u.id = ?',
-            (event.get_active().id, self.id),
-            one=True
-        )[0]
+        score = db.query_db('''
+            SELECT SUM(f.value) FROM users u
+            LEFT JOIN flagsfound ff ON ff.user_id = u.id
+            LEFT JOIN flags f ON f.flag = ff.flag_id
+            LEFT JOIN events e ON f.event_id = e.id
+            WHERE e.active = 1
+            AND u.id = ?
+        ''', [self.id], one=True)[0]
+        if score is None:
+            return 0
+        return score
+
+    # Get user's score for given event
+    def get_event_score(self, event_id):
+        score = db.query_db('''
+            SELECT SUM(f.value) FROM users u
+            LEFT JOIN flagsfound ff ON ff.user_id = u.id
+            LEFT JOIN flags f ON f.flag = ff.flag_id
+            LEFT JOIN events e ON f.event_id = e.id
+            WHERE e.id = ?
+            AND u.id = ?
+        ''', (event_id, self.id), one=True)[0]
         if score is None:
             return 0
         return score
