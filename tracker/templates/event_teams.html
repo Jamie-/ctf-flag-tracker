@@ -3,10 +3,8 @@
 {% block content %}
     <div class="container" id="event-team">
         <h1>{{ event.name }}</h1>
-        {% if event.no_flags is not none %}
-            <h4>There are {{ event.no_flags }} total flags to find.</h4>
-            <br />
-        {% endif %}
+        <h4>There are a total of {{ event.get_num_flags() }} flags to find.</h4>
+        <br />
 
         <div class="row">
             {% if user is defined %}
@@ -22,11 +20,11 @@
                                     <th style="width: 20%;">Score</th>
                                 </tr>
                             </thead>
-                            {% for u in team.get_leaderboard(limit=6) %}
+                            {% for p in team.get_leaderboard(limit=6) %}
                                 <tr>
-                                    <td>{{ u.pos }}</td>
-                                    <td class="name"><a href="/profile/{{ u.id }}">{{ u.name }}</a></td>
-                                    <td>{{ u.score }}</td>
+                                    <td>{{ p.pos }}</td>
+                                    <td class="name"><a href="/profile/{{ p.entity.id }}">{{ p.entity.name }}</a></td>
+                                    <td>{{ p.score }}</td>
                                 </tr>
                             {% endfor %}
                         </table>
@@ -34,7 +32,7 @@
                 {% else %}
                     <div class="col-sm">
                         <h3>Create/Join a Team</h3>
-                        <form action="/event/{{ event.id }}/team" method="post" name="team">
+                        <form action="/event/{{ event.id }}" method="post" name="team">
                             {{ form.hidden_tag() }}
                             <table id="join-team">
                                 <tr>
@@ -74,15 +72,13 @@
                             <th style="width: 20%;">Score</th>
                         </tr>
                     </thead>
-                    {% if team_lb is defined and team_lb is not none %}
-                    {% for t in team_lb %}
+                    {% for p in team_lb %}
                         <tr>
-                            <td>{{ t.pos }}</td>
-                            <td class="name"><a href="/event/{{ event.id }}/team/{{ t.name }}">{{ t.name }}</a></td>
-                            <td>{{ t.score }}</td>
+                            <td>{{ p.pos }}</td>
+                            <td class="name"><a href="/event/{{ event.id }}/team/{{ p.entity.name }}">{{ p.entity.name }}</a></td>
+                            <td>{{ p.score }}</td>
                         </tr>
                     {% endfor %}
-                    {% endif %}
                 </table>
             </div>
             <div class="col-sm">
@@ -96,15 +92,13 @@
                             <th style="width: 20%;">Score</th>
                         </tr>
                     </thead>
-                    {% if indiv_lb is defined and indiv_lb is not none %}
-                    {% for u in indiv_lb %}
+                    {% for p in indiv_lb %}
                         <tr>
-                            <td>{{ u.pos }}</td>
-                            <td class="name"><a href="/profile/{{ u.id }}">{{ u.name }}</a></td>
-                            <td>{{ u.score }}</td>
+                            <td>{{ p.pos }}</td>
+                            <td class="name"><a href="/profile/{{ p.entity.id }}">{{ p.entity.name }}</a></td>
+                            <td>{{ p.score }}</td>
                         </tr>
                     {% endfor %}
-                    {% endif %}
                 </table>
             </div>
         </div>

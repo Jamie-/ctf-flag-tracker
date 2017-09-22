@@ -11,15 +11,13 @@
                     <th style="width: 20%;">Points Available</th>
                 </tr>
             </thead>
-            {% if events is defined and events is not none %}
             {% for e in events %}
                 <tr>
                     <td class="name"><a href="/event/{{ e.id }}">{{ e.name }}</a></td>
-                    <td>{{ e.no_flags }}</td>
-                    <td>{{ e.points }}</td>
+                    <td>{{ e.get_num_flags() }}</td>
+                    <td>{{ e.get_num_points() }}</td>
                 </tr>
             {% endfor %}
-            {% endif %}
         </table>
     </div>
 {% endblock %}

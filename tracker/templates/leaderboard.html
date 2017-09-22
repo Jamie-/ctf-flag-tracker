@@ -3,8 +3,8 @@
 {% block content %}
     <div class="container" id="leaderboard">
         <h1>{{ heading }}</h1>
-        {% if no_flags is defined %}
-            <h4>There are {{ no_flags }} total flags to find.</h4>
+        {% if num_flags is defined %}
+            <h4>There are a total of {{ num_flags }} flags to find.</h4>
             <br />
         {% endif %}
         <table class="leaderboard table table-striped table-inverse">
@@ -14,25 +14,28 @@
                     <th class="name">Name</th>
                     {% if users is defined %}
                     <th style="width: 20%;">Rank</th>
+                    {% elif teams is defined %}
+                        <th style="width: 20%;">Members</th>
                     {% endif %}
                     <th style="width: 20%;">Score</th>
                 </tr>
             </thead>
-            {% if users is defined and users is not none %}
-            {% for u in users %}
+            {% if users is defined %}
+            {% for p in users %}
                 <tr>
-                    <td>{{ u.pos }}</td>
-                    <td class="name"><a href="/profile/{{ u.id }}">{{ u.name }}</a></td>
-                    <td>{{ u.rank }}</td>
-                    <td>{{ u.score }}</td>
+                    <td>{{ p.pos }}</td>
+                    <td class="name"><a href="/profile/{{ p.entity.id }}">{{ p.entity.name }}</a></td>
+                    <td>{{ p.get_rank() }}</td>
+                    <td>{{ p.score }}</td>
                 </tr>
             {% endfor %}
-            {% elif teams is defined and teams is not none %}
-            {% for t in teams %}
+            {% elif teams is defined %}
+            {% for p in teams %}
                 <tr>
-                    <td>{{ t.pos }}</td>
-                    <td class="name"><a href="/event/{{ e.id }}/team/{{ t.id }}">{{ t.name }}</a></td>
-                    <td>{{ t.score }}</td>
+                    <td>{{ p.pos }}</td>
+                    <td class="name"><a href="/event/{{ p.entity.event_id }}/team/{{ p.entity.name }}">{{ p.entity.name }}</a></td>
+                    <td>{{ p.entity.get_num_members() }}</td>
+                    <td>{{ p.score }}</td>
                 </tr>
             {% endfor %}
             {% endif %}
