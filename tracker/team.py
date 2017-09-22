@@ -25,13 +25,15 @@ class Team():
 
     # Get number of members in this team
     def get_num_members(self):
-        return db.query_db('''
+        num = db.query_db('''
             SELECT COUNT(*)
-            FROM teams t
-            LEFT JOIN teamusers tu ON tu.team_name = t.name AND tu.event_id = t.event_id
-            WHERE t.event_id = ? AND t.name = ?
-            GROUP BY t.name
-        ''', (self.event_id, self.name), one=True)[0]
+            FROM teamusers tu
+            WHERE tu.event_id = ? AND tu.team_name = ?
+            GROUP BY tu.team_name
+        ''', (self.event_id, self.name), one=True)
+        if num is None:
+            return 0
+        return num[0]
 
 
 # Create a team (in DB)
