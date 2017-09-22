@@ -3,8 +3,8 @@
 {% block content %}
     <div class="container" id="leaderboard">
         <h1>{{ heading }}</h1>
-        {% if no_flags is defined %}
-            <h4>There are {{ no_flags }} total flags to find.</h4>
+        {% if num_flags is defined %}
+            <h4>There are a total of {{ num_flags }} flags to find.</h4>
             <br />
         {% endif %}
         <table class="leaderboard table table-striped table-inverse">
@@ -20,7 +20,7 @@
                     <th style="width: 20%;">Score</th>
                 </tr>
             </thead>
-            {% if users is defined and users is not none %}
+            {% if users is defined %}
             {% for p in users %}
                 <tr>
                     <td>{{ p.pos }}</td>
@@ -29,7 +29,7 @@
                     <td>{{ p.score }}</td>
                 </tr>
             {% endfor %}
-            {% elif teams is defined and teams is not none %}
+            {% elif teams is defined %}
             {% for p in teams %}
                 <tr>
                     <td>{{ p.pos }}</td>

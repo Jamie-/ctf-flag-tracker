@@ -84,7 +84,7 @@ def get_event(event_id):
             return flask.render_template('event_teams.html', title=e.name, event=e, team_lb=team_lb, indiv_lb=indiv_lb)
     else:
         title = e.name + ' Leaderboard'
-        return flask.render_template('leaderboard.html', title=title, heading=title, users=e.get_leaderboard(), no_flags=e.no_flags)
+        return flask.render_template('leaderboard.html', title=title, heading=title, users=e.get_leaderboard(), num_flags=e.get_num_flags())
 
 @app.route('/event/<int:event_id>/team')
 def event_team(event_id):
@@ -103,7 +103,7 @@ def event_teams(event_id):
 
     e = event.get_event(event_id)
     title = e.name + ' Teams Leaderboard'
-    return flask.render_template('leaderboard.html', title=title, heading=title, teams=e.get_team_leaderboard(), no_flags=e.no_flags)
+    return flask.render_template('leaderboard.html', title=title, heading=title, teams=e.get_team_leaderboard(), num_flags=e.get_num_flags())
 
 @app.route('/event/<int:event_id>/individual')
 def event_individual(event_id):
@@ -113,7 +113,7 @@ def event_individual(event_id):
 
     e = event.get_event(event_id)
     title = e.name + ' Individual Leaderboard'
-    return flask.render_template('leaderboard.html', title=title, heading=title, users=e.get_leaderboard(), no_flags=e.no_flags)
+    return flask.render_template('leaderboard.html', title=title, heading=title, users=e.get_leaderboard(), num_flags=e.get_num_flags())
 
 @app.route('/event/<int:event_id>/team/<string:team_name>')
 def event_inter_team(event_id, team_name):

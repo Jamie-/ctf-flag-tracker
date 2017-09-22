@@ -4,11 +4,34 @@ import tracker.team as team
 
 class Event():
 
-    def __init__(self, id, name, no_flags=None, points=None):
+    def __init__(self, id, name):
         self.id = id
         self.name = name
-        self.no_flags = no_flags
-        self.points = points
+
+    # Get number of flags available in this event
+    def get_num_flags(self):
+        num = db.query_db('''
+            SELECT COUNT(*)
+            FROM flags f
+            WHERE f.event_id = ?
+            GROUP BY f.event_id
+        ''', [self.id], one=True)
+        if num is None:
+            return 0
+        return num[0]
+
+    # Get number of points available in this event
+    def get_num_points(self):
+        num = db.query_db('''
+            SELECT SUM(f.value)
+            FROM events e
+            LEFT JOIN flags f ON f.event_id = e.id
+            WHERE e.id = ?
+            GROUP BY e.id;
+        ''', [self.id], one=True)[0]
+        if num is None:
+            return 0
+        return num
 
     # Check to see if teams flag has been set for this event
     def has_teams(self):
@@ -89,21 +112,16 @@ class Event():
 
 # Get an event object from an event ID
 def get_event(id):
-    q = db.query_db('''
-        SELECT e.id AS id, e.name AS name, COUNT(*) AS num
+    return make_event_from_row(db.query_db('''
+        SELECT e.id AS id, e.name AS name
         FROM events e
-        LEFT JOIN flags f ON f.event_id = e.id
         WHERE e.id = ?
-        GROUP BY e.id
-    ''', [id], one=True)
-    if q is None:
-        return None
-    else:
-        return Event(q['id'], q['name'], q['num'])
+    ''', [id], one=True))
 
+#TODO Not happy with this being here, it ideally needs to be in user: u.get_events(), but this causes loop on event import.
 # Get list of events attended by user (by looking at flags found)
 def by_user(user_id):
-    events = db.query_db('''
+    return make_list_from_query(db.query_db('''
         SELECT e.id AS id, e.name AS name
         FROM events e
         LEFT JOIN flags f ON f.event_id = e.id
@@ -111,32 +129,30 @@ def by_user(user_id):
         LEFT JOIN users u ON u.id = ff.user_id
         WHERE u.id IS NOT NULL AND u.id = ?
         GROUP BY e.id
-    ''', [user_id])
-    elist = []
-    if events is not None:
-        for e in events:
-            elist.append(Event(e['id'], e['name']))
-    return elist
+    ''', [user_id]))
 
 # Get currently active event
 def get_active():
-    q = db.query_db('SELECT * FROM events WHERE active = 1', one=True)
-    if q is None:
-        return None
-    else:
-        return Event(q['id'], q['name'])
+    return make_event_from_row(db.query_db('SELECT * FROM events WHERE active = 1', one=True))
 
 # Get list of all events
 def get_all_events():
-    events = db.query_db('''
-        SELECT e.id AS id, e.name AS name, COUNT(e.name) AS num, SUM(f.value) AS points
+    return make_list_from_query(db.query_db('''
+        SELECT e.id AS id, e.name AS name
         FROM events e
-        LEFT JOIN flags f ON f.event_id = e.id
-        GROUP BY e.name
         ORDER BY e.id DESC
-    ''')
-    elist = []
-    if events is not None:
-        for e in events:
-            elist.append(Event(e['id'], e['name'], e['num'], e['points']))
-    return elist
+    '''))
+
+# Make list of events from DB query result
+def make_list_from_query(query):
+    l = []
+    if query is not None:
+        for e in query:
+            l.append(make_event_from_row(e))
+    return l
+
+# Make event object from DB row
+def make_event_from_row(row):
+    if row is None:
+        return None
+    return Event(row['id'], row['name'])

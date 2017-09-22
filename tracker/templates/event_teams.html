@@ -3,10 +3,8 @@
 {% block content %}
     <div class="container" id="event-team">
         <h1>{{ event.name }}</h1>
-        {% if event.no_flags is not none %}
-            <h4>There are {{ event.no_flags }} total flags to find.</h4>
-            <br />
-        {% endif %}
+        <h4>There are a total of {{ event.get_num_flags() }} flags to find.</h4>
+        <br />
 
         <div class="row">
             {% if user is defined %}
@@ -74,7 +72,6 @@
                             <th style="width: 20%;">Score</th>
                         </tr>
                     </thead>
-                    {% if team_lb is defined and team_lb is not none %}
                     {% for p in team_lb %}
                         <tr>
                             <td>{{ p.pos }}</td>
@@ -82,7 +79,6 @@
                             <td>{{ p.score }}</td>
                         </tr>
                     {% endfor %}
-                    {% endif %}
                 </table>
             </div>
             <div class="col-sm">
@@ -96,7 +92,6 @@
                             <th style="width: 20%;">Score</th>
                         </tr>
                     </thead>
-                    {% if indiv_lb is defined and indiv_lb is not none %}
                     {% for p in indiv_lb %}
                         <tr>
                             <td>{{ p.pos }}</td>
@@ -104,7 +99,6 @@
                             <td>{{ p.score }}</td>
                         </tr>
                     {% endfor %}
-                    {% endif %}
                 </table>
             </div>
         </div>
