@@ -25,13 +25,7 @@ class User():
 
     # Get user's global score
     def get_global_score(self):
-        return db.query_db('''
-            SELECT SUM(f.value)
-            FROM flagsfound ff
-            LEFT JOIN flags f ON f.flag = ff.flag_id
-            LEFT JOIN users u ON u.id = ff.user_id
-            WHERE ff.user_id = ?
-        ''', [self.id], one=True)[0]
+        return db.query_db('SELECT SUM(f.value) FROM flagsfound ff LEFT JOIN flags f ON f.flag = ff.flag_id LEFT JOIN users u ON u.id = ff.user_id WHERE ff.user_id = ?', [self.id], one=True)[0]
 
     # Get number of flags found by user
     def get_no_flags(self):
