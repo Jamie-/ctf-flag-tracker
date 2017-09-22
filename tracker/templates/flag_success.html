@@ -6,8 +6,10 @@
         <h4>That flag had a value of:</h4>
         <h1 class="super-large">{{ flag.value }}</h1>
 
-        <h5>Your current event score:</h5>
-        <h3>{{ user.get_current_event_score() }}</h3>
+        {% if flag.event is not none %}
+            <h5>Your score for the {{ flag.event.name }} event:</h5>
+            <h3>{{ user.get_event_score(flag.event.id) }}</h3>
+        {% endif %}
 
         <h5>Your new global score:</h5>
         <h3>{{ user.get_global_score() }}</h3>

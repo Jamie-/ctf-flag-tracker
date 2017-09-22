@@ -45,6 +45,20 @@ class User():
             return 0
         return score
 
+    # Get user's score for given event
+    def get_event_score(self, event_id):
+        score = db.query_db('''
+            SELECT SUM(f.value) FROM users u
+            LEFT JOIN flagsfound ff ON ff.user_id = u.id
+            LEFT JOIN flags f ON f.flag = ff.flag_id
+            LEFT JOIN events e ON f.event_id = e.id
+            WHERE e.id = ?
+            AND u.id = ?
+        ''', (event_id, self.id), one=True)[0]
+        if score is None:
+            return 0
+        return score
+
     def __repr__(self):
         return '<User %r>' % self.id
 
