@@ -2,9 +2,10 @@ import tracker.db as db
 
 class User():
 
-    def __init__(self, id, name):
+    def __init__(self, id, name, admin=None):
         self.id = id
         self.name = name
+        self.admin = admin
 
     ## FLASK_LOGIN #################
     def is_authenticated(self):
@@ -68,6 +69,20 @@ class User():
             return 0
         return score
 
+    # Check if user is admin
+    def is_admin(self):
+        u = db.query_db('SELECT * FROM users WHERE id = ?', [self.id], one=True)
+        if u['admin'] is 1:
+            return True
+        return False
+
+    # Set user admin privs
+    def set_admin(self, admin):
+        if admin:
+            db.query_db('UPDATE users SET admin = 1 WHERE id = ?', [self.id])
+        else:
+            db.query_db('UPDATE users SET admin = 0 WHERE id = ?', [self.id])
+
     def __repr__(self):
         return '<User %r>' % self.id
 
@@ -87,3 +102,14 @@ def get_user(id):
         return None
     else:
         return User(u['id'], u['name'])
+
+# Get list of all users
+def get_all():
+    users = db.query_db('SELECT * FROM users')
+    ulist = []
+    for u in users:
+        adm = False
+        if u['admin'] is 1:
+            adm = True
+        ulist.append(User(u['id'], u['name'], adm))
+    return ulist

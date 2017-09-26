@@ -128,7 +128,7 @@ def event_inter_team(event_id, team_name):
 
 @app.route('/events')
 def get_events():
-    return flask.render_template('event_list.html', title='Events', events=event.get_all_events())
+    return flask.render_template('event_list.html', title='Events', events=event.get_all())
 
 @app.route('/flag', methods=['GET', 'POST'])
 @flask_login.login_required
@@ -165,6 +165,102 @@ def profile_user(user_id):
         flask.abort(404)
     u = user.get_user(user_id)
     return flask.render_template('profile.html', title=u.name, user=u, events=event.by_user(user_id))
+
+
+## Admin
+
+@app.route('/admin')
+def admin():
+    if not flask_login.current_user.is_authenticated:
+        flask.abort(404)
+    elif not flask_login.current_user.is_admin():
+        flask.abort(404)
+    return flask.redirect('/admin/events', code=302)
+
+@app.route('/admin/events', methods=['GET', 'POST'])
+def admin_events():
+    if not flask_login.current_user.is_authenticated:
+        flask.abort(404)
+    elif not flask_login.current_user.is_admin():
+        flask.abort(404)
+
+    form = forms.AdminEventForm()
+    if form.validate_on_submit():
+        teams = 0
+        active = 0
+        if form.teams.data:
+            teams = 1
+        if form.active.data:
+            active = 1
+
+        if form.add.data: # Add event
+            if event.exists(form.id.data):
+                flask.flash('An event already exists with that ID, try a different ID.', 'danger')
+            else:
+                event.create(form.id.data, form.name.data, teams, active)
+                flask.flash('Event added successfully!', 'success')
+        elif form.update.data: # Update event
+            if event.exists(form.id.data):
+                event.update(form.id.data, form.name.data, teams, active)
+            else:
+                flask.flash('That event does not exist so can\'t be updated!' ,'danger')
+        elif form.delete.data: # Delete event
+            if event.exists(form.id.data):
+                event.delete(form.id.data)
+                flask.flash('Event deleted successfully.', 'success')
+            else:
+                flask.flash('Unable to delete event as it does not exist.', 'danger')
+    return flask.render_template('admin/events.html', title='Events - Admin', events=event.get_all(), form=form)
+
+@app.route('/admin/flags', methods=['GET', 'POST'])
+def admin_flags():
+    if not flask_login.current_user.is_authenticated:
+        flask.abort(404)
+    elif not flask_login.current_user.is_admin():
+        flask.abort(404)
+
+    form = forms.AdminFlagForm()
+    if form.validate_on_submit():
+        if form.add.data: # Add flag
+            if flag.exists(form.flag.data):
+                flask.flash('Unable to add flag, it already exists.', 'danger')
+            elif (form.event_id.data is not None) and not (event.exists(form.event_id.data)):
+                flask.flash('Unable to add flag, that event ID does not exist.', 'danger')
+            else:
+                flag.add(form.flag.data, form.value.data, form.event_id.data)
+                flask.flash('Added flag successfully.', 'success')
+        elif form.update.data: # Update flag
+            if flag.exists(form.flag.data):
+                if (form.event_id.data is None) or (event.exists(form.event_id.data)):
+                    flag.update(form.flag.data, form.value.data, form.event_id.data)
+                    flask.flash('Flag updated successfully.', 'success')
+                else:
+                    flask.flash('Unable to update flag, that event ID does not exist.', 'danger')
+            else:
+                flask.flash('Unable to update flag as it does not exist.', 'danger')
+        elif form.delete.data: # Delete flag
+            if flag.exists(form.flag.data):
+                flag.delete(form.flag.data)
+                flask.flash('Flag deleted successfully.', 'success')
+            else:
+                flask.flash('Unable to delete flag as it does not exist.', 'danger')
+    return flask.render_template('admin/flags.html', title='Flags - Admin', flags=flag.get_all(), form=form)
+
+@app.route('/admin/users', methods=['GET', 'POST'])
+def admin_users():
+    if not flask_login.current_user.is_authenticated:
+        flask.abort(404)
+    elif not flask_login.current_user.is_admin():
+        flask.abort(404)
+
+    form = forms.AdminUserForm()
+    if form.validate_on_submit() and form.update.data:
+        if user.exists(form.id.data):
+            user.get_user(form.id.data).set_admin(form.admin.data)
+            flask.flash('User updated successfully.', 'success')
+        else:
+            flask.flash('Unable to update user, that ID does not exist.', 'danger')
+    return flask.render_template('admin/users.html', title='Users - Admin', users=user.get_all(), form=form)
 
 
 ## Error Handlers
