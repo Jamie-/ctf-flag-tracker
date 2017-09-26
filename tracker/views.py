@@ -128,7 +128,7 @@ def event_inter_team(event_id, team_name):
 
 @app.route('/events')
 def get_events():
-    return flask.render_template('event_list.html', title='Events', events=event.get_all_events())
+    return flask.render_template('event_list.html', title='Events', events=event.get_all())
 
 @app.route('/flag', methods=['GET', 'POST'])
 @flask_login.login_required
