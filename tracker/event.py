@@ -33,6 +33,13 @@ class Event():
             return 0
         return num
 
+    # Check to see if current event is active event
+    def is_active(self):
+        teams = db.query_db('SELECT active FROM events WHERE id = ?', [self.id], one=True)[0]
+        if teams is not None and teams == 1:
+            return True
+        return False
+
     # Check to see if teams flag has been set for this event
     def has_teams(self):
         teams = db.query_db('SELECT has_teams FROM events WHERE id = ?', [self.id], one=True)[0]

@@ -167,6 +167,17 @@ def profile_user(user_id):
     return flask.render_template('profile.html', title=u.name, user=u, events=event.by_user(user_id))
 
 
+## Admin
+
+@app.route('/admin')
+def admin():
+    return flask.render_template('admin/template.html', title='Admin')
+
+@app.route('/admin/events')
+def admin_events():
+    return flask.render_template('admin/events.html', title='Events - Admin', events=event.get_all_events())
+
+
 ## Error Handlers
 
 @app.errorhandler(400)
