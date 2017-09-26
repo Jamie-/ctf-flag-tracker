@@ -117,6 +117,12 @@ class Event():
         return team.make_leaderboard(q, (self.id, self.id))
 
 
+# Check event exists
+def exists(id):
+    if db.query_db('SELECT * FROM events WHERE id = ?', [id], one=True) is None:
+        return False
+    return True
+
 # Get an event object from an event ID
 def get_event(id):
     return make_event_from_row(db.query_db('''
@@ -124,6 +130,34 @@ def get_event(id):
         FROM events e
         WHERE e.id = ?
     ''', [id], one=True))
+
+# Create event
+def create(id, name, teams, active):
+    if (active is 1) and (get_active() is not None): # Deactive current active event
+        db.query_db('UPDATE events SET active = 0 WHERE active = 1')
+    # Insert new event
+    db.query_db('''
+        INSERT INTO events (id, name, has_teams, active)
+        VALUES (?, ?, ?, ?)
+    ''', (id, name, teams, active))
+
+# Update event
+def update(id, name, teams, active):
+    if (active is 1) and (get_active() is not None): # Deactive current active event
+        db.query_db('UPDATE events SET active = 0 WHERE active = 1')
+    # Update record
+    db.query_db('''
+        UPDATE events
+        SET name = ?, has_teams = ?, active = ?
+        WHERE id = ?
+    ''', (name, teams, active, id))
+
+# Delete event
+def delete(id):
+    db.query_db('''
+        DELETE FROM events
+        WHERE id = ?
+    ''', [id])
 
 #TODO Not happy with this being here, it ideally needs to be in user: u.get_events(), but this causes loop on event import.
 # Get list of events attended by user (by looking at flags found)
@@ -143,7 +177,7 @@ def get_active():
     return make_event_from_row(db.query_db('SELECT * FROM events WHERE active = 1', one=True))
 
 # Get list of all events
-def get_all_events():
+def get_all():
     return make_list_from_query(db.query_db('''
         SELECT e.id AS id, e.name AS name
         FROM events e
