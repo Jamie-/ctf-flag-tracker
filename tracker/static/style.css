@@ -32,6 +32,10 @@ div.container > h1 {
 }
 
 /* Navbar */
+.bg-dark {
+    background-color: #35383d!important;
+}
+
 .navbar-light .navbar-nav .nav-link {
     color: #008dff;
 }
@@ -46,6 +50,15 @@ div.container > h1 {
 .navbar-light .navbar-nav .nav-link.show,
 .navbar-light .navbar-nav .show>.nav-link {
     color: #0068cd;
+}
+
+.dropdown-menu {
+    background-color: #35383d;
+}
+
+.dropdown-item:focus,
+.dropdown-item:hover {
+    background-color: #35383d;
 }
 
 .dropdown-item {
