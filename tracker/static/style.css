@@ -75,13 +75,13 @@ a:hover {
 
 /* Input Fields */
 .form-control {
-    background-color: rgba(0,0,255,0.1);
+    background-color: #262848;
     border: 1px solid #008dff;
     color: #a9a9a9;
 }
 
 .form-control:focus {
-    background-color: rgba(0,0,255,0.1);
+    background-color: #262848;
     border: 1px solid #008dff;
     color: #a9a9a9;
 }
@@ -90,7 +90,7 @@ a:hover {
 .form-control.is-invalid,
 .was-validated .custom-select:invalid,
 .was-validated .form-control:invalid {
-    background-color: rgba(255,0,0,0.1);
+    background-color: #40282e;
 }
 
 /* List Groups (profile page) */
@@ -136,7 +136,7 @@ a:hover {
 
 .alert-warning {
     color: #d19300;
-    background-color: rgba(255,255,0,0.1);;
+    background-color: rgba(255,255,0,0.1);
     border-color: #d19300;
 }
 
@@ -171,7 +171,7 @@ a:hover {
 /* Buttons */
 .btn-primary {
     color: #008dff;
-    background-color: rgba(0,0,255,0.1);
+    background-color: #262848;
     border-color: #008dff;
 }
 
@@ -183,7 +183,7 @@ a:hover {
 
 .btn-success {
     color: #00d11e;
-    background-color: rgba(0,255,0,0.1);
+    background-color: #26422e;
     border-color: #00d11e;
 }
 
@@ -195,7 +195,7 @@ a:hover {
 
 .btn-danger {
     color: #df0000;
-    background-color: rgba(255,0,0,0.1);
+    background-color: #40282e;
     border-color: #df0000;
 }
 
