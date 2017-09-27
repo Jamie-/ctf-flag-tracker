@@ -3,8 +3,9 @@
 ########################################################################################################################
  */
 
+/* Generic */
 body {
-    background: #333333;
+    background: #2a2d33;
     color: #ffffff;
 }
 
@@ -17,6 +18,7 @@ div.container > h1 {
     margin-bottom: 2rem;
 }
 
+/* Custom */
 .super-large {
     font-size: 6em;
 }
@@ -29,6 +31,193 @@ div.container > h1 {
     text-align: center;
 }
 
+/* Navbar */
+.bg-dark {
+    background-color: #35383d!important;
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: #008dff;
+}
+
+.navbar-light .navbar-nav .nav-link:focus,
+.navbar-light .navbar-nav .nav-link:hover {
+    color: #0068cd;
+}
+
+.navbar-light .navbar-nav .active>.nav-link,
+.navbar-light .navbar-nav .nav-link.active,
+.navbar-light .navbar-nav .nav-link.show,
+.navbar-light .navbar-nav .show>.nav-link {
+    color: #0068cd;
+}
+
+.dropdown-menu {
+    background-color: #35383d;
+}
+
+.dropdown-item:focus,
+.dropdown-item:hover {
+    background-color: #35383d;
+}
+
+.dropdown-item {
+    color: #008dff;
+}
+
+.dropdown-item:focus,
+.dropdown-item:hover {
+    color: #0068cd;
+}
+
+.dropdown-item.active,
+.dropdown-item:active {
+    color: #fff;
+    background-color: #008dff;
+}
+
+/* Links */
+a {
+    color: #008dff;
+}
+
+a:hover {
+    color: #2e9dff;
+    text-decoration: none;
+}
+
+/* Input Fields */
+.form-control {
+    background-color: #262848;
+    border: 1px solid #008dff;
+    color: #a9a9a9;
+}
+
+.form-control:focus {
+    background-color: #262848;
+    border: 1px solid #008dff;
+    color: #a9a9a9;
+}
+
+.custom-select.is-invalid,
+.form-control.is-invalid,
+.was-validated .custom-select:invalid,
+.was-validated .form-control:invalid {
+    background-color: #40282e;
+}
+
+/* List Groups (profile page) */
+.list-group-item:first-child,
+.list-group-item:last-child {
+    border-radius: 0;
+}
+
+.list-group-item-dark {
+    background-color: rgba(255,255,255,0.05);
+}
+
+/* Alerts */
+.alert-primary {
+    color: #008dff;
+    background-color: rgba(0,0,255,0.1);
+    border-color: #008dff;
+}
+
+.alert-primary .alert-dismissible .close {
+    color: #008dff;
+}
+
+.alert-primary .close:focus,
+.alert-primary .close:hover {
+    color: #0041bf;
+}
+
+.alert-success {
+    color: #00d11e;
+    background-color: rgba(0,255,0,0.1);;
+    border-color: #00d11e;
+}
+
+.alert-success .alert-dismissible .close {
+    color: #00d11e;
+}
+
+.alert-success .close:focus,
+.alert-success .close:hover {
+    color: #007f1b;
+}
+
+.alert-warning {
+    color: #d19300;
+    background-color: rgba(255,255,0,0.1);
+    border-color: #d19300;
+}
+
+.alert-warning .alert-dismissible .close {
+    color: #d19300;
+}
+
+.alert-warning .close:focus,
+.alert-warning .close:hover {
+    color: #7f5600;
+}
+
+.alert-danger {
+    color: #df0000;
+    background-color: rgba(255,0,0,0.1);
+    border-color: #df0000;
+}
+
+.alert-danger .alert-dismissible .close {
+    color: #df0000;
+}
+
+.alert-danger .close:focus,
+.alert-danger .close:hover {
+    color: #7f0000;
+}
+
+.close {
+    text-shadow: none;
+}
+
+/* Buttons */
+.btn-primary {
+    color: #008dff;
+    background-color: #262848;
+    border-color: #008dff;
+}
+
+.btn-primary:hover {
+    color: #fff;
+    background-color: #008dff;
+    border-color: #008dff;
+}
+
+.btn-success {
+    color: #00d11e;
+    background-color: #26422e;
+    border-color: #00d11e;
+}
+
+.btn-success:hover {
+    color: #fff;
+    background-color: #00d11e;
+    border-color: #00d11e;
+}
+
+.btn-danger {
+    color: #df0000;
+    background-color: #40282e;
+    border-color: #df0000;
+}
+
+.btn-danger:hover {
+    color: #fff;
+    background-color: #df0000;
+    border-color: #df0000;
+}
+
 /*
     PAGE SPECIFICS
 ########################################################################################################################
@@ -37,6 +226,13 @@ div.container > h1 {
 /* ERROR */
 #error {
     text-align: center;
+}
+
+/* LOGIN */
+.main-content {
+    padding: 20px;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.05);
 }
 
 /* LEADERBOARDS */
