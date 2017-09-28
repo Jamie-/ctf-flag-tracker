@@ -9,12 +9,20 @@ class Rank():
 
 # Get list of all ranks
 def get_all():
-    ranks = db.query_db('SELECT * FROM ranks')
+    ranks = db.query_db('SELECT * FROM ranks ORDER BY score ASC')
     rlist = []
     if ranks is not None:
         for r in ranks:
             rlist.append(Rank(r['rank'], r['score']))
     return rlist
+
+# Get rank for score
+def get_rank(score):
+    ranks = db.query_db('SELECT * FROM ranks ORDER BY score DESC')
+    if ranks is not None:
+        for r in ranks:
+            if score > r['score']:
+                return r['rank']
 
 # Check rank exists
 def exists(rank):

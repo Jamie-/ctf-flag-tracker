@@ -1,5 +1,6 @@
 import tracker.db as db
 import tracker.user as user
+import tracker.rank as rank
 
 class Position():
 
@@ -10,14 +11,7 @@ class Position():
 
     # Get rank from user's score
     def get_rank(self):
-        if self.score > 70:
-            return '1337 h4x0r!'
-        elif self.score > 40:
-            return 'Member of Anonymous'
-        elif self.score > 20:
-            return 'script kiddie'
-        else:
-            return 'noob'
+        return rank.get_rank(self.score)
 
 
 # Leaderboard builder for user entities
