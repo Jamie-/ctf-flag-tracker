@@ -17,3 +17,4 @@ CREATE TABLE IF NOT EXISTS teamusers(
   user_id TEXT NOT NULL REFERENCES users(id),
   PRIMARY KEY (team_name, event_id, user_id)
 );
+CREATE TABLE IF NOT EXISTS ranks(rank TEXT PRIMARY KEY, score INTEGER NOT NULL);

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, IntegerField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, Length, Optional
+from wtforms.validators import DataRequired, Length, Optional, NumberRange
 
 class LoginForm(FlaskForm):
     username = StringField('username', validators=[DataRequired()])
@@ -37,3 +37,10 @@ class AdminUserForm(FlaskForm):
     id = StringField('id', validators=[DataRequired()])
     admin = BooleanField('admin')
     update = SubmitField(label='Update')
+
+class AdminRankForm(FlaskForm):
+    rank = StringField('rank', validators=[DataRequired()])
+    score = IntegerField('score', validators=[NumberRange(min=0)])
+    add = SubmitField(label='Add')
+    update = SubmitField(label='Update')
+    delete = SubmitField(label='Delete')
