@@ -40,7 +40,7 @@ class AdminUserForm(FlaskForm):
 
 class AdminRankForm(FlaskForm):
     rank = StringField('rank', validators=[DataRequired()])
-    score = IntegerField('score', validators=[DataRequired()])
+    score = IntegerField('score', validators=[NumberRange(min=0)])
     add = SubmitField(label='Add')
     update = SubmitField(label='Update')
     delete = SubmitField(label='Delete')
