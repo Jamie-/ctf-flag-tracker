@@ -21,7 +21,7 @@ def get_rank(score):
     ranks = db.query_db('SELECT * FROM ranks ORDER BY score DESC')
     if ranks is not None:
         for r in ranks:
-            if score > r['score']:
+            if score >= r['score']:
                 return r['rank']
 
 # Check rank exists
