@@ -27,7 +27,7 @@ class AdminEventForm(FlaskForm):
 
 class AdminFlagForm(FlaskForm):
     flag = StringField('flag', validators=[DataRequired()])
-    value = IntegerField('value', validators=[DataRequired()])
+    value = IntegerField('value', validators=[NumberRange(min=0, max=50)])
     event_id = IntegerField('event_id', validators=[Optional()])
     add = SubmitField(label='Add')
     update = SubmitField(label='Update')
