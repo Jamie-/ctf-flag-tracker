@@ -68,13 +68,25 @@
             </thead>
             {% for f in flags %}
                 <tr>
-                    <td><input class="form-control" type="checkbox"></td>
-                    <td>{{ f.flag }}</td>
-                    <td class="center">{{ f.value }}</td>
-                    <td class="center">{{ f.event }}</td>
+                    <td><input class="form-control edit" type="checkbox"></td>
+                    <td class="edit-flag">{{ f.flag }}</td>
+                    <td class="center edit-value">{{ f.value }}</td>
+                    <td class="center edit-event">{{ f.event }}</td>
                 </tr>
             {% endfor %}
             <tr></tr>
         </table>
     </div>
+{% endblock %}
+{% block script %}
+    $('input.edit').on('change', function() {
+        $('input.edit').not(this).prop('checked', false);
+        $("#flag").val($(this).parent().parent().find(".edit-flag").text());
+        $("#value").val($(this).parent().parent().find(".edit-value").text());
+        if ($(this).parent().parent().find(".edit-event").text() != "None") {
+            $("#event_id").val($(this).parent().parent().find(".edit-event").text());
+        } else {
+            $("#event_id").val("")
+        }
+    });
 {% endblock %}

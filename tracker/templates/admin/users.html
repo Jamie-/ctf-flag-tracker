@@ -46,13 +46,24 @@
             </thead>
             {% for u in users %}
                 <tr>
-                    <td><input class="form-control" type="checkbox"></td>
-                    <td>{{ u.id }}</td>
+                    <td><input class="form-control edit" type="checkbox"></td>
+                    <td class="edit-id">{{ u.id }}</td>
                     <td>{{ u.name }}</td>
-                    <td><input class="form-control" type="checkbox" {% if u.is_admin() %}checked{% endif %} disabled></td>
+                    <td><input class="form-control edit-admin" type="checkbox" {% if u.is_admin() %}checked{% endif %} disabled></td>
                 </tr>
             {% endfor %}
             <tr></tr>
         </table>
     </div>
+{% endblock %}
+{% block script %}
+    $('input.edit').on('change', function() {
+        $('input.edit').not(this).prop('checked', false);
+        $("#id").val($(this).parent().parent().find(".edit-id").text());
+        if ($(this).parent().parent().find(".edit-admin").is(':checked')) {
+            $("#admin").prop('checked', true);
+        } else {
+            $("#admin").prop('checked', false);
+        }
+    });
 {% endblock %}

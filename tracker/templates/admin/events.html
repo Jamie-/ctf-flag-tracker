@@ -62,14 +62,31 @@
             </thead>
             {% for e in events %}
                 <tr>
-                    <td><input class="form-control" type="checkbox"></td>
-                    <td>{{ e.id }}</td>
-                    <td>{{ e.name }}</td>
-                    <td><input class="form-control" type="checkbox" {% if e.has_teams() %}checked{% endif %} disabled></td>
-                    <td><input class="form-control" type="checkbox" {% if e.is_active() %}checked{% endif %} disabled></td>
+                    <td><input class="form-control edit" type="checkbox"></td>
+                    <td class="edit-id">{{ e.id }}</td>
+                    <td class="edit-name">{{ e.name }}</td>
+                    <td><input class="form-control edit-teams" type="checkbox" {% if e.has_teams() %}checked{% endif %} disabled></td>
+                    <td><input class="form-control edit-active" type="checkbox" {% if e.is_active() %}checked{% endif %} disabled></td>
                 </tr>
             {% endfor %}
             <tr></tr>
         </table>
     </div>
+{% endblock %}
+{% block script %}
+    $('input.edit').on('change', function() {
+        $('input.edit').not(this).prop('checked', false);
+        $("#id").val($(this).parent().parent().find(".edit-id").text());
+        $("#name").val($(this).parent().parent().find(".edit-name").text());
+        if ($(this).parent().parent().find(".edit-teams").is(':checked')) {
+            $("#teams").prop('checked', true);
+        } else {
+            $("#teams").prop('checked', false);
+        }
+        if ($(this).parent().parent().find(".edit-active").is(':checked')) {
+            $("#active").prop('checked', true);
+        } else {
+            $("#active").prop('checked', false);
+        }
+    });
 {% endblock %}

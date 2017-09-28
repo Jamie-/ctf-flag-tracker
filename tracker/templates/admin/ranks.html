@@ -56,12 +56,19 @@
             </thead>
             {% for r in ranks %}
                 <tr>
-                    <td><input class="form-control" type="checkbox"></td>
-                    <td>{{ r.rank }}</td>
-                    <td>{{ r.score }}</td>
+                    <td><input class="form-control edit" type="checkbox"></td>
+                    <td class="edit-rank">{{ r.rank }}</td>
+                    <td class="edit-score">{{ r.score }}</td>
                 </tr>
             {% endfor %}
             <tr></tr>
         </table>
     </div>
+{% endblock %}
+{% block script %}
+    $('input.edit').on('change', function() {
+        $('input.edit').not(this).prop('checked', false);
+        $("#rank").val($(this).parent().parent().find(".edit-rank").text());
+        $("#score").val($(this).parent().parent().find(".edit-score").text());
+    });
 {% endblock %}
