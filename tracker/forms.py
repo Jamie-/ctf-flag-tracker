@@ -37,3 +37,10 @@ class AdminUserForm(FlaskForm):
     id = StringField('id', validators=[DataRequired()])
     admin = BooleanField('admin')
     update = SubmitField(label='Update')
+
+class AdminRankForm(FlaskForm):
+    rank = StringField('rank', validators=[DataRequired()])
+    score = IntegerField('score', validators=[DataRequired()])
+    add = SubmitField(label='Add')
+    update = SubmitField(label='Update')
+    delete = SubmitField(label='Delete')

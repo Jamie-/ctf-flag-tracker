@@ -9,6 +9,7 @@ import tracker.event as event
 import tracker.team as team
 import tracker.flag as flag
 import tracker.user as user
+import tracker.rank as rank
 
 @app.route('/')
 def index():
@@ -262,6 +263,34 @@ def admin_users():
             flask.flash('Unable to update user, that ID does not exist.', 'danger')
     return flask.render_template('admin/users.html', title='Users - Admin', users=user.get_all(), form=form)
 
+@app.route('/admin/ranks', methods=['GET', 'POST'])
+def admin_ranks():
+    if not flask_login.current_user.is_authenticated:
+        flask.abort(404)
+    elif not flask_login.current_user.is_admin():
+        flask.abort(404)
+
+    form = forms.AdminRankForm()
+    if form.validate_on_submit():
+        if form.add.data: # Add rank
+            if rank.exists(form.rank.data):
+                flask.flash('Unable to add that rank, it already exists.', 'danger')
+            else:
+                rank.add(form.rank.data, form.score.data)
+                flask.flash('Rank added successfully.', 'success')
+        elif form.update.data: # Update rank
+            if rank.exists(form.rank.data):
+                rank.update(form.rank.data, form.score.data)
+                flask.flash('Rank updated successfully.', 'success')
+            else:
+                flask.flash('Unable to update that rank, it doesn\'t exist.', 'danger')
+        elif form.delete.data: # Delete rank
+            if rank.exists(form.rank.data):
+                rank.delete(form.rank.data)
+                flask.flash('Rank deleted successfully.', 'success')
+            else:
+                flask.flash('Unable to delete that rank, it doesn\'t exist.', 'danger')
+    return flask.render_template('admin/ranks.html', title='Ranks - Admin', ranks=rank.get_all(), form=form)
 
 ## Error Handlers
 
