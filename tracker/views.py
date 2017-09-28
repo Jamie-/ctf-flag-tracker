@@ -165,7 +165,7 @@ def profile_user(user_id):
     if not user.exists(user_id):
         flask.abort(404)
     u = user.get_user(user_id)
-    return flask.render_template('profile.html', title=u.name, user=u, events=event.by_user(user_id))
+    return flask.render_template('profile.html', title=u.name, user=u, events=event.by_user(user_id), rank=rank.get_rank(u.get_global_score()))
 
 
 ## Admin
