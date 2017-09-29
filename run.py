@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!flask/bin/python3
 
 from tracker import app
 
