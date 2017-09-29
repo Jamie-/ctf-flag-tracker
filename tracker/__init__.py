@@ -1,9 +1,12 @@
-import os
+import json
 from flask import Flask
 import flask_login
 
 app = Flask(__name__)
-app.config.from_object('config')
+
+with open('/srv/tracker/config.json') as f:
+    config = json.load(f)
+app.config.update(config)
 
 lm = flask_login.LoginManager()
 lm.init_app(app)
