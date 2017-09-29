@@ -99,12 +99,15 @@ class Event():
         q = '''
             SELECT name, event_id, SUM(score) AS score
             FROM (
-                SELECT tu.team_name AS name, tu.event_id as event_id, SUM(f.value) AS score
-                FROM flagsfound ff
-                LEFT JOIN flags f ON f.flag = ff.flag_id
-                LEFT JOIN teamusers tu ON tu.event_id = f.event_id AND tu.user_id = ff.user_id
-                WHERE tu.event_id = ?
-                GROUP BY tu.team_name
+                SELECT team_name AS name, event_id as event_id, SUM(value) AS score
+                FROM (
+                    SELECT DISTINCT flag, value, f.event_id, team_name
+                    FROM flagsfound ff
+                    LEFT JOIN flags f ON f.flag = ff.flag_id
+                    LEFT JOIN teamusers tu ON tu.event_id = f.event_id AND tu.user_id = ff.user_id
+                    WHERE tu.event_id = ?
+                )
+                GROUP BY team_name
                 UNION
                 SELECT t.name as name, t.event_id as event_id, 0 AS score
                 FROM teams t
