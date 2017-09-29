@@ -31,6 +31,13 @@ div.container > h1 {
     text-align: center;
 }
 
+.main-content {
+    padding: 20px;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.05);
+    margin-bottom: 20px;
+}
+
 /* Navbar */
 .bg-dark {
     background-color: #35383d!important;
@@ -226,13 +233,6 @@ a:hover {
 /* ERROR */
 #error {
     text-align: center;
-}
-
-/* LOGIN */
-.main-content {
-    padding: 20px;
-    border-radius: 5px;
-    background: rgba(255,255,255,0.05);
 }
 
 /* LEADERBOARDS */
