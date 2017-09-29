@@ -1,0 +1,12 @@
+INSERT INTO ranks (rank, score) VALUES ("Master of pwnage", 5000);
+INSERT INTO ranks (rank, score) VALUES ("1337 h4x0r", 4000);
+INSERT INTO ranks (rank, score) VALUES ("Da B0ss", 3000);
+INSERT INTO ranks (rank, score) VALUES ("Black Hat Pro", 2000);
+INSERT INTO ranks (rank, score) VALUES ("Anonymous Hacker", 1000);
+INSERT INTO ranks (rank, score) VALUES ("NSA Agent", 750);
+INSERT INTO ranks (rank, score) VALUES ("Binary Ninja", 500);
+INSERT INTO ranks (rank, score) VALUES ("Hardware h4x0r", 250);
+INSERT INTO ranks (rank, score) VALUES ("Member of Lizard Squad", 150);
+INSERT INTO ranks (rank, score) VALUES ("Hacktivist", 100);
+INSERT INTO ranks (rank, score) VALUES ("Script Kiddie", 50);
+INSERT INTO ranks (rank, score) VALUES ("n00b", 0);
