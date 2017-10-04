@@ -61,6 +61,7 @@ def update(flag, value, event_id):
 # Delete flag
 def delete(flag):
     db.query_db('DELETE FROM flags WHERE flag = ?', [flag])
+    db.query_db('DELETE FROM flagsfound WHERE flag_id = ?', [flag])
 
 def get_flag(flag):
     f = db.query_db('SELECT * FROM flags WHERE flag = ?', [flag], one=True)
