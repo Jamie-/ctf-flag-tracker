@@ -40,7 +40,7 @@ def check_login(user, password):
                     name = attrs['name']
                 except KeyError:
                     try:  # Try first + last third
-                        name = attrs['givenName'] + attrs['sn']
+                        name = attrs['givenName'] + ' ' + attrs['sn']
                     except KeyError:
                         pass # Give up and just use username
 
