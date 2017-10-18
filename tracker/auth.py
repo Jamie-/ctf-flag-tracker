@@ -31,7 +31,18 @@ def check_login(user, password):
         conn.unbind()
 
         if response:
-            name = response['entries'][0]['attributes']['displayName']
+            attrs = response['entries'][0]['attributes']
+            name = user # Fallback if unable to get name from LDAP
+            try: # Try 'display name' first
+                name = attrs['displayName']
+            except KeyError:
+                try: # Try 'name' second
+                    name = attrs['name']
+                except KeyError:
+                    try:  # Try first + last third
+                        name = attrs['givenName'] + attrs['sn']
+                    except KeyError:
+                        pass # Give up and just use username
 
             # Add user to DB or update user in DB before returning
             db_user = db.query_db('SELECT * FROM users WHERE id = ?', [user], one=True)
