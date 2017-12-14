@@ -3,10 +3,11 @@ import tracker.event as event
 
 class Flag():
 
-    def __init__(self, flag, value, event=None):
+    def __init__(self, flag, value, event=None, notes=None):
         self.flag = flag
         self.value = value
         self.event = event
+        self.notes = notes
 
 
 def check(flag, user):
@@ -31,32 +32,32 @@ def exists(flag):
     return True
 
 # Add flag
-def add(flag, value, event_id):
+def add(flag, value, event_id, notes):
     if event_id is None:
         db.query_db('''
-          INSERT INTO flags (flag, value)
-          VALUES (?, ?)
-        ''', (flag, value))
+          INSERT INTO flags (flag, value, notes)
+          VALUES (?, ?, ?)
+        ''', (flag, value, notes))
     else:
         db.query_db('''
-            INSERT INTO flags (flag, value, event_id)
-            VALUES (?, ?, ?)
-        ''', (flag, value, event_id))
+            INSERT INTO flags (flag, value, event_id, notes)
+            VALUES (?, ?, ?, ?)
+        ''', (flag, value, event_id, notes))
 
 # Update flag
-def update(flag, value, event_id):
+def update(flag, value, event_id, notes):
     if event_id is None:
         db.query_db('''
           UPDATE flags
-          SET value = ?, event_id = NULL
+          SET value = ?, event_id = NULL, notes = ?
           WHERE flag = ?
-        ''', (value, flag))
+        ''', (value, notes, flag))
     else:
         db.query_db('''
             UPDATE flags
-          SET value = ?, event_id = ?
+          SET value = ?, event_id = ?, notes = ?
           WHERE flag = ?
-        ''', (value, event_id, flag))
+        ''', (value, event_id, notes, flag))
 
 # Delete flag
 def delete(flag):
@@ -69,8 +70,8 @@ def get_flag(flag):
         return None
     else:
         if f['event_id']:
-            return Flag(f['flag'], f['value'], event.get_event(f['event_id']))
-        return Flag(f['flag'], f['value'])
+            return Flag(f['flag'], f['value'], event.get_event(f['event_id']), f['notes'])
+        return Flag(f['flag'], f['value'], notes=f['notes'])
 
 # Get list of all flags
 def get_all():
@@ -78,5 +79,5 @@ def get_all():
     flist = []
     if flags is not None:
         for f in flags:
-            flist.append(Flag(f['flag'], f['value'], f['event_id']))
+            flist.append(Flag(f['flag'], f['value'], f['event_id'], f['notes']))
     return flist

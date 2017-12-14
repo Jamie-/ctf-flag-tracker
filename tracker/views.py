@@ -228,12 +228,12 @@ def admin_flags():
             elif (form.event_id.data is not None) and not (event.exists(form.event_id.data)):
                 flask.flash('Unable to add flag, that event ID does not exist.', 'danger')
             else:
-                flag.add(form.flag.data, form.value.data, form.event_id.data)
+                flag.add(form.flag.data, form.value.data, form.event_id.data, form.notes.data)
                 flask.flash('Added flag successfully.', 'success')
         elif form.update.data: # Update flag
             if flag.exists(form.flag.data):
                 if (form.event_id.data is None) or (event.exists(form.event_id.data)):
-                    flag.update(form.flag.data, form.value.data, form.event_id.data)
+                    flag.update(form.flag.data, form.value.data, form.event_id.data, form.notes.data)
                     flask.flash('Flag updated successfully.', 'success')
                 else:
                     flask.flash('Unable to update flag, that event ID does not exist.', 'danger')
