@@ -69,6 +69,14 @@ class User():
             return 0
         return score
 
+    # Get flags submitted by user
+    def get_flags(self):
+        return db.query_db('''
+            SELECT f.flag, f.value, f.event_id FROM flags f
+            LEFT JOIN flagsfound ff ON f.flag = ff.flag_id
+            WHERE ff.user_id = ?
+        ''', [self.id])
+
     # Check if user is admin
     def is_admin(self):
         u = db.query_db('SELECT * FROM users WHERE id = ?', [self.id], one=True)
