@@ -47,6 +47,18 @@
                     </td>
                 </tr>
                 <tr>
+                    <td colspan="3">
+                        {% if form.notes.errors %}
+                            {{ form.notes(placeholder='Notes...', class='form-control is-invalid') }}
+                        {% else %}
+                            {{ form.notes(placeholder='Notes...', class='form-control') }}
+                        {% endif %}
+                        {% for error in form.notes.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
                     <td colspan="4" class="center">
                         {{ form.add(class='btn btn-success') }}
                         {{ form.update(class='btn btn-primary') }}

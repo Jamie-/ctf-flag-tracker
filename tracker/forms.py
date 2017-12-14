@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, IntegerField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Length, Optional, NumberRange
+from wtforms.widgets import TextArea
 
 class LoginForm(FlaskForm):
     username = StringField('username', validators=[DataRequired()])
@@ -29,6 +30,7 @@ class AdminFlagForm(FlaskForm):
     flag = StringField('flag', validators=[DataRequired()])
     value = IntegerField('value', validators=[NumberRange(min=0, max=50)])
     event_id = IntegerField('event_id', validators=[Optional()])
+    notes = StringField('notes', widget=TextArea())
     add = SubmitField(label='Add')
     update = SubmitField(label='Update')
     delete = SubmitField(label='Delete')
