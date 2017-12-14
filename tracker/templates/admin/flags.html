@@ -81,7 +81,7 @@
             {% for f in flags %}
                 <tr>
                     <td><input class="form-control edit" type="checkbox"></td>
-                    <td class="edit-flag">{{ f.flag }}</td>
+                    <td class="edit-flag" title="{{ f.notes }}" data-notes="{{ f.notes }}">{{ f.flag }}</td>
                     <td class="center edit-value">{{ f.value }}</td>
                     <td class="center edit-event">{{ f.event }}</td>
                 </tr>
@@ -99,6 +99,11 @@
             $("#event_id").val($(this).parent().parent().find(".edit-event").text());
         } else {
             $("#event_id").val("")
+        }
+        if ($(this).parent().parent().find(".edit-flag").data("notes") != "None") {
+            $("#notes").val($(this).parent().parent().find(".edit-flag").data("notes"));
+        } else {
+            $("#notes").val("");
         }
     });
 {% endblock %}
