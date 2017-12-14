@@ -47,7 +47,7 @@
             {% for u in users %}
                 <tr>
                     <td><input class="form-control edit" type="checkbox"></td>
-                    <td class="edit-id">{{ u.id }}</td>
+                    <td class="edit-id"><a href="/admin/user/{{ u.id }}">{{ u.id }}</a></td>
                     <td>{{ u.name }}</td>
                     <td><input class="form-control edit-admin" type="checkbox" {% if u.is_admin() %}checked{% endif %} disabled></td>
                 </tr>

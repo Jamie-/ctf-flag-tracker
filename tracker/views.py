@@ -292,6 +292,18 @@ def admin_ranks():
                 flask.flash('Unable to delete that rank, it doesn\'t exist.', 'danger')
     return flask.render_template('admin/ranks.html', title='Ranks - Admin', ranks=rank.get_all(), form=form)
 
+@app.route('/admin/user/<string:user_id>')
+def admin_user(user_id):
+    if not flask_login.current_user.is_authenticated:
+        flask.abort(404)
+    elif not flask_login.current_user.is_admin():
+        flask.abort(404)
+
+    u = user.get_user(user_id)
+    if u is not None:
+        return flask.render_template('admin/user.html', title=user_id+' - Admin', user=u)
+    flask.abort(404)
+
 ## Error Handlers
 
 @app.errorhandler(400)
