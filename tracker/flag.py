@@ -9,6 +9,14 @@ class Flag():
         self.event = event
         self.notes = notes
 
+    # Get number of people who found this flag
+    def found_count(self):
+        return db.query_db('''
+            SELECT COUNT(*)
+            FROM flagsfound
+            WHERE flag_id = ?
+        ''', [self.flag], one=True)[0]
+
 
 def check(flag, user):
     # Check if flag is valid

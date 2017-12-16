@@ -74,6 +74,7 @@
                 <tr>
                     <th style="width: 10%;" class="center">Edit</th>
                     <th>Flag</th>
+                    <th style="width: 10%;"># Found</th>
                     <th style="width: 10%;" class="center">Value</th>
                     <th style="width: 10%;" class="center">Event ID</th>
                 </tr>
@@ -82,6 +83,7 @@
                 <tr>
                     <td><input class="form-control edit" type="checkbox"></td>
                     <td class="edit-flag" title="{{ f.notes }}" data-notes="{{ f.notes }}">{{ f.flag }}</td>
+                    <td class="center">{{ f.found_count() }}</td>
                     <td class="center edit-value">{{ f.value }}</td>
                     <td class="center edit-event">{{ f.event }}</td>
                 </tr>
