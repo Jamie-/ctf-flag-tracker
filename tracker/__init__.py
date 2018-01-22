@@ -1,6 +1,10 @@
 import json
 from flask import Flask
 import flask_login
+import logging
+
+# Setup logging
+logging.basicConfig(format='%(asctime)s[%(levelname)8s][%(module)s] %(message)s', datefmt='[%m/%d/%Y][%I:%M:%S %p]', level=logging.INFO)
 
 app = Flask(__name__)
 
