@@ -22,7 +22,7 @@ def make_leaderboard(query, args=()):
         return out
     pos = 1
     for d in data:
-        out.append(Position(pos, user.User(d['id'], d['name']), d['score']))
+        out.append(Position(pos, user.User(d['id'], d['name'], 0), d['score']))  # Using 0 for admin as ignored in this context
         pos += 1
     return out
 

@@ -2,10 +2,13 @@ import tracker.db as db
 
 class User():
 
-    def __init__(self, id, name, admin=None):
+    def __init__(self, id, name, admin):
         self.id = id
         self.name = name
-        self.admin = admin
+        if admin is not None and (admin or admin == 1):
+            self.admin = 1
+        else:
+            self.admin = 0
 
     ## FLASK_LOGIN #################
     def is_authenticated(self):
@@ -109,15 +112,12 @@ def get_user(id):
     if u is None:
         return None
     else:
-        return User(u['id'], u['name'])
+        return User(u['id'], u['name'], u['admin'])
 
 # Get list of all users
 def get_all():
     users = db.query_db('SELECT * FROM users')
     ulist = []
     for u in users:
-        adm = False
-        if u['admin'] is 1:
-            adm = True
-        ulist.append(User(u['id'], u['name'], adm))
+        ulist.append(User(u['id'], u['name'], u['admin']))
     return ulist

@@ -7,7 +7,7 @@ import tracker.db as db
 @tracker.lm.user_loader
 def load_user(id):
     user = db.query_db('SELECT * FROM users WHERE id = ?', [id], one=True)
-    return User(user['id'], user['name'])
+    return User(user['id'], user['name'], user['admin'])
 
 def check_login(user, password):
     try:
@@ -44,16 +44,18 @@ def check_login(user, password):
                     except KeyError:
                         pass # Give up and just use username
 
-            # Add user to DB or update user in DB before returning
+            # Check user existence in database
             db_user = db.query_db('SELECT * FROM users WHERE id = ?', [user.lower()], one=True)
             if db_user is None:
                 # Add user
                 db.query_db('INSERT INTO users(id, name) VALUES(?, ?)', (user.lower(), name))
-            elif not db_user['name'] == name:
+                return User(user.lower(), name, 0)
+            else:  # User already exists
                 # Update user's name if changed in LDAP
-                db.query_db('UPDATE users SET name = ? WHERE id = ?', (name, user.lower()))
+                if db_user['name'] != name:
+                    db.query_db('UPDATE users SET name = ? WHERE id = ?', (name, user.lower()))
+                return User(user.lower(), name, db_user['admin'])
 
-            return User(user.lower(), name)
         return False
     except ldap3.core.exceptions.LDAPBindError:
         return False
