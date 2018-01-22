@@ -1,7 +1,6 @@
 import flask
 import flask_login
 from tracker import app
-from tracker.user import User
 import tracker.forms as forms
 import tracker.leaderboard as leaderboard
 import tracker.auth as auth
@@ -19,11 +18,10 @@ def index():
 def login():
     form = forms.LoginForm()
     if form.validate_on_submit():
-        name = auth.check_login(form.username.data, form.password.data)
-        if name:
-            flask_login.login_user(User(form.username.data, name))
-            flask.flash('Welcome back, %s.' % flask.escape(name), 'success')
-
+        user = auth.check_login(form.username.data, form.password.data)
+        if user:
+            flask_login.login_user(user)
+            flask.flash('Welcome back, %s.' % flask.escape(user.name), 'success')
             return flask.redirect('/')
         else:
             flask.flash('Invalid user credentials, please try again.', 'danger')
