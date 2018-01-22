@@ -1,12 +1,31 @@
 import json
 from flask import Flask
 import flask_login
+import logging
+import sys
 
 app = Flask(__name__)
 
 with open('/srv/tracker/config.json') as f:
     config = json.load(f)
 app.config.update(config)
+
+
+# Setup logging
+log_formatter = logging.Formatter('%(asctime)s[%(levelname)8s][%(module)s] %(message)s', datefmt='[%m/%d/%Y][%I:%M:%S %p]')
+root_logger = logging.getLogger()
+root_logger.setLevel(logging.getLevelName(app.config['LOG_LEVEL'].upper()))
+
+# Console log handler
+log_console_handler = logging.StreamHandler(sys.stdout)
+log_console_handler.setFormatter(log_formatter)
+root_logger.addHandler(log_console_handler)
+
+# Log file handler
+log_file_handler = logging.FileHandler(app.config['LOG_FILE_PATH'])
+log_file_handler.setFormatter(log_formatter)
+root_logger.addHandler(log_file_handler)
+
 
 lm = flask_login.LoginManager()
 lm.init_app(app)

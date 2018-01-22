@@ -1,8 +1,11 @@
 import ldap3
 import json
+import logging
 import tracker
 from tracker.user import User
 import tracker.db as db
+
+logger = logging.getLogger(__name__)
 
 @tracker.lm.user_loader
 def load_user(id):
@@ -26,11 +29,14 @@ def check_login(user, password):
         try:
             response = json.loads(conn.response_to_json())
         except ValueError:
+            logger.critical("Received bad response from LDAP for user '%s'.", user.lower())
             return False
 
         conn.unbind()
 
         if response:
+            logger.info("User '%s' just logged in successfully.", user.lower())
+
             attrs = response['entries'][0]['attributes']
             name = user # Fallback if unable to get name from LDAP
             try: # Try 'display name' first
@@ -54,8 +60,12 @@ def check_login(user, password):
                 # Update user's name if changed in LDAP
                 if db_user['name'] != name:
                     db.query_db('UPDATE users SET name = ? WHERE id = ?', (name, user.lower()))
+                    logger.info("Display name for '%s' has changed, updated in local database.", user.lower())
                 return User(user.lower(), name, db_user['admin'])
 
+        logger.critical("Received empty response from LDAP for user '%s'.", user.lower())
         return False
-    except ldap3.core.exceptions.LDAPBindError:
+    except ldap3.core.exceptions.LDAPBindError as e:
+        logger.warning("Failed to bind LDAP server while trying to login user '%s'.", user.lower())
+        logger.warning(e)
         return False

@@ -1,5 +1,8 @@
+import logging
 import tracker.db as db
 import tracker.event as event
+
+logger = logging.getLogger(__name__)
 
 class Flag():
 
@@ -22,15 +25,18 @@ def check(flag, user):
     # Check if flag is valid
     f = db.query_db('SELECT * FROM flags WHERE flag = ?', [flag], one=True)
     if f is None:
+        logger.info("'%s' submitted an invalid flag: '%s'.", user, flag)
         return False
 
     # Check if user already has flag
     f = db.query_db('SELECT * FROM flagsfound WHERE flag_id = ? AND user_id = ?', (flag, user), one=True)
     if f is not None:
+        logger.info("'%s' submitted a flag they have submitted before ('%s').", user, flag)
         return None
 
     # If above complete, mark user as having found the flag
     db.query_db('INSERT INTO flagsfound (flag_id, user_id) VALUES (?, ?)', (flag, user))
+    logger.info("'%s' found flag '%s'.", user, flag)
     return True
 
 # Check if flag exists
