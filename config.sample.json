@@ -4,5 +4,7 @@
   "LDAP_HOST": "ldap.example.com",
   "LDAP_DOMAIN": "example.com",
   "LDAP_SEARCH_BASE": "CN=Users,DC=example,DC=com",
-  "SQLITE_URI": "/srv/tracker/data.db"
+  "SQLITE_URI": "/srv/tracker/data.db",
+  "LOG_FILE_PATH": "/var/log/flag_tracker.log",
+  "LOG_LEVEL": "warning"
 }
