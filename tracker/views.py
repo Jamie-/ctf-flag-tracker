@@ -68,7 +68,7 @@ def get_event(event_id):
     if flask.request.method == 'POST':
         if not flask_login.current_user.is_authenticated: # Check user is logged in
             flask.abort(405)
-        if e.get_users_team(flask_login.current_user.id) is not None: # Check user is not already in a team
+        if e.get_users_team(flask_login.current_user.username) is not None: # Check user is not already in a team
             flask.abort(405)
         team_form = forms.TeamForm()
         if team_form.validate_on_submit():  # Check form completed properly
@@ -80,7 +80,7 @@ def get_event(event_id):
                     team_form.team.errors.append('Unable to create team %s, it may already exist in this event.' % team_data)
                     return flask.render_template('event_teams.html', title=e.name, event=e, user=flask_login.current_user, form=team_form, team_lb=team_lb, indiv_lb=indiv_lb)
             # Add user to team if just created or if Join button pressed
-            if e.add_user_to_team(flask_login.current_user.id, team_data): # Team joined okay
+            if e.add_user_to_team(flask_login.current_user.username, team_data): # Team joined okay
                 flask.flash('Joined team %s successfully!' % team_data, 'success')
                 return flask.redirect('/event/' + str(event_id), code=302)
             else: # Unable to join team
@@ -90,7 +90,7 @@ def get_event(event_id):
 
     if e.has_teams():
         if flask_login.current_user.is_authenticated:
-            t = e.get_users_team(flask_login.current_user.id)
+            t = e.get_users_team(flask_login.current_user.username)
             if t is None:
                 return flask.render_template('event_teams.html', title=e.name, event=e, user=flask_login.current_user, form=forms.TeamForm(), team_lb=team_lb, indiv_lb=indiv_lb)
             else:
@@ -105,7 +105,7 @@ def get_event(event_id):
 def event_team(event_id):
     if not flask_login.current_user.is_authenticated:
         flask.abort(404) # User not logged in so has no team nor can create/join a team
-    t = event.get_event(event_id).get_users_team(flask_login.current_user.id)
+    t = event.get_event(event_id).get_users_team(flask_login.current_user.username)
     if t is None:
         flask.abort(404)
     return flask.redirect('/event/' + str(event_id) + '/team/' + t.name, code=302)
@@ -214,18 +214,18 @@ def admin_events():
             else:
                 event.create(form.id.data, form.name.data, teams, active)
                 flask.flash('Event added successfully!', 'success')
-                logger.info("'%s' just added an event - %d:'%s'.", flask_login.current_user.id, form.id.data, form.name.data)
+                logger.info("'%s' just added an event - %d:'%s'.", flask_login.current_user.username, form.id.data, form.name.data)
         elif form.update.data: # Update event
             if event.exists(form.id.data):
                 event.update(form.id.data, form.name.data, teams, active)
-                logger.info("'%s' just updated the %d:'%s' event.", flask_login.current_user.id, form.id.data, form.name.data)
+                logger.info("'%s' just updated the %d:'%s' event.", flask_login.current_user.username, form.id.data, form.name.data)
             else:
                 flask.flash('That event does not exist so can\'t be updated!' ,'danger')
         elif form.delete.data: # Delete event
             if event.exists(form.id.data):
                 event.delete(form.id.data)
                 flask.flash('Event deleted successfully.', 'success')
-                logger.info("'%s' just deleted the %d:'%s' event.", flask_login.current_user.id, form.id.data, form.name.data)
+                logger.info("'%s' just deleted the %d:'%s' event.", flask_login.current_user.username, form.id.data, form.name.data)
             else:
                 flask.flash('Unable to delete event as it does not exist.', 'danger')
     return flask.render_template('admin/events.html', title='Events - Admin', events=event.get_all(), form=form)
@@ -247,13 +247,13 @@ def admin_flags():
             else:
                 flag.add(form.flag.data, form.value.data, form.event_id.data, form.notes.data)
                 flask.flash('Added flag successfully.', 'success')
-                logger.info("'%s' just added the flag '%s'.", flask_login.current_user.id, form.flag.data)
+                logger.info("'%s' just added the flag '%s'.", flask_login.current_user.username, form.flag.data)
         elif form.update.data: # Update flag
             if flag.exists(form.flag.data):
                 if (form.event_id.data is None) or (event.exists(form.event_id.data)):
                     flag.update(form.flag.data, form.value.data, form.event_id.data, form.notes.data)
                     flask.flash('Flag updated successfully.', 'success')
-                    logger.info("'%s' just updated the flag '%s'.", flask_login.current_user.id, form.flag.data)
+                    logger.info("'%s' just updated the flag '%s'.", flask_login.current_user.username, form.flag.data)
                 else:
                     flask.flash('Unable to update flag, that event ID does not exist.', 'danger')
             else:
@@ -262,7 +262,7 @@ def admin_flags():
             if flag.exists(form.flag.data):
                 flag.delete(form.flag.data)
                 flask.flash('Flag deleted successfully.', 'success')
-                logger.info("'%s' just deleted the flag '%s'.", flask_login.current_user.id, form.flag.data)
+                logger.info("'%s' just deleted the flag '%s'.", flask_login.current_user.username, form.flag.data)
             else:
                 flask.flash('Unable to delete flag as it does not exist.', 'danger')
     return flask.render_template('admin/flags.html', title='Flags - Admin', flags=flag.get_all(), form=form)
@@ -302,19 +302,19 @@ def admin_ranks():
             else:
                 rank.add(form.rank.data, form.score.data)
                 flask.flash('Rank added successfully.', 'success')
-                logger.info("'%s' just added the rank '%s'.", flask_login.current_user.id, form.rank.data)
+                logger.info("'%s' just added the rank '%s'.", flask_login.current_user.username, form.rank.data)
         elif form.update.data: # Update rank
             if rank.exists(form.rank.data):
                 rank.update(form.rank.data, form.score.data)
                 flask.flash('Rank updated successfully.', 'success')
-                logger.info("'%s' just updated the rank '%s'.", flask_login.current_user.id, form.rank.data)
+                logger.info("'%s' just updated the rank '%s'.", flask_login.current_user.username, form.rank.data)
             else:
                 flask.flash('Unable to update that rank, it doesn\'t exist.', 'danger')
         elif form.delete.data: # Delete rank
             if rank.exists(form.rank.data):
                 rank.delete(form.rank.data)
                 flask.flash('Rank deleted successfully.', 'success')
-                logger.info("'%s' just deleted the rank '%s'.", flask_login.current_user.id, form.rank.data)
+                logger.info("'%s' just deleted the rank '%s'.", flask_login.current_user.username, form.rank.data)
             else:
                 flask.flash('Unable to delete that rank, it doesn\'t exist.', 'danger')
     return flask.render_template('admin/ranks.html', title='Ranks - Admin', ranks=rank.get_all(), form=form)
