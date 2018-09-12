@@ -1,4 +1,5 @@
 import logging
+import re
 import tracker.db as db
 import tracker.event as event
 
@@ -21,7 +22,17 @@ class Flag():
         ''', [self.flag], one=True)[0]
 
 
-def check(flag, user):
+def unwrap(flag_str):  # If flag is wrapped in flag{...}, strip it off
+    flag_pattern = re.compile('^flag{.+}$')
+    if flag_pattern.match(flag_str):
+        return flag_str[5:-1]
+    else:
+        return flag_str
+
+def check(flag_str, user):
+    # Check if flag is wrapped in flag{...}
+    flag = unwrap(flag_str)
+
     # Check if flag is valid
     f = db.query_db('SELECT * FROM flags WHERE flag = ?', [flag], one=True)
     if f is None:
@@ -46,7 +57,8 @@ def exists(flag):
     return True
 
 # Add flag
-def add(flag, value, event_id, notes):
+def add(flag_str, value, event_id, notes):
+    flag = unwrap(flag_str)  # Unwrap flag notation
     if event_id is None:
         db.query_db('''
           INSERT INTO flags (flag, value, notes)
@@ -78,7 +90,8 @@ def delete(flag):
     db.query_db('DELETE FROM flags WHERE flag = ?', [flag])
     db.query_db('DELETE FROM flagsfound WHERE flag_id = ?', [flag])
 
-def get_flag(flag):
+def get_flag(flag_str):
+    flag = unwrap(flag_str)
     f = db.query_db('SELECT * FROM flags WHERE flag = ?', [flag], one=True)
     if f is None:
         return None
