@@ -15,7 +15,7 @@ RUN mkdir -p /opt/tracker
 RUN git clone https://github.com/sotoncyber/ctf-flag-tracker.git /opt/tracker/
 
 # Setup app
-RUN cd /opt/tracker && make venv
+RUN cd /opt/tracker && make setup && make depends
 RUN mkdir -p /srv/tracker
 
 EXPOSE 5000

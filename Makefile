@@ -11,9 +11,11 @@ clean-db: # Delete database
 init-db: # Create database
 	flask/bin/python3 -c 'from tracker.db import init_db; init_db()'
 
-venv: # Setup virtual environment
+setup: # Setup virtual environment
 	python3 -m venv flask
-	flask/bin/pip3 install flask flask_login flask_wtf
+
+depends:
+	flask/bin/pip3 install -r requirements.txt
 
 run: # Run app
 	flask/bin/python3 run.py
