@@ -1,48 +1,53 @@
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, IntegerField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, Length, Optional, NumberRange
-from wtforms.widgets import TextArea
+import flask_wtf
+import wtforms
+import wtforms.validators as validators
 
-class LoginForm(FlaskForm):
-    username = StringField('username', validators=[DataRequired()])
-    password = PasswordField('password', validators=[DataRequired()])
 
-class FlagForm(FlaskForm):
-    flag = StringField('flag', validators=[DataRequired()])
+class LoginForm(flask_wtf.FlaskForm):
+    username = wtforms.StringField('username', validators=[validators.DataRequired()])
+    password = wtforms.PasswordField('password', validators=[validators.DataRequired()])
 
-class TeamForm(FlaskForm):
-    team = StringField('team',validators=[DataRequired(), Length(3)])
-    create = SubmitField(label='Create')
-    join = SubmitField(label='Join')
+
+class FlagForm(flask_wtf.FlaskForm):
+    flag = wtforms.StringField('flag', validators=[validators.DataRequired()])
+
+
+class TeamForm(flask_wtf.FlaskForm):
+    team = wtforms.StringField('team', validators=[validators.DataRequired(), validators.Length(3)])
+    create = wtforms.SubmitField(label='Create')
+    join = wtforms.SubmitField(label='Join')
 
 
 # Admin Forms
-class AdminEventForm(FlaskForm):
-    id = IntegerField('id', validators=[DataRequired()])
-    name = StringField('name', validators=[DataRequired()])
-    teams = BooleanField('teams')
-    active = BooleanField('active')
-    add = SubmitField(label='Add')
-    update = SubmitField(label='Update')
-    delete = SubmitField(label='Delete')
+class AdminEventForm(flask_wtf.FlaskForm):
+    id = wtforms.IntegerField('id', validators=[validators.DataRequired()])
+    name = wtforms.StringField('name', validators=[validators.DataRequired()])
+    teams = wtforms.BooleanField('teams')
+    active = wtforms.BooleanField('active')
+    add = wtforms.SubmitField(label='Add')
+    update = wtforms.SubmitField(label='Update')
+    delete = wtforms.SubmitField(label='Delete')
 
-class AdminFlagForm(FlaskForm):
-    flag = StringField('flag', validators=[DataRequired()])
-    value = IntegerField('value', validators=[NumberRange(min=0, max=50)])
-    event_id = IntegerField('event_id', validators=[Optional()])
-    notes = StringField('notes', widget=TextArea())
-    add = SubmitField(label='Add')
-    update = SubmitField(label='Update')
-    delete = SubmitField(label='Delete')
 
-class AdminUserForm(FlaskForm):
-    id = StringField('id', validators=[DataRequired()])
-    admin = BooleanField('admin')
-    update = SubmitField(label='Update')
+class AdminFlagForm(flask_wtf.FlaskForm):
+    flag = wtforms.StringField('flag', validators=[validators.DataRequired()])
+    value = wtforms.IntegerField('value', validators=[validators.NumberRange(min=0, max=50)])
+    event_id = wtforms.IntegerField('event_id', validators=[validators.Optional()])
+    notes = wtforms.StringField('notes', widget=wtforms.widgets.TextArea())
+    add = wtforms.SubmitField(label='Add')
+    update = wtforms.SubmitField(label='Update')
+    delete = wtforms.SubmitField(label='Delete')
 
-class AdminRankForm(FlaskForm):
-    rank = StringField('rank', validators=[DataRequired()])
-    score = IntegerField('score', validators=[NumberRange(min=0)])
-    add = SubmitField(label='Add')
-    update = SubmitField(label='Update')
-    delete = SubmitField(label='Delete')
+
+class AdminUserForm(flask_wtf.FlaskForm):
+    id = wtforms.StringField('id', validators=[validators.DataRequired()])
+    admin = wtforms.BooleanField('admin')
+    update = wtforms.SubmitField(label='Update')
+
+
+class AdminRankForm(flask_wtf.FlaskForm):
+    rank = wtforms.StringField('rank', validators=[validators.DataRequired()])
+    score = wtforms.IntegerField('score', validators=[validators.NumberRange(min=0)])
+    add = wtforms.SubmitField(label='Add')
+    update = wtforms.SubmitField(label='Update')
+    delete = wtforms.SubmitField(label='Delete')
