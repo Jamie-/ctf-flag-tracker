@@ -17,6 +17,19 @@ logger = logging.getLogger(__name__)
 def index():
     return flask.render_template('leaderboard.html', title='Leaderboard', heading='Global Leaderboard', users=leaderboard.get_global())
 
+@app.route('/register', methods=['GET', 'POST'])
+def route_register():
+    form = forms.RegisterForm()
+    if form.validate_on_submit():
+        if user.exists(form.username.data):
+            form.username.errors.append('That username is already taken, please pick another one.')
+        if form.password.data != form.password2.data:
+            form.password2.errors.append('Repeat password does not match.')
+        auth.create_user(form.username.data, form.name.data, form.password.data)
+        flask.flash('User account created successfully.', 'success')
+        return flask.redirect('/login')
+    return flask.render_template('register.html', title='Register', form=form)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = forms.LoginForm()
@@ -24,7 +37,7 @@ def login():
         user = auth.check_login(form.username.data, form.password.data)
         if user:
             flask_login.login_user(user)
-            flask.flash('Welcome back, %s.' % flask.escape(user.name), 'success')
+            flask.flash('Welcome back, %s.' % flask.escape(user.display_name), 'success')
             return flask.redirect('/')
         else:
             flask.flash('Invalid user credentials, please try again.', 'danger')
@@ -161,12 +174,12 @@ def profile():
         return flask.redirect('/profile/' + flask_login.current_user.get_id())
     flask.abort(404)
 
-@app.route('/profile/<string:user_id>')
-def profile_user(user_id):
-    if not user.exists(user_id):
+@app.route('/profile/<username>')
+def profile_user(username):
+    if not user.exists(username):
         flask.abort(404)
-    u = user.get_user(user_id)
-    return flask.render_template('profile.html', title=u.name, user=u, events=event.by_user(user_id), rank=rank.get_rank(u.get_global_score()))
+    u = user.get_user(username)
+    return flask.render_template('profile.html', title=u.display_name, user=u, events=event.by_user(username), rank=rank.get_rank(u.get_global_score()))
 
 
 ## Admin
@@ -263,15 +276,15 @@ def admin_users():
 
     form = forms.AdminUserForm()
     if form.validate_on_submit() and form.update.data:
-        if user.exists(form.id.data):
-            user.get_user(form.id.data).set_admin(form.admin.data)
+        if user.exists(form.username.data):
+            user.get_user(form.username.data).set_admin(form.admin.data)
             if form.admin.data:
-                logger.info("'%s' granted admin privileges to '%s'.", flask_login.current_user.id, form.id.data)
+                logger.info("'%s' granted admin privileges to '%s'.", flask_login.current_user.username, form.username.data)
             else:
-                logger.info("'%s' revoked admin privileges from '%s'.", flask_login.current_user.id, form.id.data)
+                logger.info("'%s' revoked admin privileges from '%s'.", flask_login.current_user.username, form.username.data)
             flask.flash('User updated successfully.', 'success')
         else:
-            flask.flash('Unable to update user, that ID does not exist.', 'danger')
+            flask.flash('Unable to update user privileges, that username does not exist.', 'danger')
     return flask.render_template('admin/users.html', title='Users - Admin', users=user.get_all(), form=form)
 
 @app.route('/admin/ranks', methods=['GET', 'POST'])

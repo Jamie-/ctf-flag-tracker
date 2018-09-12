@@ -9,18 +9,18 @@
             <table class="table table-inverse">
                 <thead>
                     <tr>
-                        <th style="width: 90%;">ID</th>
+                        <th style="width: 90%;">Username</th>
                         <th style="width: 10%;" class="center">Admin?</th>
                     </tr>
                 </thead>
                 <tr>
                     <td>
-                        {% if form.id.errors %}
-                            {{ form.id(class='form-control is-invalid') }}
+                        {% if form.username.errors %}
+                            {{ form.username(class='form-control is-invalid') }}
                         {% else %}
-                            {{ form.id(class='form-control') }}
+                            {{ form.username(class='form-control') }}
                         {% endif %}
-                        {% for error in form.id.errors %}
+                        {% for error in form.username.errors %}
                             <div class="invalid-feedback">{{ error }}</div>
                         {% endfor %}
                     </td>
@@ -47,8 +47,8 @@
             {% for u in users %}
                 <tr>
                     <td><input class="form-control edit" type="checkbox"></td>
-                    <td class="edit-id"><a href="/admin/user/{{ u.id }}">{{ u.id }}</a></td>
-                    <td>{{ u.name }}</td>
+                    <td class="edit-username"><a href="/admin/user/{{ u.username }}">{{ u.username }}</a></td>
+                    <td>{{ u.display_name }}</td>
                     <td><input class="form-control edit-admin" type="checkbox" {% if u.is_admin() %}checked{% endif %} disabled></td>
                 </tr>
             {% endfor %}
@@ -59,7 +59,7 @@
 {% block script %}
     $('input.edit').on('change', function() {
         $('input.edit').not(this).prop('checked', false);
-        $("#id").val($(this).parent().parent().find(".edit-id").text());
+        $("#username").val($(this).parent().parent().find(".edit-username").text());
         if ($(this).parent().parent().find(".edit-admin").is(':checked')) {
             $("#admin").prop('checked', true);
         } else {

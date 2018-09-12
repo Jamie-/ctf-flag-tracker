@@ -10,13 +10,13 @@ class Team():
     # Get leaderboard of all users in this team
     def get_leaderboard(self, limit=None):
         q = '''
-            SELECT u.id AS id, u.name AS name, SUM(f.value) AS score
+            SELECT u.username AS username, u.displayname AS displayname, SUM(f.value) AS score
             FROM flagsfound ff
             LEFT JOIN flags f ON f.flag = ff.flag_id
             LEFT JOIN teamusers tu ON ff.user_id = tu.user_id
-            LEFT JOIN users u ON ff.user_id = u.id
+            LEFT JOIN users u ON ff.user_id = u.username
             WHERE tu.event_id = ? AND f.event_id = ? AND tu.team_name = ?
-            GROUP BY u.id
+            GROUP BY u.username
             ORDER BY score DESC
         '''
         if limit is not None:  # Limit number of users returned

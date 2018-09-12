@@ -8,6 +8,13 @@ class LoginForm(flask_wtf.FlaskForm):
     password = wtforms.PasswordField('password', validators=[validators.DataRequired()])
 
 
+class RegisterForm(flask_wtf.FlaskForm):
+    username = wtforms.StringField('username', validators=[validators.DataRequired(), validators.Length(min=3, max=20)])
+    name = wtforms.StringField('name', validators=[validators.DataRequired(), validators.Length(min=3, max=50)])
+    password = wtforms.PasswordField('password', validators=[validators.DataRequired(), validators.Length(min=8)])
+    password2 = wtforms.PasswordField('password2', validators=[validators.DataRequired(), validators.Length(min=8)])
+
+
 class FlagForm(flask_wtf.FlaskForm):
     flag = wtforms.StringField('flag', validators=[validators.DataRequired()])
 
@@ -40,7 +47,7 @@ class AdminFlagForm(flask_wtf.FlaskForm):
 
 
 class AdminUserForm(flask_wtf.FlaskForm):
-    id = wtforms.StringField('id', validators=[validators.DataRequired()])
+    username = wtforms.StringField('username', validators=[validators.DataRequired()])
     admin = wtforms.BooleanField('admin')
     update = wtforms.SubmitField(label='Update')
 

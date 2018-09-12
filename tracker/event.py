@@ -82,12 +82,12 @@ class Event():
     # Get event individual leaderboard (from user leaderboard builder)
     def get_leaderboard(self, limit=None):
         q = '''
-            SELECT u.id, u.name, SUM(f.value) AS score
+            SELECT u.username, u.displayname, SUM(f.value) AS score
             FROM flagsfound ff
             LEFT JOIN flags f ON f.flag = ff.flag_id
-            LEFT JOIN users u ON u.id = ff.user_id
+            LEFT JOIN users u ON u.username = ff.user_id
             WHERE f.event_id = ?
-            GROUP BY u.id
+            GROUP BY u.username
             ORDER BY score DESC
         '''
         if limit is not None:  # Limit number of users returned
@@ -170,8 +170,8 @@ def by_user(user_id):
         FROM events e
         LEFT JOIN flags f ON f.event_id = e.id
         LEFT JOIN flagsfound ff ON ff.flag_id = f.flag
-        LEFT JOIN users u ON u.id = ff.user_id
-        WHERE u.id IS NOT NULL AND u.id = ?
+        LEFT JOIN users u ON u.username = ff.user_id
+        WHERE u.username IS NOT NULL AND u.username = ?
         GROUP BY e.id
     ''', [user_id]))
 

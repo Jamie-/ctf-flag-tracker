@@ -22,17 +22,17 @@ def make_leaderboard(query, args=()):
         return out
     pos = 1
     for d in data:
-        out.append(Position(pos, user.User(d['id'], d['name'], 0), d['score']))  # Using 0 for admin as ignored in this context
+        out.append(Position(pos, user.User(d['username'], d['displayname'], 0), d['score']))  # Using 0 for admin as ignored in this context
         pos += 1
     return out
 
 # Get global leaderboard data
 def get_global():
     return make_leaderboard('''
-        SELECT u.id, u.name, SUM(f.value) AS score
+        SELECT u.username, u.displayname, SUM(f.value) AS score
         FROM flagsfound ff
         LEFT JOIN flags f ON f.flag = ff.flag_id
-        LEFT JOIN users u ON u.id = ff.user_id
-        GROUP BY u.id
+        LEFT JOIN users u ON u.username = ff.user_id
+        GROUP BY u.username
         ORDER BY score DESC
     ''')

@@ -2,9 +2,9 @@ import tracker.db as db
 
 class User():
 
-    def __init__(self, id, name, admin):
-        self.id = id
-        self.name = name
+    def __init__(self, username, display_name, admin):
+        self.username = username
+        self.display_name = display_name
         if admin is not None and (admin or admin == 1):
             self.admin = 1
         else:
@@ -21,10 +21,10 @@ class User():
         return False
 
     def get_id(self):
-        return self.id
+        return self.username
 
     def get_name(self):
-        return self.name
+        return self.display_name
     ## /FLASK_LOGIN ################
 
     # Get global score for this user
@@ -33,27 +33,27 @@ class User():
             SELECT SUM(f.value)
             FROM flagsfound ff
             LEFT JOIN flags f ON f.flag = ff.flag_id
-            LEFT JOIN users u ON u.id = ff.user_id
+            LEFT JOIN users u ON u.username = ff.user_id
             WHERE ff.user_id = ?
-        ''', [self.id], one=True)[0]
+        ''', [self.username], one=True)[0]
         if score is None:
             score = 0
         return score
 
     # Get number of flags found by user
     def get_no_flags(self):
-        return db.query_db('SELECT COUNT(*) FROM flagsfound WHERE user_id = ?', [self.id], one=True)[0]
+        return db.query_db('SELECT COUNT(*) FROM flagsfound WHERE user_id = ?', [self.username], one=True)[0]
 
     # Get user's score for current event
     def get_current_event_score(self):
         score = db.query_db('''
             SELECT SUM(f.value) FROM users u
-            LEFT JOIN flagsfound ff ON ff.user_id = u.id
+            LEFT JOIN flagsfound ff ON ff.user_id = u.username
             LEFT JOIN flags f ON f.flag = ff.flag_id
             LEFT JOIN events e ON f.event_id = e.id
             WHERE e.active = 1
-            AND u.id = ?
-        ''', [self.id], one=True)[0]
+            AND u.username = ?
+        ''', [self.username], one=True)[0]
         if score is None:
             return 0
         return score
@@ -62,12 +62,12 @@ class User():
     def get_event_score(self, event_id):
         score = db.query_db('''
             SELECT SUM(f.value) FROM users u
-            LEFT JOIN flagsfound ff ON ff.user_id = u.id
+            LEFT JOIN flagsfound ff ON ff.user_id = u.username
             LEFT JOIN flags f ON f.flag = ff.flag_id
             LEFT JOIN events e ON f.event_id = e.id
             WHERE e.id = ?
-            AND u.id = ?
-        ''', (event_id, self.id), one=True)[0]
+            AND u.username = ?
+        ''', (event_id, self.username), one=True)[0]
         if score is None:
             return 0
         return score
@@ -78,11 +78,11 @@ class User():
             SELECT f.flag, f.value, f.event_id FROM flags f
             LEFT JOIN flagsfound ff ON f.flag = ff.flag_id
             WHERE ff.user_id = ?
-        ''', [self.id])
+        ''', [self.username])
 
     # Check if user is admin
     def is_admin(self):
-        u = db.query_db('SELECT * FROM users WHERE id = ?', [self.id], one=True)
+        u = db.query_db('SELECT * FROM users WHERE username = ?', [self.username], one=True)
         if u['admin'] is 1:
             return True
         return False
@@ -90,34 +90,34 @@ class User():
     # Set user admin privs
     def set_admin(self, admin):
         if admin:
-            db.query_db('UPDATE users SET admin = 1 WHERE id = ?', [self.id])
+            db.query_db('UPDATE users SET admin = 1 WHERE username = ?', [self.username])
         else:
-            db.query_db('UPDATE users SET admin = 0 WHERE id = ?', [self.id])
+            db.query_db('UPDATE users SET admin = 0 WHERE username = ?', [self.username])
 
     def __repr__(self):
-        return '<User %r>' % self.id
+        return '<User %r>' % self.username
 
 
 # Check whether a user exists
-def exists(id):
-    u = db.query_db('SELECT * FROM users WHERE id = ?', [id])
+def exists(username):
+    u = db.query_db('SELECT * FROM users WHERE username = ?', [username])
     if u:
         return True
     else:
         return False
 
 # Get a user from ID
-def get_user(id):
-    u = db.query_db('SELECT * FROM users WHERE id = ?', [id], one=True)
+def get_user(username):
+    u = db.query_db('SELECT * FROM users WHERE username = ?', [username], one=True)
     if u is None:
         return None
     else:
-        return User(u['id'], u['name'], u['admin'])
+        return User(u['username'], u['displayname'], u['admin'])
 
 # Get list of all users
 def get_all():
     users = db.query_db('SELECT * FROM users')
     ulist = []
     for u in users:
-        ulist.append(User(u['id'], u['name'], u['admin']))
+        ulist.append(User(u['username'], u['displayname'], u['admin']))
     return ulist

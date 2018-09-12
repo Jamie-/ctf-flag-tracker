@@ -13,7 +13,7 @@ init-db: # Create database
 
 venv: # Setup virtual environment
 	python3 -m venv flask
-	flask/bin/pip3 install flask flask_login flask_wtf ldap3
+	flask/bin/pip3 install flask flask_login flask_wtf
 
 run: # Run app
 	flask/bin/python3 run.py

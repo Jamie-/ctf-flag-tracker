@@ -24,7 +24,7 @@
             {% for p in users %}
                 <tr>
                     <td>{{ p.pos }}</td>
-                    <td class="name"><a href="/profile/{{ p.entity.id }}">{{ p.entity.name }}</a></td>
+                    <td class="name"><a href="/profile/{{ p.entity.username }}">{{ p.entity.display_name }}</a></td>
                     <td>{{ p.get_rank() }}</td>
                     <td>{{ p.score }}</td>
                 </tr>
