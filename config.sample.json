@@ -2,6 +2,6 @@
   "WTF_CSRF_ENABLED": true,
   "SECRET_KEY": "Put a secret key here!",
   "SQLITE_URI": "/srv/tracker/data.db",
-  "LOG_FILE_PATH": "/var/log/flag_tracker.log",
+  "LOG_FILE_PATH": "/srv/tracker/flag_tracker.log",
   "LOG_LEVEL": "warning"
 }
