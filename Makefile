@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := run
-.PHONY: clean, clean-db, init-db, venv, run
+.PHONY: clean, clean-db, setup, depends
 
 clean: # Clean build files
 	rm -rf **/*.pyc
@@ -8,14 +8,8 @@ clean: # Clean build files
 clean-db: # Delete database
 	rm -rf *.db
 
-init-db: # Create database
-	flask/bin/python3 -c 'from tracker.db import init_db; init_db()'
-
 setup: # Setup virtual environment
-	python3 -m venv flask
+	python3 -m venv venv
 
 depends:
-	flask/bin/pip3 install -r requirements.txt
-
-run: # Run app
-	flask/bin/python3 run.py
+	venv/bin/pip3 install -r requirements.txt
