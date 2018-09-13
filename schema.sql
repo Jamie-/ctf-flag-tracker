@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS flags(
 );
 CREATE TABLE IF NOT EXISTS flagsfound(
   flag_id TEXT NOT NULL REFERENCES flags(flag),
-  user_id TEXT NOT NULL REFERENCES users(id),
+  user_id TEXT NOT NULL REFERENCES users(username),
   PRIMARY KEY (flag_id, user_id)
 );
 CREATE TABLE IF NOT EXISTS events(id INTEGER PRIMARY KEY, name TEXT NOT NULL, active BOOLEAN, has_teams BOOLEAN);
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS teams(
 CREATE TABLE IF NOT EXISTS teamusers(
   team_name TEXT NOT NULL REFERENCES teams(name),
   event_id INTEGER NOT NULL REFERENCES teams(event_id),
-  user_id TEXT NOT NULL REFERENCES users(id),
+  user_id TEXT NOT NULL REFERENCES users(username),
   PRIMARY KEY (team_name, event_id, user_id)
 );
 CREATE TABLE IF NOT EXISTS ranks(rank TEXT PRIMARY KEY, score INTEGER NOT NULL);
