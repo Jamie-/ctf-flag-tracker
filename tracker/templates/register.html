@@ -6,7 +6,7 @@
         <form action="/register" method="post" name="register">
             {{ form.hidden_tag() }}
             <div class="form-group">
-                <label>Username</label>
+                <label>Username (may only contain: A-Z a-z 0-9 . _ -)</label>
                 {% if form.username.errors %}
                     {{ form.username(class='form-control is-invalid') }}
                 {% else %}

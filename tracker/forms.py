@@ -9,7 +9,7 @@ class LoginForm(flask_wtf.FlaskForm):
 
 
 class RegisterForm(flask_wtf.FlaskForm):
-    username = wtforms.StringField('username', validators=[validators.DataRequired(), validators.Length(min=3, max=20)])
+    username = wtforms.StringField('username', validators=[validators.DataRequired(), validators.Length(min=3, max=20), validators.Regexp('^(?:[a-zA-Z]|\d|-|_|\.)+$', message='Username contains invalid characters.')])
     name = wtforms.StringField('name', validators=[validators.DataRequired(), validators.Length(min=3, max=50)])
     password = wtforms.PasswordField('password', validators=[validators.DataRequired(), validators.Length(min=8)])
     password2 = wtforms.PasswordField('password2', validators=[validators.DataRequired(), validators.Length(min=8)])
