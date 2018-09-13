@@ -23,8 +23,10 @@ def route_register():
     if form.validate_on_submit():
         if user.exists(form.username.data):
             form.username.errors.append('That username is already taken, please pick another one.')
+            return flask.render_template('register.html', title='Register', form=form)
         if form.password.data != form.password2.data:
             form.password2.errors.append('Repeat password does not match.')
+            return flask.render_template('register.html', title='Register', form=form)
         auth.create_user(form.username.data, form.name.data, form.password.data)
         flask.flash('User account created successfully.', 'success')
         return flask.redirect('/login')
