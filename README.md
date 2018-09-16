@@ -30,3 +30,13 @@ $ docker exec -it tracker /bin/bash
 # setadmin <username>
 # exit
 ```
+
+### Running Behind Nginx Proxy ###
+Use this snippet inside your `server {...}` block. The most important part is `proxy_redirect` when using SSL as without this, redirects are broken!
+```
+location / {
+    proxy_pass http://localhost:8080;
+    proxy_redirect http:// $scheme://;
+    proxy_set_header HOST $http_host;
+}
+```
