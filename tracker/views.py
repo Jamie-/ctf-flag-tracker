@@ -166,9 +166,9 @@ def check_flag():
 def flag_success():
     if flask.request.method == 'POST':
         f = flag.get_flag(flask.request.form['flag'])
-        return flask.render_template('flag_success.html', title='Yay! Flag Added', flag=f, user=flask_login.current_user)
-    else:
-        return flask.redirect('/flag', code=302)
+        if f is not None:
+            return flask.render_template('flag_success.html', title='Yay! Flag Added', flag=f, user=flask_login.current_user)
+    return flask.redirect('/flag', code=302)
 
 @app.route('/profile')
 def profile():
