@@ -22,10 +22,11 @@ wget https://raw.githubusercontent.com/Jamie-/ctf-flag-tracker/master/config.sam
 docker run --name=tracker --restart=always -p8080:8080 -v /srv/docker/tracker:/srv/tracker -d tracker
 ```
 
-6. Create initial database:
+6. Create initial admin user:
+Visit the app in your browser and create an account `http://<ip_address>:8080/register`
+After creating an account, grant it admin priviledges as below
 ```
-docker exec -it tracker /bin/bash
-# cd /opt/tracker
-# make init-db
+$ docker exec -it tracker /bin/bash
+# setadmin <username>
 # exit
 ```

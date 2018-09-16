@@ -16,6 +16,7 @@ RUN git clone https://github.com/Jamie-/ctf-flag-tracker.git /opt/tracker/
 # Setup app
 RUN cd /opt/tracker && make setup && make depends
 RUN mkdir -p /srv/tracker
+RUN ln -s /opt/tracker/setadmin.sh /usr/bin/setadmin
 
 EXPOSE 8080
 VOLUME "/srv/tracker"
