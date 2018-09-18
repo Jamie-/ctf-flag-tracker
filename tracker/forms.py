@@ -13,6 +13,7 @@ class RegisterForm(flask_wtf.FlaskForm):
     name = wtforms.StringField('name', validators=[validators.DataRequired(), validators.Length(min=3, max=50)])
     password = wtforms.PasswordField('password', validators=[validators.DataRequired(), validators.Length(min=8)])
     password2 = wtforms.PasswordField('password2', validators=[validators.DataRequired(), validators.Length(min=8)])
+    recaptcha = flask_wtf.RecaptchaField()
 
 
 class FlagForm(flask_wtf.FlaskForm):
