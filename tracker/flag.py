@@ -50,6 +50,13 @@ def check(flag_str, user):
     logger.info("'%s' found flag '%s'.", user, flag)
     return True
 
+#(admin) delete flag from user
+def removeflag(flag, user):
+    # Unmark user as having found the flag.
+    db.query_db('DELETE FROM flagsfound WHERE flag_id = ? AND user_id = ?', (flag, user))
+    logger.info("Admin removed flag '%s' from user '%s'.", flag, user )
+    return True
+
 # Check if flag exists
 def exists(flag):
     if db.query_db('SELECT * FROM flags WHERE flag = ?', [flag], one=True) is None:
