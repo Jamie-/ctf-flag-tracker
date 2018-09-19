@@ -8,7 +8,8 @@
   "RECAPTCHA_PUBLIC_KEY": "Put site-key from https://www.google.com/recaptcha/admin here",
   "RECAPTCHA_PRIVATE_KEY": "Put secret-key from https://www.google.com/recaptcha/admin here",
   "VIEW_CONFIG": {
-    "APP_NAME": "Shown after '-' in page title. Usually just 'Flag Tracker'.",
-    "FORGOTTEN_PASSWORD_TEXT": "Text shown to user below the registration link on the login page. Remove this entry to show nothing."
+    "APP_NAME": "Shown after '-' in page title. Defaults to 'Flag Tracker' if omitted.",
+    "FORGOTTEN_PASSWORD_TEXT": "Text shown to user below the registration link on the login page. Omit to hide",
+    "PRIVACY_POLICY_TEXT": "Text shown to user above submit button on registration form. Omit to hide."
   }
 }
