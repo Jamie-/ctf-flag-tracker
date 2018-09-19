@@ -7,4 +7,7 @@
   "RECAPTCHA_DATA_ATTRS": {"theme": "dark"},
   "RECAPTCHA_PUBLIC_KEY": "Put site-key from https://www.google.com/recaptcha/admin here",
   "RECAPTCHA_PRIVATE_KEY": "Put secret-key from https://www.google.com/recaptcha/admin here",
+  "VIEW_CONFIG": {
+    "FORGOTTEN_PASSWORD_TEXT": "Text shown to user below the registration link on the login page. Remove this entry to show nothing."
+  }
 }
