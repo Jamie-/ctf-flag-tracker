@@ -15,7 +15,7 @@ mkdir -p /srv/docker/tracker
 wget https://raw.githubusercontent.com/Jamie-/ctf-flag-tracker/master/config.sample.json -O /srv/docker/tracker/config.json
 ```
 
-4. Edit config file as required - `/srv/docker/tracker/config.json`.
+4. Edit config file as required - `/srv/docker/tracker/config.json`. All strings available under `VIEW_CONFIG` are shown but none are required. If you want a string to be default or hidden, omit it's entry.
 
 5. Run docker container:
 ```
