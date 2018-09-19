@@ -4,6 +4,7 @@
   "SQLITE_URI": "/srv/tracker/data.db",
   "LOG_FILE_PATH": "/srv/tracker/flag_tracker.log",
   "LOG_LEVEL": "warning",
+  "DEVELOPMENT_MODE": false,
   "RECAPTCHA_DATA_ATTRS": {"theme": "dark"},
   "RECAPTCHA_PUBLIC_KEY": "Put site-key from https://www.google.com/recaptcha/admin here",
   "RECAPTCHA_PRIVATE_KEY": "Put secret-key from https://www.google.com/recaptcha/admin here",
