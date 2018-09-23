@@ -19,10 +19,10 @@
                     <td class="center">{{ f.value }}</td>
                     <td class="center">{{ f.event_id }}</td>
                     <td class="center">
-                    <form method="POST" action="{{ request.path }}/removeflag">
-                        <input type="hidden" name="flag" value="{{ f.flag }}">
-                        <input type="submit" value="X" class="btn btn-danger btn-sm">
-                    </form>
+                        <form method="POST" action="{{ request.path }}/removeflag">
+                            <input type="hidden" name="flag" value="{{ f.flag }}">
+                            <input type="submit" value="X" class="btn btn-danger btn-sm">
+                        </form>
                     </td>
                 </tr>
             {% endfor %}
