@@ -39,8 +39,8 @@
             <thead>
                 <tr>
                     <th style="width: 10%;" class="center">Edit</th>
-                    <th style="width: 40%;">ID</th>
-                    <th style="width: 40%;">Name</th>
+                    <th style="width: 35%;">ID</th>
+                    <th style="width: 35%;">Name</th>
                     <th style="width: 10%;" class="center">Admin?</th>
                     <th style="width: 10%;" class="center">Remove</th>
                 </tr>
@@ -56,6 +56,12 @@
                     <td>{{ u.display_name }}</td>
                     <td class="center">
                         <input class="form-control edit-admin" type="checkbox" {% if u.is_admin() %}checked{% endif %} disabled>
+                    </td>
+                    <td class="center">
+                        <form method="POST" action="/admin/user/{{ u.username }}/remove">
+                            <input type="hidden" name="user" value="{{ u.username }}">
+                            <input type="submit" value="X" class="btn btn-danger btn-sm">
+                        </form>
                     </td>
                 </tr>
             {% endfor %}

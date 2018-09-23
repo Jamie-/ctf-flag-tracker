@@ -333,6 +333,25 @@ def admin_user(user_id):
         return flask.render_template('admin/user.html', title=user_id+' - Admin', user=u)
     flask.abort(404)
 
+@app.route('/admin/user/<string:user_id>/remove', methods=['POST'])
+def remove_user(user_id):
+    if not flask_login.current_user.is_authenticated:
+        flask.abort(404)
+    elif not flask_login.current_user.is_admin():
+        flask.abort(404)
+    if 'user' not in flask.request.form:
+        flask.abort(400)
+
+    if user_id == flask_login.current_user.get_id():
+        flask.flash("You can't delete your own user here, you need to go to your profile page.", 'danger')
+    else:
+        u = user.get_user(user_id)
+        u.remove()
+        flask.flash('User removed.', 'success')
+        logger.info("%s deleted the user '%s'.", flask_login.current_user.get_id(), user_id)
+
+    return flask.redirect('/admin/users')
+
 @app.route('/admin/user/<string:user_id>/removeflag', methods=['POST'])
 def remove_flag(user_id):
     if not flask_login.current_user.is_authenticated:

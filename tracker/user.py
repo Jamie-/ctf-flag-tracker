@@ -94,6 +94,12 @@ class User():
         else:
             db.query_db('UPDATE users SET admin = 0 WHERE username = ?', [self.username])
 
+    # Remove user and all data
+    def remove(self):
+        db.query_db('DELETE FROM flagsfound WHERE user_id = ?', [self.username])
+        db.query_db('DELETE FROM teamusers WHERE user_id = ?', [self.username])
+        db.query_db('DELETE FROM users WHERE username = ?', [self.username])
+
     def __repr__(self):
         return '<User %r>' % self.username
 
