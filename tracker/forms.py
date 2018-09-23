@@ -1,6 +1,7 @@
 import flask_wtf
 import wtforms
 import wtforms.validators as validators
+import tracker
 
 
 class LoginForm(flask_wtf.FlaskForm):
@@ -13,7 +14,10 @@ class RegisterForm(flask_wtf.FlaskForm):
     name = wtforms.StringField('name', validators=[validators.DataRequired(), validators.Length(min=3, max=50)])
     password = wtforms.PasswordField('password', validators=[validators.DataRequired(), validators.Length(min=8)])
     password2 = wtforms.PasswordField('password2', validators=[validators.DataRequired(), validators.Length(min=8)])
-    recaptcha = flask_wtf.RecaptchaField()
+    if 'DEBUG' in tracker.app.config and not tracker.app.config['DEBUG']:
+        recaptcha = flask_wtf.RecaptchaField()
+    else:
+        recaptcha = wtforms.HiddenField('nothing')
 
 
 class FlagForm(flask_wtf.FlaskForm):
