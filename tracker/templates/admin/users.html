@@ -42,14 +42,21 @@
                     <th style="width: 40%;">ID</th>
                     <th style="width: 40%;">Name</th>
                     <th style="width: 10%;" class="center">Admin?</th>
+                    <th style="width: 10%;" class="center">Remove</th>
                 </tr>
             </thead>
             {% for u in users %}
                 <tr>
-                    <td><input class="form-control edit" type="checkbox"></td>
-                    <td class="edit-username"><a href="/admin/user/{{ u.username }}">{{ u.username }}</a></td>
+                    <td class="center">
+                        <input class="form-control edit" type="checkbox">
+                    </td>
+                    <td class="edit-username">
+                        <a href="/admin/user/{{ u.username }}">{{ u.username }}</a>
+                    </td>
                     <td>{{ u.display_name }}</td>
-                    <td><input class="form-control edit-admin" type="checkbox" {% if u.is_admin() %}checked{% endif %} disabled></td>
+                    <td class="center">
+                        <input class="form-control edit-admin" type="checkbox" {% if u.is_admin() %}checked{% endif %} disabled>
+                    </td>
                 </tr>
             {% endfor %}
             <tr></tr>
@@ -59,7 +66,7 @@
 {% block script %}
     $('input.edit').on('change', function() {
         $('input.edit').not(this).prop('checked', false);
-        $("#username").val($(this).parent().parent().find(".edit-username").text());
+        $("#username").val($(this).parent().parent().find(".edit-username").find("a").text());
         if ($(this).parent().parent().find(".edit-admin").is(':checked')) {
             $("#admin").prop('checked', true);
         } else {
