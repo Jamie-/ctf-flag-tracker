@@ -1,5 +1,6 @@
 import logging
 import re
+import flask_login
 import tracker.db as db
 import tracker.event as event
 
@@ -49,6 +50,12 @@ def check(flag_str, user):
     db.query_db('INSERT INTO flagsfound (flag_id, user_id) VALUES (?, ?)', (flag, user))
     logger.info("'%s' found flag '%s'.", user, flag)
     return True
+
+#(admin) delete flag from user
+def remove_flag(flag, user):
+    # Unmark user as having found the flag.
+    db.query_db('DELETE FROM flagsfound WHERE flag_id = ? AND user_id = ?', (flag, user))
+    logger.info("%s removed flag '%s' from %s.", flask_login.current_user.get_id(), flag, user)
 
 # Check if flag exists
 def exists(flag):
