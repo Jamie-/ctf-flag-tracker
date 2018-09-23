@@ -7,10 +7,10 @@
         <table class="table table-striped table-inverse">
             <thead>
                 <tr>
-                    <th style="width: 75%;">Flag</th>
+                    <th style="width: 80%;">Flag</th>
                     <th style="width: 10%;" class="center">Value</th>
                     <th style="width: 10%;" class="center">Event</th>
-                    <th style="width: 5%;" class="center">Remove</th>
+                    <th style="width: 10%;" class="center">Remove</th>
                 </tr>
             </thead>
             {% for f in user.get_flags() %}
@@ -18,7 +18,7 @@
                     <td>{{ f.flag }}</td>
                     <td class="center">{{ f.value }}</td>
                     <td class="center">{{ f.event_id }}</td>
-                    <td class="center" style="color:red;">
+                    <td class="center">
                     <form method="POST" action="{{ request.path }}/removeflag">
                         <input type="hidden" name="flag" value="{{ f.flag }}">
                         <input type="submit" value="X" class="btn btn-danger btn-sm">
@@ -30,6 +30,7 @@
                 <tr>
                 <td style="text-align: right; font-weight: bold;">Score:</td>
                 <td style="font-weight: bold;" class="center">{{ user.get_global_score() }}</td>
+                <td></td>
                 <td></td>
             </tr>
             </tfoot>
