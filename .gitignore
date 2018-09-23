@@ -3,9 +3,6 @@
 # Virtual environment
 flask/
 
-# App config
-config.py
-
 # Database files
 **/*.db
 
