@@ -10,7 +10,7 @@
                 {% if form.username.errors %}
                     {{ form.username(class='form-control is-invalid') }}
                 {% else %}
-                    {{ form.username(class='form-control') }}
+                    {{ form.username(class='form-control', autofocus=true) }}
                 {% endif %}
                 {% for error in form.username.errors %}
                     <div class="invalid-feedback">{{ error }}</div>
