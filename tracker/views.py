@@ -333,14 +333,12 @@ def admin_user(user_id):
         return flask.render_template('admin/user.html', title=user_id+' - Admin', user=u)
     flask.abort(404)
 
-@app.route('/admin/user/<string:user_id>/removeflag', methods=['GET', 'POST'])
+@app.route('/admin/user/<string:user_id>/removeflag', methods=['POST'])
 def remove_flag(user_id):
     if not flask_login.current_user.is_authenticated:
         flask.abort(404)
     elif not flask_login.current_user.is_admin():
         flask.abort(404)
-    elif not flask.request.method == 'POST':
-        flask.abort(400)
     if 'flag' not in flask.request.form:
         flask.abort(400)
 
