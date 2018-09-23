@@ -341,10 +341,13 @@ def remove_flag(user_id):
         flask.abort(404)
     elif not flask.request.method == 'POST':
         flask.abort(400)
+    if 'flag' not in flask.request.form:
+        flask.abort(400)
 
-    f = flag.removeflag(flask.request.form["flag"], user_id)
+    flag.remove_flag(flask.request.form['flag'], user_id)
+    flask.flash('Flag removed.', 'success')
 
-    return flask.redirect("/admin/user/"+str(user_id))
+    return flask.redirect("/admin/user/{}".format(user_id))
 
 ## Error Handlers
 
