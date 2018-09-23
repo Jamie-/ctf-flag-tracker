@@ -35,8 +35,7 @@ def check(flag_str, user):
     flag = unwrap(flag_str)
 
     # Check if flag is valid
-    f = db.query_db('SELECT * FROM flags WHERE flag = ?', [flag], one=True)
-    if f is None:
+    if not exists(flag):
         logger.info("'%s' submitted an invalid flag: '%s'.", user, flag)
         return False
 
