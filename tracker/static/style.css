@@ -31,6 +31,10 @@ div.container > h1 {
     text-align: center;
 }
 
+.vertical-center td {
+    vertical-align: middle !important;
+}
+
 .main-content {
     padding: 20px;
     border-radius: 5px;
