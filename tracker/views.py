@@ -31,7 +31,7 @@ def route_register():
             form.password2.errors.append('Repeat password does not match.')
             return flask.render_template('register.html', title='Register', form=form)
         auth.create_user(form.username.data, form.name.data, form.password.data)
-        logger.info("User account '%s' just created with display name '%s'.", form.username.data, form.name.data)
+        logger.info("User account '%s' created with display name '%s'.", form.username.data, form.name.data)
         flask.flash('User account created successfully.', 'success')
         return flask.redirect('/login')
     return flask.render_template('register.html', title='Register', form=form)
@@ -223,18 +223,18 @@ def admin_events():
             else:
                 event.create(form.id.data, form.name.data, teams, active)
                 flask.flash('Event added successfully!', 'success')
-                logger.info("'%s' just added an event - %d:'%s'.", flask_login.current_user.username, form.id.data, form.name.data)
+                logger.info("'%s' added an event - %d:'%s'.", flask_login.current_user.username, form.id.data, form.name.data)
         elif form.update.data: # Update event
             if event.exists(form.id.data):
                 event.update(form.id.data, form.name.data, teams, active)
-                logger.info("'%s' just updated the %d:'%s' event.", flask_login.current_user.username, form.id.data, form.name.data)
+                logger.info("'%s' updated the %d:'%s' event.", flask_login.current_user.username, form.id.data, form.name.data)
             else:
                 flask.flash('That event does not exist so can\'t be updated!' ,'danger')
         elif form.delete.data: # Delete event
             if event.exists(form.id.data):
                 event.delete(form.id.data)
                 flask.flash('Event deleted successfully.', 'success')
-                logger.info("'%s' just deleted the %d:'%s' event.", flask_login.current_user.username, form.id.data, form.name.data)
+                logger.info("'%s' deleted the %d:'%s' event.", flask_login.current_user.username, form.id.data, form.name.data)
             else:
                 flask.flash('Unable to delete event as it does not exist.', 'danger')
     return flask.render_template('admin/events.html', title='Events - Admin', events=event.get_all(), form=form)
@@ -262,7 +262,7 @@ def admin_flags():
                 if (form.event_id.data is None) or (event.exists(form.event_id.data)):
                     flag.update(form.flag.data, form.value.data, form.event_id.data, form.notes.data)
                     flask.flash('Flag updated successfully.', 'success')
-                    logger.info("'%s' just updated the flag '%s'.", flask_login.current_user.username, form.flag.data)
+                    logger.info("'%s' updated the flag '%s'.", flask_login.current_user.username, form.flag.data)
                 else:
                     flask.flash('Unable to update flag, that event ID does not exist.', 'danger')
             else:
@@ -271,7 +271,7 @@ def admin_flags():
             if flag.exists(form.flag.data):
                 flag.delete(form.flag.data)
                 flask.flash('Flag deleted successfully.', 'success')
-                logger.info("'%s' just deleted the flag '%s'.", flask_login.current_user.username, form.flag.data)
+                logger.info("'%s' deleted the flag '%s'.", flask_login.current_user.username, form.flag.data)
             else:
                 flask.flash('Unable to delete flag as it does not exist.', 'danger')
     return flask.render_template('admin/flags.html', title='Flags - Admin', flags=flag.get_all(), form=form)
@@ -311,21 +311,21 @@ def admin_ranks():
             else:
                 rank.add(form.rank.data, form.score.data)
                 flask.flash('Rank added successfully.', 'success')
-                logger.info("'%s' just added the rank '%s'.", flask_login.current_user.username, form.rank.data)
+                logger.info("'%s' added the rank '%s'.", flask_login.current_user.username, form.rank.data)
         elif form.update.data: # Update rank
             if rank.exists(form.rank.data):
                 rank.update(form.rank.data, form.score.data)
                 flask.flash('Rank updated successfully.', 'success')
-                logger.info("'%s' just updated the rank '%s'.", flask_login.current_user.username, form.rank.data)
+                logger.info("'%s' updated the rank '%s'.", flask_login.current_user.username, form.rank.data)
             else:
-                flask.flash('Unable to update that rank, it doesn\'t exist.', 'danger')
+                flask.flash("Unable to update that rank, it doesn't exist.", 'danger')
         elif form.delete.data: # Delete rank
             if rank.exists(form.rank.data):
                 rank.delete(form.rank.data)
                 flask.flash('Rank deleted successfully.', 'success')
-                logger.info("'%s' just deleted the rank '%s'.", flask_login.current_user.username, form.rank.data)
+                logger.info("'%s' deleted the rank '%s'.", flask_login.current_user.username, form.rank.data)
             else:
-                flask.flash('Unable to delete that rank, it doesn\'t exist.', 'danger')
+                flask.flash("Unable to delete that rank, it doesn't exist.", 'danger')
     return flask.render_template('admin/ranks.html', title='Ranks - Admin', ranks=rank.get_all(), form=form)
 
 @app.route('/admin/user/<string:user_id>')
