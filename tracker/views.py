@@ -13,9 +13,11 @@ import tracker.rank as rank
 
 logger = logging.getLogger(__name__)
 
+
 @app.route('/')
 def index():
     return flask.render_template('leaderboard.html', title='Leaderboard', heading='Global Leaderboard', users=leaderboard.get_global())
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def route_register():
@@ -31,10 +33,11 @@ def route_register():
             form.password2.errors.append('Repeat password does not match.')
             return flask.render_template('register.html', title='Register', form=form)
         auth.create_user(form.username.data, form.name.data, form.password.data)
-        logger.info("User account '%s' created with display name '%s'.", form.username.data, form.name.data)
+        logger.info("User account ^%s^ created with display name '%s'.", form.username.data, form.name.data)
         flask.flash('User account created successfully.', 'success')
         return flask.redirect('/login')
     return flask.render_template('register.html', title='Register', form=form)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -43,20 +46,22 @@ def login():
         return flask.redirect('/')
     form = forms.LoginForm()
     if form.validate_on_submit():
-        user = auth.check_login(form.username.data, form.password.data)
-        if user:
-            flask_login.login_user(user)
-            flask.flash('Welcome back, %s.' % flask.escape(user.display_name), 'success')
+        u = auth.check_login(form.username.data, form.password.data)
+        if u:
+            flask_login.login_user(u)
+            flask.flash('Welcome back, %s.' % flask.escape(u.display_name), 'success')
             return flask.redirect('/')
         else:
             flask.flash('Invalid user credentials, please try again.', 'danger')
     return flask.render_template('login.html', title='Login', form=form)
+
 
 @app.route('/logout')
 @flask_login.login_required
 def logout():
     flask_login.logout_user()
     return flask.redirect('/')
+
 
 @app.route('/event')
 def current_event():
@@ -65,19 +70,20 @@ def current_event():
         return flask.redirect('/event/' + str(e.id), code=302)
     return flask.render_template('error.html', title='Current Event', heading=':(', text="We currently aren't running an event right now. Check back later!")
 
+
 @app.route('/event/<int:event_id>', methods=['GET', 'POST'])
 def get_event(event_id):
     e = event.get_event(event_id)
     if e is None:
         flask.abort(404)
 
-    indiv_lb = e.get_leaderboard(limit=6) # Individual leaderboard
-    team_lb = e.get_team_leaderboard(limit=6) # Team leaderboard
+    indiv_lb = e.get_leaderboard(limit=6)  # Individual leaderboard
+    team_lb = e.get_team_leaderboard(limit=6)  # Team leaderboard
 
     if flask.request.method == 'POST':
-        if not flask_login.current_user.is_authenticated: # Check user is logged in
+        if not flask_login.current_user.is_authenticated:  # Check user is logged in
             flask.abort(405)
-        if e.get_users_team(flask_login.current_user.username) is not None: # Check user is not already in a team
+        if e.get_users_team(flask_login.current_user.username) is not None:  # Check user is not already in a team
             flask.abort(405)
         team_form = forms.TeamForm()
         if team_form.validate_on_submit():  # Check form completed properly
@@ -89,10 +95,10 @@ def get_event(event_id):
                     team_form.team.errors.append('Unable to create team %s, it may already exist in this event.' % team_data)
                     return flask.render_template('event_teams.html', title=e.name, event=e, user=flask_login.current_user, form=team_form, team_lb=team_lb, indiv_lb=indiv_lb)
             # Add user to team if just created or if Join button pressed
-            if e.add_user_to_team(flask_login.current_user.username, team_data): # Team joined okay
+            if e.add_user_to_team(flask_login.current_user.username, team_data):  # Team joined okay
                 flask.flash('Joined team %s successfully!' % team_data, 'success')
                 return flask.redirect('/event/' + str(event_id), code=302)
-            else: # Unable to join team
+            else:  # Unable to join team
                 team_form.team.errors.append('Unable to join team %s, it may not exist in this event.' % team_data)
                 return flask.render_template('event_teams.html', title=e.name, event=e, user=flask_login.current_user, form=team_form, team_lb=team_lb, indiv_lb=indiv_lb)
         return flask.render_template('event_teams.html', title=e.name, event=e, user=flask_login.current_user, form=team_form, team_lb=team_lb, indiv_lb=indiv_lb)
@@ -110,14 +116,16 @@ def get_event(event_id):
         title = e.name + ' Leaderboard'
         return flask.render_template('leaderboard.html', title=title, heading=title, users=e.get_leaderboard(), num_flags=e.get_num_flags())
 
+
 @app.route('/event/<int:event_id>/team')
 def event_team(event_id):
     if not flask_login.current_user.is_authenticated:
-        flask.abort(404) # User not logged in so has no team nor can create/join a team
+        flask.abort(404)  # User not logged in so has no team nor can create/join a team
     t = event.get_event(event_id).get_users_team(flask_login.current_user.username)
     if t is None:
         flask.abort(404)
     return flask.redirect('/event/' + str(event_id) + '/team/' + t.name, code=302)
+
 
 @app.route('/event/<int:event_id>/teams')
 def event_teams(event_id):
@@ -129,6 +137,7 @@ def event_teams(event_id):
     title = e.name + ' Teams Leaderboard'
     return flask.render_template('leaderboard.html', title=title, heading=title, teams=e.get_team_leaderboard(), num_flags=e.get_num_flags())
 
+
 @app.route('/event/<int:event_id>/individual')
 def event_individual(event_id):
     # Redirect to normal event (which shows individual leaderboard) when event has no teams
@@ -138,6 +147,7 @@ def event_individual(event_id):
     e = event.get_event(event_id)
     title = e.name + ' Individual Leaderboard'
     return flask.render_template('leaderboard.html', title=title, heading=title, users=e.get_leaderboard(), num_flags=e.get_num_flags())
+
 
 @app.route('/event/<int:event_id>/team/<string:team_name>')
 def event_inter_team(event_id, team_name):
@@ -150,9 +160,11 @@ def event_inter_team(event_id, team_name):
     title = team_name + ' Leaderboard'
     return flask.render_template('leaderboard.html', title=title, heading=title, users=t.get_leaderboard())
 
+
 @app.route('/events')
 def get_events():
     return flask.render_template('event_list.html', title='Events', events=event.get_all())
+
 
 @app.route('/flag', methods=['GET', 'POST'])
 @flask_login.login_required
@@ -160,13 +172,14 @@ def check_flag():
     form = forms.FlagForm()
     if form.validate_on_submit():
         f = flag.check(form.flag.data, flask_login.current_user.get_id())
-        if f: # Flag is valid and user has not previously found it
+        if f:  # Flag is valid and user has not previously found it
             return flask.redirect('/flag/boom', code=307)
-        elif f is None: # User already has flag
-            flask.flash('You\'ve already submitted that flag.', 'primary')
-        elif not f: # Not valid flag
-            flask.flash('Oh, that\'s not a valid flag :(', 'warning')
+        elif f is None:  # User already has flag
+            flask.flash("You've already submitted that flag.", 'primary')
+        elif not f:  # Not valid flag
+            flask.flash("Oh, that's not a valid flag :(", 'warning')
     return flask.render_template('flag.html', title='Submit Flag', form=form)
+
 
 @app.route('/flag/boom', methods=['GET', 'POST'])
 @flask_login.login_required
@@ -177,11 +190,13 @@ def flag_success():
             return flask.render_template('flag_success.html', title='Yay! Flag Added', flag=f, user=flask_login.current_user)
     return flask.redirect('/flag', code=302)
 
+
 @app.route('/profile')
 def profile():
     if flask_login.current_user.is_authenticated:
         return flask.redirect('/profile/' + flask_login.current_user.get_id())
     flask.abort(404)
+
 
 @app.route('/profile/<username>')
 def profile_user(username):
@@ -189,212 +204,3 @@ def profile_user(username):
         flask.abort(404)
     u = user.get_user(username)
     return flask.render_template('profile.html', title=u.display_name, user=u, events=event.by_user(username), rank=rank.get_rank(u.get_global_score()))
-
-
-## Admin
-
-@app.route('/admin')
-def admin():
-    if not flask_login.current_user.is_authenticated:
-        flask.abort(404)
-    elif not flask_login.current_user.is_admin():
-        flask.abort(404)
-    return flask.redirect('/admin/events', code=302)
-
-@app.route('/admin/events', methods=['GET', 'POST'])
-def admin_events():
-    if not flask_login.current_user.is_authenticated:
-        flask.abort(404)
-    elif not flask_login.current_user.is_admin():
-        flask.abort(404)
-
-    form = forms.AdminEventForm()
-    if form.validate_on_submit():
-        teams = 0
-        active = 0
-        if form.teams.data:
-            teams = 1
-        if form.active.data:
-            active = 1
-
-        if form.add.data: # Add event
-            if event.exists(form.id.data):
-                flask.flash('An event already exists with that ID, try a different ID.', 'danger')
-            else:
-                event.create(form.id.data, form.name.data, teams, active)
-                flask.flash('Event added successfully!', 'success')
-                logger.info("'%s' added an event - %d:'%s'.", flask_login.current_user.username, form.id.data, form.name.data)
-        elif form.update.data: # Update event
-            if event.exists(form.id.data):
-                event.update(form.id.data, form.name.data, teams, active)
-                logger.info("'%s' updated the %d:'%s' event.", flask_login.current_user.username, form.id.data, form.name.data)
-            else:
-                flask.flash('That event does not exist so can\'t be updated!' ,'danger')
-        elif form.delete.data: # Delete event
-            if event.exists(form.id.data):
-                event.delete(form.id.data)
-                flask.flash('Event deleted successfully.', 'success')
-                logger.info("'%s' deleted the %d:'%s' event.", flask_login.current_user.username, form.id.data, form.name.data)
-            else:
-                flask.flash('Unable to delete event as it does not exist.', 'danger')
-    return flask.render_template('admin/events.html', title='Events - Admin', events=event.get_all(), form=form)
-
-@app.route('/admin/flags', methods=['GET', 'POST'])
-def admin_flags():
-    if not flask_login.current_user.is_authenticated:
-        flask.abort(404)
-    elif not flask_login.current_user.is_admin():
-        flask.abort(404)
-
-    form = forms.AdminFlagForm()
-    if form.validate_on_submit():
-        if form.add.data: # Add flag
-            if flag.exists(form.flag.data):
-                flask.flash('Unable to add flag, it already exists.', 'danger')
-            elif (form.event_id.data is not None) and not (event.exists(form.event_id.data)):
-                flask.flash('Unable to add flag, that event ID does not exist.', 'danger')
-            else:
-                flag.add(form.flag.data, form.value.data, form.event_id.data, form.notes.data)
-                flask.flash('Added flag successfully.', 'success')
-                logger.info("'%s' just added the flag '%s'.", flask_login.current_user.username, form.flag.data)
-        elif form.update.data: # Update flag
-            if flag.exists(form.flag.data):
-                if (form.event_id.data is None) or (event.exists(form.event_id.data)):
-                    flag.update(form.flag.data, form.value.data, form.event_id.data, form.notes.data)
-                    flask.flash('Flag updated successfully.', 'success')
-                    logger.info("'%s' updated the flag '%s'.", flask_login.current_user.username, form.flag.data)
-                else:
-                    flask.flash('Unable to update flag, that event ID does not exist.', 'danger')
-            else:
-                flask.flash('Unable to update flag as it does not exist.', 'danger')
-        elif form.delete.data: # Delete flag
-            if flag.exists(form.flag.data):
-                flag.delete(form.flag.data)
-                flask.flash('Flag deleted successfully.', 'success')
-                logger.info("'%s' deleted the flag '%s'.", flask_login.current_user.username, form.flag.data)
-            else:
-                flask.flash('Unable to delete flag as it does not exist.', 'danger')
-    return flask.render_template('admin/flags.html', title='Flags - Admin', flags=flag.get_all(), form=form)
-
-@app.route('/admin/users', methods=['GET', 'POST'])
-def admin_users():
-    if not flask_login.current_user.is_authenticated:
-        flask.abort(404)
-    elif not flask_login.current_user.is_admin():
-        flask.abort(404)
-
-    form = forms.AdminUserForm()
-    if form.validate_on_submit() and form.update.data:
-        if user.exists(form.username.data):
-            user.get_user(form.username.data).set_admin(form.admin.data)
-            if form.admin.data:
-                logger.info("'%s' granted admin privileges to '%s'.", flask_login.current_user.username, form.username.data)
-            else:
-                logger.info("'%s' revoked admin privileges from '%s'.", flask_login.current_user.username, form.username.data)
-            flask.flash('User updated successfully.', 'success')
-        else:
-            flask.flash('Unable to update user privileges, that username does not exist.', 'danger')
-    return flask.render_template('admin/users.html', title='Users - Admin', users=user.get_all(), form=form)
-
-@app.route('/admin/ranks', methods=['GET', 'POST'])
-def admin_ranks():
-    if not flask_login.current_user.is_authenticated:
-        flask.abort(404)
-    elif not flask_login.current_user.is_admin():
-        flask.abort(404)
-
-    form = forms.AdminRankForm()
-    if form.validate_on_submit():
-        if form.add.data: # Add rank
-            if rank.exists(form.rank.data):
-                flask.flash('Unable to add that rank, it already exists.', 'danger')
-            else:
-                rank.add(form.rank.data, form.score.data)
-                flask.flash('Rank added successfully.', 'success')
-                logger.info("'%s' added the rank '%s'.", flask_login.current_user.username, form.rank.data)
-        elif form.update.data: # Update rank
-            if rank.exists(form.rank.data):
-                rank.update(form.rank.data, form.score.data)
-                flask.flash('Rank updated successfully.', 'success')
-                logger.info("'%s' updated the rank '%s'.", flask_login.current_user.username, form.rank.data)
-            else:
-                flask.flash("Unable to update that rank, it doesn't exist.", 'danger')
-        elif form.delete.data: # Delete rank
-            if rank.exists(form.rank.data):
-                rank.delete(form.rank.data)
-                flask.flash('Rank deleted successfully.', 'success')
-                logger.info("'%s' deleted the rank '%s'.", flask_login.current_user.username, form.rank.data)
-            else:
-                flask.flash("Unable to delete that rank, it doesn't exist.", 'danger')
-    return flask.render_template('admin/ranks.html', title='Ranks - Admin', ranks=rank.get_all(), form=form)
-
-@app.route('/admin/user/<string:user_id>')
-def admin_user(user_id):
-    if not flask_login.current_user.is_authenticated:
-        flask.abort(404)
-    elif not flask_login.current_user.is_admin():
-        flask.abort(404)
-
-    u = user.get_user(user_id)
-    if u is not None:
-        return flask.render_template('admin/user.html', title=user_id+' - Admin', user=u)
-    flask.abort(404)
-
-@app.route('/admin/user/<string:user_id>/remove', methods=['POST'])
-def remove_user(user_id):
-    if not flask_login.current_user.is_authenticated:
-        flask.abort(404)
-    elif not flask_login.current_user.is_admin():
-        flask.abort(404)
-    if 'user' not in flask.request.form:
-        flask.abort(400)
-
-    if user_id == flask_login.current_user.get_id():
-        flask.flash("You can't delete your own user here, you need to go to your profile page.", 'danger')
-    else:
-        u = user.get_user(user_id)
-        u.remove()
-        flask.flash('User removed.', 'success')
-        logger.info("%s deleted the user '%s'.", flask_login.current_user.get_id(), user_id)
-
-    return flask.redirect('/admin/users')
-
-@app.route('/admin/user/<string:user_id>/removeflag', methods=['POST'])
-def remove_flag(user_id):
-    if not flask_login.current_user.is_authenticated:
-        flask.abort(404)
-    elif not flask_login.current_user.is_admin():
-        flask.abort(404)
-    if 'flag' not in flask.request.form:
-        flask.abort(400)
-
-    flag.remove_flag(flask.request.form['flag'], user_id)
-    flask.flash('Flag removed.', 'success')
-
-    return flask.redirect("/admin/user/{}".format(user_id))
-
-## Error Handlers
-
-@app.errorhandler(400)
-def error_400(error):
-    return flask.render_template('error.html', title='400', heading='Error 400', text="Oh no, that's an error!")
-
-@app.errorhandler(401)
-def error_401(error):
-    return flask.render_template('error.html', title='401', heading='Error 401', text="Oh no, that's an error!")
-
-@app.errorhandler(403)
-def error_403(error):
-    return flask.render_template('error.html', title='403', heading='Error 403', text="Oh no, that's an error!")
-
-@app.errorhandler(404)
-def error_404(error):
-    return flask.render_template('error.html', title='404', heading='Error 404', text="Oh no, that's an error!")
-
-@app.errorhandler(405)
-def error_405(error):
-    return flask.render_template('error.html', title='405', heading='Error 405', text="Oh no, that's an error!")
-
-@app.errorhandler(500)
-def error_500(error):
-    return flask.render_template('error.html', title='500', heading='Error 500', text="Oh no, that's an error!")

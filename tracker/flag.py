@@ -36,25 +36,25 @@ def check(flag_str, user):
 
     # Check if flag is valid
     if not exists(flag):
-        logger.info("'%s' submitted an invalid flag: '%s'.", user, flag)
+        logger.info("^%s^ submitted an invalid flag: '%s'.", user, flag)
         return False
 
     # Check if user already has flag
     f = db.query_db('SELECT * FROM flagsfound WHERE flag_id = ? AND user_id = ?', (flag, user), one=True)
     if f is not None:
-        logger.info("'%s' submitted a flag they have submitted before ('%s').", user, flag)
+        logger.info("^%s^ submitted a flag they have submitted before ('%s').", user, flag)
         return None
 
     # If above complete, mark user as having found the flag
     db.query_db('INSERT INTO flagsfound (flag_id, user_id) VALUES (?, ?)', (flag, user))
-    logger.info("'%s' found flag '%s'.", user, flag)
+    logger.info("^%s^ found flag '%s'.", user, flag)
     return True
 
 #(admin) delete flag from user
 def remove_flag(flag, user):
     # Unmark user as having found the flag.
     db.query_db('DELETE FROM flagsfound WHERE flag_id = ? AND user_id = ?', (flag, user))
-    logger.info("%s removed flag '%s' from %s.", flask_login.current_user.get_id(), flag, user)
+    logger.info("^%s^ removed flag '%s' from ^%s^.", flask_login.current_user.get_id(), flag, user)
 
 # Check if flag exists
 def exists(flag):

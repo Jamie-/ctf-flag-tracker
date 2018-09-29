@@ -37,4 +37,4 @@ lm.login_view = '/login'
 lm.login_message = 'You need to be logged in to do that.'
 lm.login_message_category = 'danger'
 
-from tracker import views, user
+from tracker import views, views_admin, views_errors, user
