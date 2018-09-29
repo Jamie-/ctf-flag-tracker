@@ -170,7 +170,7 @@ def remove_user(user_id):
         flask.abort(404)
     elif not flask_login.current_user.is_admin():
         flask.abort(404)
-    if 'user' not in flask.request.form:
+    if 'remove' not in flask.request.form:
         flask.abort(400)
 
     if user_id == flask_login.current_user.get_id():
