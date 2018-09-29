@@ -19,10 +19,7 @@
                     <td class="center">{{ f.value }}</td>
                     <td class="center">{{ f.event_id }}</td>
                     <td class="center">
-                        <form method="POST" action="{{ request.path }}/removeflag">
-                            <input type="hidden" name="flag" value="{{ f.flag }}">
-                            <input type="submit" value="X" class="btn btn-danger btn-sm">
-                        </form>
+                        <button onclick="removeFlag('{{ f.flag }}')" class="btn btn-danger btn-sm">X</button>
                     </td>
                 </tr>
             {% endfor %}
@@ -36,4 +33,16 @@
             </tfoot>
         </table>
     </div>
+{% endblock %}
+{% block script %}
+    <script>
+        function removeFlag(flag) {
+            var result = window.confirm("Are you sure you want to remove the flag '" + flag.toString() + "' from this user?");
+            if (result) {
+                $.post("/admin/user/{{ user.username }}/removeflag", {'flag': flag.toString()}, function () {
+                    location.reload();
+                })
+            }
+        }
+    </script>
 {% endblock %}
