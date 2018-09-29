@@ -28,6 +28,7 @@ def route_register():
             form.password2.errors.append('Repeat password does not match.')
             return flask.render_template('register.html', title='Register', form=form)
         auth.create_user(form.username.data, form.name.data, form.password.data)
+        logger.info("User account '%s' just created with display name '%s'.", form.username.data, form.name.data)
         flask.flash('User account created successfully.', 'success')
         return flask.redirect('/login')
     return flask.render_template('register.html', title='Register', form=form)
