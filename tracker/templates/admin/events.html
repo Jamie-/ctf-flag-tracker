@@ -74,19 +74,21 @@
     </div>
 {% endblock %}
 {% block script %}
-    $('input.edit').on('change', function() {
-        $('input.edit').not(this).prop('checked', false);
-        $("#id").val($(this).parent().parent().find(".edit-id").text());
-        $("#name").val($(this).parent().parent().find(".edit-name").text());
-        if ($(this).parent().parent().find(".edit-teams").is(':checked')) {
-            $("#teams").prop('checked', true);
-        } else {
-            $("#teams").prop('checked', false);
-        }
-        if ($(this).parent().parent().find(".edit-active").is(':checked')) {
-            $("#active").prop('checked', true);
-        } else {
-            $("#active").prop('checked', false);
-        }
-    });
+    <script>
+        $('input.edit').on('change', function() {
+            $('input.edit').not(this).prop('checked', false);
+            $("#id").val($(this).parent().parent().find(".edit-id").text());
+            $("#name").val($(this).parent().parent().find(".edit-name").text());
+            if ($(this).parent().parent().find(".edit-teams").is(':checked')) {
+                $("#teams").prop('checked', true);
+            } else {
+                $("#teams").prop('checked', false);
+            }
+            if ($(this).parent().parent().find(".edit-active").is(':checked')) {
+                $("#active").prop('checked', true);
+            } else {
+                $("#active").prop('checked', false);
+            }
+        });
+    </script>
 {% endblock %}

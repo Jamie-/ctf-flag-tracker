@@ -66,9 +66,11 @@
     </div>
 {% endblock %}
 {% block script %}
-    $('input.edit').on('change', function() {
-        $('input.edit').not(this).prop('checked', false);
-        $("#rank").val($(this).parent().parent().find(".edit-rank").text());
-        $("#score").val($(this).parent().parent().find(".edit-score").text());
-    });
+    <script>
+        $('input.edit').on('change', function() {
+            $('input.edit').not(this).prop('checked', false);
+            $("#rank").val($(this).parent().parent().find(".edit-rank").text());
+            $("#score").val($(this).parent().parent().find(".edit-score").text());
+        });
+    </script>
 {% endblock %}

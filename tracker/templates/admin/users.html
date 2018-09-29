@@ -70,13 +70,15 @@
     </div>
 {% endblock %}
 {% block script %}
-    $('input.edit').on('change', function() {
-        $('input.edit').not(this).prop('checked', false);
-        $("#username").val($(this).parent().parent().find(".edit-username").find("a").text());
-        if ($(this).parent().parent().find(".edit-admin").is(':checked')) {
-            $("#admin").prop('checked', true);
-        } else {
-            $("#admin").prop('checked', false);
-        }
-    });
+    <script>
+        $('input.edit').on('change', function() {
+            $('input.edit').not(this).prop('checked', false);
+            $("#username").val($(this).parent().parent().find(".edit-username").find("a").text());
+            if ($(this).parent().parent().find(".edit-admin").is(':checked')) {
+                $("#admin").prop('checked', true);
+            } else {
+                $("#admin").prop('checked', false);
+            }
+        });
+    </script>
 {% endblock %}

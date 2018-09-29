@@ -93,19 +93,21 @@
     </div>
 {% endblock %}
 {% block script %}
-    $('input.edit').on('change', function() {
-        $('input.edit').not(this).prop('checked', false);
-        $("#flag").val($(this).parent().parent().find(".edit-flag").text());
-        $("#value").val($(this).parent().parent().find(".edit-value").text());
-        if ($(this).parent().parent().find(".edit-event").text() != "None") {
-            $("#event_id").val($(this).parent().parent().find(".edit-event").text());
-        } else {
-            $("#event_id").val("");
-        }
-        if ($(this).parent().parent().find(".edit-flag").data("notes") != "None") {
-            $("#notes").val($(this).parent().parent().find(".edit-flag").data("notes"));
-        } else {
-            $("#notes").val("");
-        }
-    });
+    <script>
+        $('input.edit').on('change', function() {
+            $('input.edit').not(this).prop('checked', false);
+            $("#flag").val($(this).parent().parent().find(".edit-flag").text());
+            $("#value").val($(this).parent().parent().find(".edit-value").text());
+            if ($(this).parent().parent().find(".edit-event").text() != "None") {
+                $("#event_id").val($(this).parent().parent().find(".edit-event").text());
+            } else {
+                $("#event_id").val("");
+            }
+            if ($(this).parent().parent().find(".edit-flag").data("notes") != "None") {
+                $("#notes").val($(this).parent().parent().find(".edit-flag").data("notes"));
+            } else {
+                $("#notes").val("");
+            }
+        });
+    </script>
 {% endblock %}
