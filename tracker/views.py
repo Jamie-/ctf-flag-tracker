@@ -19,6 +19,9 @@ def index():
 
 @app.route('/register', methods=['GET', 'POST'])
 def route_register():
+    if flask_login.current_user.is_authenticated:
+        flask.flash('You are already logged in, to register a new user please log out first.', 'warning')
+        return flask.redirect('/')
     form = forms.RegisterForm()
     if form.validate_on_submit():
         if user.exists(form.username.data):
@@ -35,6 +38,9 @@ def route_register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if flask_login.current_user.is_authenticated:
+        flask.flash('You are already logged in, to change user please log out first.', 'warning')
+        return flask.redirect('/')
     form = forms.LoginForm()
     if form.validate_on_submit():
         user = auth.check_login(form.username.data, form.password.data)
