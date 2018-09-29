@@ -51,12 +51,6 @@ class AdminFlagForm(flask_wtf.FlaskForm):
     delete = wtforms.SubmitField(label='Delete')
 
 
-class AdminUserForm(flask_wtf.FlaskForm):
-    username = wtforms.StringField('username', validators=[validators.DataRequired()])
-    admin = wtforms.BooleanField('admin')
-    update = wtforms.SubmitField(label='Update')
-
-
 class AdminRankForm(flask_wtf.FlaskForm):
     rank = wtforms.StringField('rank', validators=[validators.DataRequired()])
     score = wtforms.IntegerField('score', validators=[validators.NumberRange(min=0)])

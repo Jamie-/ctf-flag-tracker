@@ -104,18 +104,22 @@ def admin_users():
     elif not flask_login.current_user.is_admin():
         flask.abort(404)
 
-    form = forms.AdminUserForm()
-    if form.validate_on_submit() and form.update.data:
-        if user.exists(form.username.data):
-            user.get_user(form.username.data).set_admin(form.admin.data)
-            if form.admin.data:
-                logger.info('^%s^ granted admin privileges to ^%s^.', flask_login.current_user.username, form.username.data)
+    if flask.request.method == 'POST' and 'username' in flask.request.form and 'admin' in flask.request.form:
+        username = flask.request.form['username']
+        admin = False
+        if flask.request.form['admin'] == 'true':  # Handle weird jQuery POST
+            admin = True
+
+        if user.exists(username):
+            user.get_user(username).set_admin(admin)
+            if admin:
+                logger.info('^%s^ granted admin privileges to ^%s^.', flask_login.current_user.username, username)
             else:
-                logger.info('^%s^ revoked admin privileges from ^%s^.', flask_login.current_user.username, form.username.data)
+                logger.info('^%s^ revoked admin privileges from ^%s^.', flask_login.current_user.username, username)
             flask.flash('User updated successfully.', 'success')
         else:
             flask.flash('Unable to update user privileges, that username does not exist.', 'danger')
-    return flask.render_template('admin/users.html', title='Users - Admin', users=user.get_all(), form=form)
+    return flask.render_template('admin/users.html', title='Users - Admin', users=user.get_all())
 
 
 @app.route('/admin/ranks', methods=['GET', 'POST'])
