@@ -36,7 +36,7 @@ class ChangeDisplayNameForm(flask_wtf.FlaskForm):
 
 
 class ChangePasswordForm(flask_wtf.FlaskForm):
-    old_password = wtforms.PasswordField('old_password', validators=[validators.DataRequired(), validators.Length(min=8)])
+    old_password = wtforms.PasswordField('old_password', validators=[validators.DataRequired()])
     new_password = wtforms.PasswordField('new_password', validators=[validators.DataRequired(), validators.Length(min=8)])
-    new_password2 = wtforms.PasswordField('new_password2', validators=[validators.DataRequired(), validators.Length(min=8)])
+    new_password2 = wtforms.PasswordField('new_password2', validators=[validators.DataRequired()])
     submit = wtforms.SubmitField(label='Update')
