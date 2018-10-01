@@ -9,7 +9,7 @@
                     <form action="/register" method="post" name="register">
                         {{ form.hidden_tag() }}
                         <div class="form-group">
-                            <label>Username (may only contain: A-Z a-z 0-9 . _ -)</label>
+                            <label>Username</label>
                             {% if form.username.errors %}
                                 {{ form.username(class='form-control is-invalid') }}
                             {% else %}
@@ -18,9 +18,10 @@
                             {% for error in form.username.errors %}
                                 <div class="invalid-feedback">{{ error }}</div>
                             {% endfor %}
+                            <small class="form-text text-muted">May only contain: A-Z a-z 0-9 . _ -</small>
                         </div>
                         <div class="form-group">
-                            <label>Display Name (how you want to appear to others)</label>
+                            <label>Display Name</label>
                             {% if form.name.errors %}
                                 {{ form.name(class='form-control is-invalid') }}
                             {% else %}
@@ -29,6 +30,7 @@
                             {% for error in form.name.errors %}
                                 <div class="invalid-feedback">{{ error }}</div>
                             {% endfor %}
+                            <small class="form-text text-muted">How you want to appear to others.</small>
                         </div>
                         <div class="form-group">
                             <label>Password</label>
