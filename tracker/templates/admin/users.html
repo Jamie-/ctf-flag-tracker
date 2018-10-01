@@ -26,7 +26,7 @@
                                     <input class="form-control edit-admin" type="checkbox" data-username="{{ u.username }}" {% if u.is_admin() %}checked{% endif %}>
                                 </td>
                                 <td class="center">
-                                    <button type="submit" onclick="deleteUser('{{ u.username }}')" class="btn btn-danger btn-sm">X</button>
+                                    <button type="submit" onclick="deleteUser('{{ u.username }}')" class="btn btn-danger btn-sm">&times;</button>
                                 </td>
                             </tr>
                         {% endfor %}
