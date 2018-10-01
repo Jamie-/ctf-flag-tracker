@@ -2,8 +2,14 @@
 
 {% block content %}
     <div class="container" id="error">
-        <h1>{{ heading }}</h1>
-        <h4>{{ text }}</h4>
-        <h3><a href="javascript:history.back()">Want to go back?</a></h3>
+        <div class="row">
+            <div class="col">
+                <div class="container">
+                    <h1 class="bottom-space">{{ heading }}</h1>
+                    <h4>{{ text }}</h4>
+                    <h3><a href="javascript:history.back()">Want to go back?</a></h3>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

@@ -2,24 +2,30 @@
 
 {% block content %}
     <div class="container" id="flag">
-        <h1>Yay! Flag Added</h1>
-        <h4>That flag had a value of:</h4>
-        <h1 class="super-large">{{ flag.value }}</h1>
+        <div class="row">
+            <div class="col">
+                <div class="container">
+                    <h1>Yay! Flag Added</h1>
+                    <h4>That flag had a value of:</h4>
+                    <h1 class="super-large">{{ flag.value }}</h1>
 
-        {% if flag.event is not none %}
-            <h5>Your score for the {{ flag.event.name }} event:</h5>
-            <h3>{{ user.get_event_score(flag.event.id) }}</h3>
-        {% endif %}
+                    {% if flag.event is not none %}
+                        <h5>Your score for the {{ flag.event.name }} event:</h5>
+                        <h3>{{ user.get_event_score(flag.event.id) }}</h3>
+                    {% endif %}
 
-        <h5>Your new global score:</h5>
-        <h3>{{ user.get_global_score() }}</h3>
+                    <h5>Your new global score:</h5>
+                    <h3>{{ user.get_global_score() }}</h3>
 
-        {% if flag.event is not none %}
-            <p>This flag is part of the {{ flag.event.name }} event.</p>
-        {% else %}
-            <p>Woah, this is a rare flag that's not tied to an event. Nice find!</p>
-        {% endif %}
+                    {% if flag.event is not none %}
+                        <p>This flag is part of the {{ flag.event.name }} event.</p>
+                    {% else %}
+                        <p>Woah, this is a rare flag that's not tied to an event. Nice find!</p>
+                    {% endif %}
 
-        <a class="btn btn-primary" href="/flag">Submit Another?</a>
+                    <a class="btn btn-primary" href="/flag">Submit Another?</a>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

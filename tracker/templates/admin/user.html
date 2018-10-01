@@ -2,36 +2,42 @@
 
 {% block content %}
     <div class="container" id="admin-user">
-        <h1>{{ user.display_name }} ({{ user.username }})</h1>
+        <div class="row">
+            <div class="col">
+                <div class="container">
+                    <h1 class="text-center bottom-space">{{ user.display_name }} ({{ user.username }})</h1>
 
-        <table class="table table-striped table-inverse">
-            <thead>
-                <tr>
-                    <th style="width: 80%;">Flag</th>
-                    <th style="width: 10%;" class="center">Value</th>
-                    <th style="width: 10%;" class="center">Event</th>
-                    <th style="width: 10%;" class="center">Remove</th>
-                </tr>
-            </thead>
-            {% for f in user.get_flags() %}
-                <tr>
-                    <td>{{ f.flag }}</td>
-                    <td class="center">{{ f.value }}</td>
-                    <td class="center">{{ f.event_id }}</td>
-                    <td class="center">
-                        <button onclick="removeFlag('{{ f.flag }}')" class="btn btn-danger btn-sm">X</button>
-                    </td>
-                </tr>
-            {% endfor %}
-            <tfoot>
-                <tr>
-                <td style="text-align: right; font-weight: bold;">Score:</td>
-                <td style="font-weight: bold;" class="center">{{ user.get_global_score() }}</td>
-                <td></td>
-                <td></td>
-            </tr>
-            </tfoot>
-        </table>
+                    <table class="table table-striped table-inverse">
+                        <thead>
+                            <tr>
+                                <th style="width: 80%;">Flag</th>
+                                <th style="width: 10%;" class="center">Value</th>
+                                <th style="width: 10%;" class="center">Event</th>
+                                <th style="width: 10%;" class="center">Remove</th>
+                            </tr>
+                        </thead>
+                        {% for f in user.get_flags() %}
+                            <tr>
+                                <td>{{ f.flag }}</td>
+                                <td class="center">{{ f.value }}</td>
+                                <td class="center">{{ f.event_id }}</td>
+                                <td class="center">
+                                    <button onclick="removeFlag('{{ f.flag }}')" class="btn btn-danger btn-sm">X</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        <tfoot>
+                            <tr>
+                            <td style="text-align: right; font-weight: bold;">Score:</td>
+                            <td style="font-weight: bold;" class="center">{{ user.get_global_score() }}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 {% block script %}

@@ -2,38 +2,44 @@
 
 {% block content %}
     <div class="container" id="login">
-        <h1>Login</h1>
-        <form action="/login" method="post" name="login">
-            {{ form.hidden_tag() }}
-            <div class="form-group">
-                <label>Username</label>
-                {% if form.username.errors %}
-                    {{ form.username(class='form-control is-invalid') }}
-                {% else %}
-                    {{ form.username(class='form-control', autofocus=true) }}
-                {% endif %}
-                {% for error in form.username.errors %}
-                    <div class="invalid-feedback">{{ error }}</div>
-                {% endfor %}
+        <div class="row">
+            <div class="col">
+                <div class="container">
+                    <h1 class="text-center">Login</h1>
+                    <form action="/login" method="post" name="login">
+                        {{ form.hidden_tag() }}
+                        <div class="form-group">
+                            <label>Username</label>
+                            {% if form.username.errors %}
+                                {{ form.username(class='form-control is-invalid') }}
+                            {% else %}
+                                {{ form.username(class='form-control', autofocus=true) }}
+                            {% endif %}
+                            {% for error in form.username.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            {% if form.password.errors %}
+                                {{ form.password(class='form-control is-invalid') }}
+                            {% else %}
+                                {{ form.password(class='form-control') }}
+                            {% endif %}
+                            {% for error in form.password.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            If you don't have an account, <a href="/register">register here</a>.
+                            {% if 'FORGOTTEN_PASSWORD_TEXT' in VIEW_CONFIG %}
+                                <br />{{ VIEW_CONFIG['FORGOTTEN_PASSWORD_TEXT'] }}
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Password</label>
-                {% if form.password.errors %}
-                    {{ form.password(class='form-control is-invalid') }}
-                {% else %}
-                    {{ form.password(class='form-control') }}
-                {% endif %}
-                {% for error in form.password.errors %}
-                    <div class="invalid-feedback">{{ error }}</div>
-                {% endfor %}
-            </div>
-            <div class="form-group">
-                If you don't have an account, <a href="/register">register here</a>.
-                {% if 'FORGOTTEN_PASSWORD_TEXT' in VIEW_CONFIG %}
-                    <br />{{ VIEW_CONFIG['FORGOTTEN_PASSWORD_TEXT'] }}
-                {% endif %}
-            </div>
-            <button type="submit" class="btn btn-primary">Login</button>
-        </form>
+        </div>
     </div>
 {% endblock %}
