@@ -2,7 +2,7 @@ import flask
 import flask_login
 import logging
 from tracker import app
-import tracker.forms as forms
+import tracker.forms_admin as forms
 import tracker.event as event
 import tracker.flag as flag
 import tracker.user as user
