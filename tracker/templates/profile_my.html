@@ -27,6 +27,51 @@
                     </form>
                 </div>
             </div>
+
+            <div class="col col-6">
+                <div class="container">
+                    <h3>Update Password</h3>
+                    <form action="/profile/{{ user.username }}" method="post" name="profile">
+                        {{ pwd_form.hidden_tag() }}
+                        <div class="form-group">
+                            <label>Old Password</label>
+                            {% if pwd_form.old_password.errors %}
+                                {{ pwd_form.old_password(class='form-control is-invalid') }}
+                            {% else %}
+                                {{ pwd_form.old_password(class='form-control', autofocus=true) }}
+                            {% endif %}
+                            {% for error in pwd_form.old_password.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label>New Password</label>
+                            {% if pwd_form.new_password.errors %}
+                                {{ pwd_form.new_password(class='form-control is-invalid') }}
+                            {% else %}
+                                {{ pwd_form.new_password(class='form-control', autofocus=true) }}
+                            {% endif %}
+                            {% for error in pwd_form.new_password.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label>Repeat New Password</label>
+                            {% if pwd_form.new_password2.errors %}
+                                {{ pwd_form.new_password2(class='form-control is-invalid') }}
+                            {% else %}
+                                {{ pwd_form.new_password2(class='form-control', autofocus=true) }}
+                            {% endif %}
+                            {% for error in pwd_form.new_password2.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group text-center">
+                            {{ pwd_form.submit(class='btn btn-primary') }}
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

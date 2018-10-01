@@ -33,3 +33,10 @@ class TeamForm(flask_wtf.FlaskForm):
 class ChangeDisplayNameForm(flask_wtf.FlaskForm):
     display_name = wtforms.StringField('display_name', validators=[validators.DataRequired(), validators.Length(min=3, max=50)])
     submit = wtforms.SubmitField(label='Update')
+
+
+class ChangePasswordForm(flask_wtf.FlaskForm):
+    old_password = wtforms.PasswordField('old_password', validators=[validators.DataRequired(), validators.Length(min=8)])
+    new_password = wtforms.PasswordField('new_password', validators=[validators.DataRequired(), validators.Length(min=8)])
+    new_password2 = wtforms.PasswordField('new_password2', validators=[validators.DataRequired(), validators.Length(min=8)])
+    submit = wtforms.SubmitField(label='Update')

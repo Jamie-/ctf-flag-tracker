@@ -1,4 +1,5 @@
 import logging
+import werkzeug.security
 import tracker.db as db
 
 logger = logging.getLogger(__name__)
@@ -36,6 +37,12 @@ class User():
         self.display_name = display_name
         db.query_db('UPDATE users SET displayname = ? WHERE username = ?', [display_name, self.username])
         logger.info("^%s^ updated their display name to '%s'", self.username, display_name)
+
+    # Update user's password
+    def update_password(self, new_password):
+        pw_hash = werkzeug.security.generate_password_hash(new_password)
+        db.query_db('UPDATE users SET password = ? WHERE username = ?', [pw_hash, self.username])
+        logger.info('^%s^ updated their password.', self.username)
 
     # Get global score for this user
     def get_global_score(self):

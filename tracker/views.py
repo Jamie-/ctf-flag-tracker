@@ -205,13 +205,24 @@ def profile_user(username):
     u = user.get_user(username)
 
     if flask_login.current_user.get_id() == u.username:
-        dn_form = forms.ChangeDisplayNameForm()
+        dn_form = forms.ChangeDisplayNameForm(prefix='dn')
+        pwd_form = forms.ChangePasswordForm(prefix='pwd')
 
-        if dn_form.validate_on_submit() and dn_form.submit.data:
+        if dn_form.submit.data and dn_form.validate_on_submit():
             u.update_display_name(dn_form.display_name.data)
             flask.flash('Display name updated successfully.', 'success')
             dn_form.display_name.data = ''  # Clear input field
 
-        return flask.render_template('profile_my.html', title=u.display_name, user=u, events=event.by_user(username), rank=rank.get_rank(u.get_global_score()), dn_form=dn_form)
+        if pwd_form.submit.data and pwd_form.validate_on_submit():
+            if auth.check_login(username, pwd_form.old_password.data):
+                if pwd_form.new_password.data == pwd_form.new_password2.data:
+                    u.update_password(pwd_form.new_password.data)
+                    flask.flash('Password updated successfully.', 'success')
+                else:
+                    pwd_form.new_password2.errors.append('Repeated password does not match.')
+            else:
+                pwd_form.old_password.errors.append('Old password is incorrect.')
+
+        return flask.render_template('profile_my.html', title=u.display_name, user=u, events=event.by_user(username), rank=rank.get_rank(u.get_global_score()), dn_form=dn_form, pwd_form=pwd_form)
 
     return flask.render_template('profile.html', title=u.display_name, user=u, events=event.by_user(username), rank=rank.get_rank(u.get_global_score()))
