@@ -198,9 +198,20 @@ def profile():
     flask.abort(404)
 
 
-@app.route('/profile/<username>')
+@app.route('/profile/<username>', methods=['GET', 'POST'])
 def profile_user(username):
     if not user.exists(username):
         flask.abort(404)
     u = user.get_user(username)
+
+    if flask_login.current_user.get_id() == u.username:
+        dn_form = forms.ChangeDisplayNameForm()
+
+        if dn_form.validate_on_submit() and dn_form.submit.data:
+            u.update_display_name(dn_form.display_name.data)
+            flask.flash('Display name updated successfully.', 'success')
+            dn_form.display_name.data = ''  # Clear input field
+
+        return flask.render_template('profile_my.html', title=u.display_name, user=u, events=event.by_user(username), rank=rank.get_rank(u.get_global_score()), dn_form=dn_form)
+
     return flask.render_template('profile.html', title=u.display_name, user=u, events=event.by_user(username), rank=rank.get_rank(u.get_global_score()))

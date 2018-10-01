@@ -2,43 +2,6 @@
 
 {% block content %}
     <div class="container" id="profile">
-        <div class="row">
-            <div class="col col-12">
-                <div class="container">
-                    <h1 class="text-center bottom-space">{{ user.display_name }}</h1>
-                    <div class="row">
-                        <div class="col-sm">
-                            <h3>Total Score</h3>
-                            <h1 class="center pretty-large">{{ user.get_global_score() }}</h1>
-                            <br />
-
-                            <h3>Flags Submitted</h3>
-                            <h1 class="center pretty-large">{{ user.get_no_flags() }}</h1>
-                        </div>
-                        <div class="col-sm">
-                            <h3>Events Attended</h3>
-                            {% if events is not none %}
-                            <h1 class="center pretty-large">{{ events|length }}</h1>
-                            <ul class="list-group{% if events|length > 7 %} pre-scrollable{% endif %}">
-                                {% for e in events %}
-                                <li class="list-group-item list-group-item-dark"><a href="/event/{{ e.id }}">{{ e.name }}</a></li>
-                                {% endfor %}
-                            </ul>
-                            {% else %}
-                                <h1 class="center pretty-large">0</h1>
-                            {% endif %}
-                        </div>
-                        <div class="col-sm">
-                            <h3>Rank</h3>
-                            <h5 class="center">{{ rank }}</h5>
-                            <br />
-
-                            <h3>Achievements</h3>
-                            <h5 class="center">Coming Soon...</h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% include 'profile_data.html' %}
     </div>
 {% endblock %}

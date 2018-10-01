@@ -1,0 +1,32 @@
+{% extends "template.html" %}
+
+{% block content %}
+    <div class="container" id="profile">
+        {% include 'profile_data.html' %}
+
+        <div class="row">
+            <div class="col col-6">
+                <div class="container">
+                    <h3 class="bottom-space">Update Display Name</h3>
+                    <form action="/profile/{{ user.username }}" method="post" name="profile">
+                        {{ dn_form.hidden_tag() }}
+                        <div class="form-group">
+                            <label class="sr-only">New display name</label>
+                            {% if dn_form.display_name.errors %}
+                                {{ dn_form.display_name(class='form-control is-invalid') }}
+                            {% else %}
+                                {{ dn_form.display_name(class='form-control', autofocus=true) }}
+                            {% endif %}
+                            {% for error in dn_form.display_name.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group text-center">
+                            {{ dn_form.submit(class='btn btn-primary') }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,4 +1,8 @@
+import logging
 import tracker.db as db
+
+logger = logging.getLogger(__name__)
+
 
 class User():
 
@@ -26,6 +30,12 @@ class User():
     def get_name(self):
         return self.display_name
     ## /FLASK_LOGIN ################
+
+    # Update user's display name
+    def update_display_name(self, display_name):
+        self.display_name = display_name
+        db.query_db('UPDATE users SET displayname = ? WHERE username = ?', [display_name, self.username])
+        logger.info("^%s^ updated their display name to '%s'", self.username, display_name)
 
     # Get global score for this user
     def get_global_score(self):

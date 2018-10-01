@@ -28,3 +28,8 @@ class TeamForm(flask_wtf.FlaskForm):
     team = wtforms.StringField('team', validators=[validators.DataRequired(), validators.Length(3)])
     create = wtforms.SubmitField(label='Create')
     join = wtforms.SubmitField(label='Join')
+
+
+class ChangeDisplayNameForm(flask_wtf.FlaskForm):
+    display_name = wtforms.StringField('display_name', validators=[validators.DataRequired(), validators.Length(min=3, max=50)])
+    submit = wtforms.SubmitField(label='Update')
