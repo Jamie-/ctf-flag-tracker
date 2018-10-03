@@ -26,14 +26,14 @@ def route_register():
         return flask.redirect('/')
     form = forms.RegisterForm()
     if form.validate_on_submit():
-        if user.exists(form.username.data):
+        if user.exists(form.username.data.lower()):
             form.username.errors.append('That username is already taken, please pick another one.')
             return flask.render_template('register.html', title='Register', form=form)
         if form.password.data != form.password2.data:
             form.password2.errors.append('Repeat password does not match.')
             return flask.render_template('register.html', title='Register', form=form)
-        auth.create_user(form.username.data, form.name.data, form.password.data)
-        logger.info("User account ^%s^ created with display name '%s'.", form.username.data, form.name.data)
+        auth.create_user(form.username.data.lower(), form.name.data, form.password.data)
+        logger.info("User account ^%s^ created with display name '%s'.", form.username.data.lower(), form.name.data)
         flask.flash('User account created successfully.', 'success')
         return flask.redirect('/login')
     return flask.render_template('register.html', title='Register', form=form)
@@ -46,7 +46,7 @@ def login():
         return flask.redirect('/')
     form = forms.LoginForm()
     if form.validate_on_submit():
-        u = auth.check_login(form.username.data, form.password.data)
+        u = auth.check_login(form.username.data.lower(), form.password.data)
         if u:
             flask_login.login_user(u)
             flask.flash('Welcome back, %s.' % flask.escape(u.display_name), 'success')
