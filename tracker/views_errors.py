@@ -1,4 +1,5 @@
 import flask
+import flask_login
 import logging
 from tracker import app
 
@@ -34,4 +35,8 @@ def error_405(error):
 def error_500(error):
     logger.error('500 Internal Server Error:')
     logger.error(error)
+    if flask_login.current_user.is_authenticated:
+        logger.error('Triggered by ^%s^', flask_login.current_user.get_id())
+    else:
+        logger.error('Triggered anonymously')  # i.e. by logged out user
     return flask.render_template('error.html', title='500', heading='Error 500', text="Oh no, that's an error!"), 500
