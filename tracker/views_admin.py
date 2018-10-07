@@ -119,7 +119,7 @@ def admin_users():
             flask.flash('User updated successfully.', 'success')
         else:
             flask.flash('Unable to update user privileges, that username does not exist.', 'danger')
-    return flask.render_template('admin/users.html', title='Users - Admin', users=user.get_all(sort_asc=True))
+    return flask.render_template('admin/users.html', title='Users - Admin', users=user.get_all(sort_asc=True, admin_first=True))
 
 
 @app.route('/admin/ranks', methods=['GET', 'POST'])

@@ -138,9 +138,13 @@ def get_user(username):
         return User(u['username'], u['displayname'], u['admin'])
 
 # Get list of all users
-def get_all(sort_asc=False):
+def get_all(sort_asc=False, admin_first=False):
     query_string = 'SELECT * FROM users'
-    if sort_asc:
+    if admin_first:
+        query_string += ' ORDER BY admin DESC'
+        if sort_asc:
+            query_string += ', username ASC'
+    elif sort_asc:
         query_string += ' ORDER BY username ASC'
     users = db.query_db(query_string)
     ulist = []
