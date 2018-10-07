@@ -138,8 +138,11 @@ def get_user(username):
         return User(u['username'], u['displayname'], u['admin'])
 
 # Get list of all users
-def get_all():
-    users = db.query_db('SELECT * FROM users')
+def get_all(sort_asc=False):
+    query_string = 'SELECT * FROM users'
+    if sort_asc:
+        query_string += ' ORDER BY username ASC'
+    users = db.query_db(query_string)
     ulist = []
     for u in users:
         ulist.append(User(u['username'], u['displayname'], u['admin']))
