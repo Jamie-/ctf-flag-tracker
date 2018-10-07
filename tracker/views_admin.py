@@ -42,18 +42,18 @@ def admin_events():
             else:
                 event.create(form.id.data, form.name.data, teams, active)
                 flask.flash('Event added successfully!', 'success')
-                logger.info("'%s' added an event - %d:'%s'.", flask_login.current_user.username, form.id.data, form.name.data)
+                logger.info("^%s^ added an event %d:'%s'.", flask_login.current_user.username, form.id.data, form.name.data)
         elif form.update.data:  # Update event
             if event.exists(form.id.data):
                 event.update(form.id.data, form.name.data, teams, active)
-                logger.info("'%s' updated the %d:'%s' event.", flask_login.current_user.username, form.id.data, form.name.data)
+                logger.info("^%s^ updated the %d:'%s' event.", flask_login.current_user.username, form.id.data, form.name.data)
             else:
                 flask.flash("That event does not exist so can't be updated!", 'danger')
         elif form.delete.data:  # Delete event
             if event.exists(form.id.data):
                 event.delete(form.id.data)
                 flask.flash('Event deleted successfully.', 'success')
-                logger.info("'%s' deleted the %d:'%s' event.", flask_login.current_user.username, form.id.data, form.name.data)
+                logger.info("^%s^ deleted the %d:'%s' event.", flask_login.current_user.username, form.id.data, form.name.data)
             else:
                 flask.flash('Unable to delete event as it does not exist.', 'danger')
     return flask.render_template('admin/events.html', title='Events - Admin', events=event.get_all(), form=form)
