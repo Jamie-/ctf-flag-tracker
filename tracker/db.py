@@ -1,6 +1,9 @@
+import logging
 import sqlite3
 import flask
 import tracker
+
+logger = logging.getLogger(__name__)
 
 IntegrityError = sqlite3.IntegrityError
 
@@ -25,7 +28,13 @@ def get_db():
     return db
 
 def query_db(query, args=(), one=False):
-    cur = get_db().execute(query, args)
+    try:
+        cur = get_db().execute(query, args)
+    except IntegrityError as e:
+        logger.error('Query failed on IntegrityError, dumping query and args:')
+        logger.error("Query: '%s'", str(query))
+        logger.error('Args: %s', str(args))
+        raise e
     rv = cur.fetchall()
     cur.close()
     get_db().commit()
