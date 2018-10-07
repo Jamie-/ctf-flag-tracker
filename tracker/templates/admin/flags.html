@@ -89,7 +89,7 @@
                                 {% if f.event is none %}
                                     <td class="edit-event">-</td>
                                 {% else %}
-                                    <td class="edit-event">{{ f.get_event_name() }} <span class="text-muted">({{ f.event }})</span></td>
+                                    <td>{{ f.get_event_name() }} <span class="edit-event text-muted">({{ f.event }})</span></td>
                                 {% endif %}
 
                                 <td class="center">{{ f.found_count() }}</td>
@@ -110,7 +110,7 @@
             $("#flag").val($(this).parent().parent().find(".edit-flag").text());
             $("#value").val($(this).parent().parent().find(".edit-value").text());
             if ($(this).parent().parent().find(".edit-event").text() != "-") {
-                $("#event_id").val($(this).parent().parent().find(".edit-event").text());
+                $("#event_id").val($(this).parent().parent().find(".edit-event").text().replace(/[()]/g, ''));
             } else {
                 $("#event_id").val("");
             }
