@@ -76,19 +76,24 @@
                         <thead>
                             <tr>
                                 <th style="width: 10%;" class="center">Edit</th>
-                                <th>Flag</th>
+                                <th style="width: 35%">Flag</th>
+                                <th style="width: 35%;">Event</th>
                                 <th style="width: 10%;"># Found</th>
                                 <th style="width: 10%;" class="center">Value</th>
-                                <th style="width: 10%;" class="center">Event ID</th>
                             </tr>
                         </thead>
                         {% for f in flags %}
                             <tr>
                                 <td><input class="form-control edit" type="checkbox"></td>
                                 <td class="edit-flag" title="{{ f.notes }}" data-notes="{{ f.notes }}">{{ f.flag }}</td>
+                                {% if f.event is none %}
+                                    <td class="edit-event">-</td>
+                                {% else %}
+                                    <td class="edit-event">{{ f.get_event_name() }} <span class="text-muted">({{ f.event }})</span></td>
+                                {% endif %}
+
                                 <td class="center">{{ f.found_count() }}</td>
                                 <td class="center edit-value">{{ f.value }}</td>
-                                <td class="center edit-event">{{ f.event }}</td>
                             </tr>
                         {% endfor %}
                         <tr></tr>
@@ -104,12 +109,12 @@
             $('input.edit').not(this).prop('checked', false);
             $("#flag").val($(this).parent().parent().find(".edit-flag").text());
             $("#value").val($(this).parent().parent().find(".edit-value").text());
-            if ($(this).parent().parent().find(".edit-event").text() != "None") {
+            if ($(this).parent().parent().find(".edit-event").text() != "-") {
                 $("#event_id").val($(this).parent().parent().find(".edit-event").text());
             } else {
                 $("#event_id").val("");
             }
-            if ($(this).parent().parent().find(".edit-flag").data("notes") != "None") {
+            if ($(this).parent().parent().find(".edit-flag").data("notes") != "-") {
                 $("#notes").val($(this).parent().parent().find(".edit-flag").data("notes"));
             } else {
                 $("#notes").val("");

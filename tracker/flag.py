@@ -22,6 +22,11 @@ class Flag():
             WHERE flag_id = ?
         ''', [self.flag], one=True)[0]
 
+    # Get name of event flag is part of (or None if not part of an event)
+    def get_event_name(self):
+        if self.event == None:
+            return None
+        return db.query_db('SELECT * FROM events WHERE id = ?', [self.event], one=True)['name']
 
 def unwrap(flag_str):  # If flag is wrapped in flag{...}, strip it off
     flag_pattern = re.compile('^flag{.+}$')
