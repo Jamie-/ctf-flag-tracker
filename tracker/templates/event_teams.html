@@ -26,7 +26,7 @@
                                         {% for p in team.get_leaderboard(limit=6) %}
                                             <tr>
                                                 <td>{{ p.pos }}</td>
-                                                <td class="name"><a href="/profile/{{ p.entity.id }}">{{ p.entity.name }}</a></td>
+                                                <td class="name"><a href="/profile/{{ p.entity.username }}" title="{{ p.entity.username }}">{{ p.entity.display_name }}</a></td>
                                                 <td>{{ p.score }}</td>
                                             </tr>
                                         {% endfor %}
@@ -98,7 +98,7 @@
                                 {% for p in indiv_lb %}
                                     <tr>
                                         <td>{{ p.pos }}</td>
-                                        <td class="name"><a href="/profile/{{ p.entity.id }}">{{ p.entity.name }}</a></td>
+                                        <td class="name"><a href="/profile/{{ p.entity.username }}" title="{{ p.entity.username }}">{{ p.entity.display_name }}</a></td>
                                         <td>{{ p.score }}</td>
                                     </tr>
                                 {% endfor %}
