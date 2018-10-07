@@ -12,9 +12,9 @@
                         <table class="table table-inverse">
                             <thead>
                                 <tr>
-                                    <th>Flag</th>
-                                    <th style="width: 10%;" class="center">Value</th>
-                                    <th style="width: 10%;" class="center">Event ID</th>
+                                    <th style="width: 50%">Flag</th>
+                                    <th style="width: 40%;">Event</th>
+                                    <th style="width: 10%;" class="text-center">Value</th>
                                 </tr>
                             </thead>
                             <tr>
@@ -29,22 +29,22 @@
                                     {% endfor %}
                                 </td>
                                 <td>
-                                    {% if form.value.errors %}
-                                        {{ form.value(class='form-control is-invalid') }}
-                                    {% else %}
-                                        {{ form.value(class='form-control') }}
-                                    {% endif %}
-                                    {% for error in form.value.errors %}
-                                        <div class="invalid-feedback">{{ error }}</div>
-                                    {% endfor %}
-                                </td>
-                                <td>
                                     {% if form.event_id.errors %}
                                         {{ form.event_id(class='form-control is-invalid') }}
                                     {% else %}
                                         {{ form.event_id(class='form-control') }}
                                     {% endif %}
                                     {% for error in form.event_id.errors %}
+                                        <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% if form.value.errors %}
+                                        {{ form.value(class='form-control is-invalid') }}
+                                    {% else %}
+                                        {{ form.value(class='form-control') }}
+                                    {% endif %}
+                                    {% for error in form.value.errors %}
                                         <div class="invalid-feedback">{{ error }}</div>
                                     {% endfor %}
                                 </td>

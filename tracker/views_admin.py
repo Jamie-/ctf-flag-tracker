@@ -67,6 +67,7 @@ def admin_flags():
         flask.abort(404)
 
     form = forms.AdminFlagForm()
+    form.event_id.choices = [('', 'None')] + [(e.id, e.name) for e in event.get_all()]
     if form.validate_on_submit():
         if form.add.data:  # Add flag
             if flag.exists(form.flag.data):

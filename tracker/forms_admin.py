@@ -3,6 +3,14 @@ import wtforms
 import wtforms.validators as validators
 
 
+# Convert string to int unless string is '' in which case we want None
+def special_int(string):
+    if string == '':
+        return None
+    else:
+        return int(string)
+
+
 class AdminEventForm(flask_wtf.FlaskForm):
     id = wtforms.IntegerField('id', validators=[validators.DataRequired()])
     name = wtforms.StringField('name', validators=[validators.DataRequired()])
@@ -16,7 +24,7 @@ class AdminEventForm(flask_wtf.FlaskForm):
 class AdminFlagForm(flask_wtf.FlaskForm):
     flag = wtforms.StringField('flag', validators=[validators.DataRequired()])
     value = wtforms.IntegerField('value', validators=[validators.NumberRange(min=0, max=50)])
-    event_id = wtforms.IntegerField('event_id', validators=[validators.Optional()])
+    event_id = wtforms.SelectField('event_id', choices=('', 'None'), coerce=special_int, validators=[validators.Optional()])
     notes = wtforms.StringField('notes', widget=wtforms.widgets.TextArea())
     add = wtforms.SubmitField(label='Add')
     update = wtforms.SubmitField(label='Update')
