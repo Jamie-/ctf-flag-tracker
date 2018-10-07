@@ -16,7 +16,7 @@ else:
 
 
 # Setup logging
-log_formatter = logging.Formatter('%(asctime)s[%(levelname)8s][%(module)s] %(message)s', datefmt='[%m/%d/%Y][%I:%M:%S %p]')
+log_formatter = logging.Formatter('[%(asctime)s.%(msecs)03d][%(levelname)8s][%(module)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 root_logger = logging.getLogger()
 root_logger.setLevel(logging.getLevelName(app.config['LOG_LEVEL'].upper()))
 
