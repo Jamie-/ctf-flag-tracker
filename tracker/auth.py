@@ -9,6 +9,8 @@ logger = logging.getLogger(__name__)
 @tracker.lm.user_loader
 def load_user(id):
     user = db.query_db('SELECT * FROM users WHERE username = ?', [id], one=True)
+    if user is None:
+        return None
     return User(user['username'], user['displayname'], user['admin'])
 
 def create_user(username, display_name, password):
