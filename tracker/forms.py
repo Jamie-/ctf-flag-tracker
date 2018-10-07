@@ -40,3 +40,7 @@ class ChangePasswordForm(flask_wtf.FlaskForm):
     new_password = wtforms.PasswordField('new_password', validators=[validators.DataRequired(), validators.Length(min=8)])
     new_password2 = wtforms.PasswordField('new_password2', validators=[validators.DataRequired()])
     submit = wtforms.SubmitField(label='Update')
+
+
+class ConfirmPasswordForm(flask_wtf.FlaskForm):
+    password = wtforms.PasswordField('password', validators=[validators.DataRequired()])

@@ -226,3 +226,21 @@ def profile_user(username):
         return flask.render_template('profile_my.html', title=u.display_name, user=u, events=event.by_user(username), rank=rank.get_rank(u.get_global_score()), dn_form=dn_form, pwd_form=pwd_form)
 
     return flask.render_template('profile.html', title=u.display_name, user=u, events=event.by_user(username), rank=rank.get_rank(u.get_global_score()))
+
+
+@app.route('/profile/<username>/delete', methods=['GET', 'POST'])
+def profile_delete(username):
+    u = user.get_user(username.lower())
+    if flask_login.current_user.get_id() == u.username:
+        form = forms.ConfirmPasswordForm()
+        if form.validate_on_submit():
+            if auth.check_login(u.username, form.password.data):
+                flask_login.logout_user()
+                u.remove()
+                flask.flash('Account deleted.', 'success')
+                return flask.redirect('/')
+            else:
+                form.password.errors.append('Incorrect password.')
+        return flask.render_template('delete_account.html', title='Delete Account', user=u, form=form)
+    else:
+        flask.abort(404)

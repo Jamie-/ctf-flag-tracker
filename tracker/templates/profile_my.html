@@ -5,8 +5,8 @@
         {% include 'profile_data.html' %}
 
         <div class="row">
-            <div class="col col-6">
-                <div class="container">
+            <div class="col col-12 col-md-6">
+                <div class="container text-center">
                     <h3 class="bottom-space">Update Display Name</h3>
                     <form action="/profile/{{ user.username }}" method="post" name="profile">
                         {{ dn_form.hidden_tag() }}
@@ -25,10 +25,11 @@
                             {{ dn_form.submit(class='btn btn-primary') }}
                         </div>
                     </form>
+                    <a href="/profile/{{ user.username }}/delete" class="btn btn-danger">Delete Account</a>
                 </div>
             </div>
 
-            <div class="col col-6">
+            <div class="col col-12 col-md-6">
                 <div class="container">
                     <h3>Update Password</h3>
                     <form action="/profile/{{ user.username }}" method="post" name="profile">
