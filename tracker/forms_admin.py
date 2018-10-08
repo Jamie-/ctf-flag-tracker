@@ -37,3 +37,8 @@ class AdminRankForm(flask_wtf.FlaskForm):
     add = wtforms.SubmitField(label='Add')
     update = wtforms.SubmitField(label='Update')
     delete = wtforms.SubmitField(label='Delete')
+
+
+class AdminFlagBulkForm(flask_wtf.FlaskForm):
+    flags = wtforms.TextAreaField('flags', validators=[validators.DataRequired()])
+    submit = wtforms.SubmitField(label='Add')

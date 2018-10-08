@@ -292,6 +292,12 @@ div#flag {
     font-size: 2em;
 }
 
+#admin-flags-bulk code {
+    background: none;
+    color: inherit;
+    padding: 0;
+}
+
 /* PROFILE*/
 
 #profile h3 {

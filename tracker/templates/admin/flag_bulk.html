@@ -1,0 +1,33 @@
+{% extends "admin/template.html" %}
+
+{% block content %}
+    <div class="container" id="admin-flags-bulk">
+        <div class="row">
+            <div class="col">
+                <div class="container">
+                    <h1 class="text-center bottom-space">Bulk Flag Add</h1>
+
+                    <form action="/admin/flags/bulk" method="post" name="flag-bulk">
+                        {{ form.hidden_tag() }}
+                        <div class="form-group">
+                            {% if form.flags.errors %}
+                                {{ form.flags(class='form-control is-invalid', rows='10') }}
+                            {% else %}
+                                {{ form.flags(class='form-control', rows='10') }}
+                            {% endif %}
+                            <small class="form-text text-muted">Add flags one per line in the form <code>[flag],[value],[event],[description]</code></small>
+                            {% for error in form.flags.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group text-center">
+                            {{ form.submit(class='btn btn-success') }}
+                        </div>
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -7,6 +7,7 @@ import tracker.event as event
 import tracker.flag as flag
 import tracker.user as user
 import tracker.rank as rank
+import tracker.db as db
 
 logger = logging.getLogger(__name__)
 
@@ -96,6 +97,59 @@ def admin_flags():
             else:
                 flask.flash('Unable to delete flag as it does not exist.', 'danger')
     return flask.render_template('admin/flags.html', title='Flags - Admin', flags=flag.get_all(), form=form)
+
+
+@app.route('/admin/flags/bulk', methods=['GET', 'POST'])
+def admin_flags_bulk():
+    if not flask_login.current_user.is_authenticated:
+        flask.abort(404)
+    elif not flask_login.current_user.is_admin():
+        flask.abort(404)
+
+    def check_line(line):  # Check line is valid and return parsed data
+        # Check we have all the data
+        if line.count(',') < 3:
+            raise ValueError('Line is missing a comma.')
+        parts = line.split(',')
+        # Check flag value
+        try:
+            value = int(parts[1])
+            if value < 0 or value > 50:
+                raise ValueError()
+        except ValueError:
+            raise ValueError('Flag value must be an integer between 0 and 50.')
+        # Check event ID
+        if parts[2] == '':  # Handle flags not tied to an event
+            event_id = None
+        else:
+            try:
+                event_id = int(parts[2])
+                if event.get_event(event_id) == None:
+                    raise ValueError()
+            except ValueError:
+                raise ValueError('Event must correspond to an existing event ID.')
+        return parts[0], value, event_id, ''.join(parts[3:]).strip()
+
+    form = forms.AdminFlagBulkForm()
+    if form.validate_on_submit():
+        lines = form.flags.data.splitlines()
+        data = []
+        # Check list submitted
+        try:
+            for l in lines:
+                data.append(check_line(l))
+        except ValueError as e:
+            form.flags.errors.append(str(e))
+        # Add all flags
+        logger.info('^%s^ started a flag bulk add.', flask_login.current_user.get_id())
+        for e in data:
+            if not flag.exists(e[0]):
+                flag.add(e[0], e[1], e[2], e[3])
+            else:
+                flask.flash("Skipped flag '{}' as it already exists.".format(e[0]), 'warning')
+        logger.info('^%s^ bulk add complete.', flask_login.current_user.get_id())
+
+    return flask.render_template('admin/flag_bulk.html', title='Bulk Add Flags - Admin', form=form)
 
 
 @app.route('/admin/users', methods=['GET', 'POST'])
