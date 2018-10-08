@@ -78,13 +78,11 @@ def admin_flags():
             else:
                 flag.add(form.flag.data, form.value.data, form.event_id.data, form.notes.data)
                 flask.flash('Added flag successfully.', 'success')
-                logger.info("^%s^ added the flag '%s'.", flask_login.current_user.username, form.flag.data)
         elif form.update.data:  # Update flag
             if flag.exists(form.flag.data):
                 if (form.event_id.data is None) or (event.exists(form.event_id.data)):
                     flag.update(form.flag.data, form.value.data, form.event_id.data, form.notes.data)
                     flask.flash('Flag updated successfully.', 'success')
-                    logger.info("^%s^ updated the flag '%s'.", flask_login.current_user.username, form.flag.data)
                 else:
                     flask.flash('Unable to update flag, that event ID does not exist.', 'danger')
             else:
@@ -93,7 +91,6 @@ def admin_flags():
             if flag.exists(form.flag.data):
                 flag.delete(form.flag.data)
                 flask.flash('Flag deleted successfully.', 'success')
-                logger.info("^%s^ deleted the flag '%s'.", flask_login.current_user.username, form.flag.data)
             else:
                 flask.flash('Unable to delete flag as it does not exist.', 'danger')
     return flask.render_template('admin/flags.html', title='Flags - Admin', flags=flag.get_all(), form=form)

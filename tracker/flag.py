@@ -80,6 +80,8 @@ def add(flag_str, value, event_id, notes):
             INSERT INTO flags (flag, value, event_id, notes)
             VALUES (?, ?, ?, ?)
         ''', (flag, value, event_id, notes))
+    logger.info("^%s^ added the flag '%s'.", flask_login.current_user.get_id(), flag)
+
 
 # Update flag
 def update(flag, value, event_id, notes):
@@ -95,11 +97,15 @@ def update(flag, value, event_id, notes):
           SET value = ?, event_id = ?, notes = ?
           WHERE flag = ?
         ''', (value, event_id, notes, flag))
+    logger.info("^%s^ updated the flag '%s'.", flask_login.current_user.get_id(), flag)
+
 
 # Delete flag
 def delete(flag):
     db.query_db('DELETE FROM flags WHERE flag = ?', [flag])
     db.query_db('DELETE FROM flagsfound WHERE flag_id = ?', [flag])
+    logger.info("^%s^ deleted the flag '%s'.", flask_login.current_user.get_id(), flag)
+
 
 def get_flag(flag_str):
     flag = unwrap(flag_str)
