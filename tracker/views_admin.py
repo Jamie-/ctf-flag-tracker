@@ -7,7 +7,6 @@ import tracker.event as event
 import tracker.flag as flag
 import tracker.user as user
 import tracker.rank as rank
-import tracker.db as db
 
 logger = logging.getLogger(__name__)
 
