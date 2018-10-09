@@ -1,6 +1,7 @@
 import flask
 import flask_login
 import logging
+import functools
 from tracker import app
 import tracker.forms_admin as forms
 import tracker.event as event
@@ -11,22 +12,27 @@ import tracker.rank as rank
 logger = logging.getLogger(__name__)
 
 
+# Use as decorator to views that must have admin permissions to be accessed
+def admin_required(func):
+    @functools.wraps(func)
+    def decorated_function(*args, **kwargs):
+        if not flask_login.current_user.is_authenticated:
+            flask.abort(404)
+        elif not flask_login.current_user.is_admin():
+            flask.abort(404)
+        return func(*args, **kwargs)
+    return decorated_function
+
+
 @app.route('/admin')
+@admin_required
 def admin():
-    if not flask_login.current_user.is_authenticated:
-        flask.abort(404)
-    elif not flask_login.current_user.is_admin():
-        flask.abort(404)
     return flask.redirect('/admin/events', code=302)
 
 
 @app.route('/admin/events', methods=['GET', 'POST'])
+@admin_required
 def admin_events():
-    if not flask_login.current_user.is_authenticated:
-        flask.abort(404)
-    elif not flask_login.current_user.is_admin():
-        flask.abort(404)
-
     form = forms.AdminEventForm()
     if form.validate_on_submit():
         teams = 0
@@ -60,12 +66,8 @@ def admin_events():
 
 
 @app.route('/admin/flags', methods=['GET', 'POST'])
+@admin_required
 def admin_flags():
-    if not flask_login.current_user.is_authenticated:
-        flask.abort(404)
-    elif not flask_login.current_user.is_admin():
-        flask.abort(404)
-
     form = forms.AdminFlagForm()
     form.event_id.choices = [('', 'None')] + [(e.id, e.name) for e in event.get_all()]
     if form.validate_on_submit():
@@ -96,13 +98,10 @@ def admin_flags():
 
 
 @app.route('/admin/flags/bulk', methods=['GET', 'POST'])
+@admin_required
 def admin_flags_bulk():
-    if not flask_login.current_user.is_authenticated:
-        flask.abort(404)
-    elif not flask_login.current_user.is_admin():
-        flask.abort(404)
-
-    def check_line(line):  # Check line is valid and return parsed data
+    # Check bulk-add line is valid and return parsed data
+    def check_line(line):
         # Check we have all the data
         if line.count(',') < 3:
             raise ValueError('Line is missing a comma.')
@@ -149,11 +148,8 @@ def admin_flags_bulk():
 
 
 @app.route('/admin/users', methods=['GET', 'POST'])
+@admin_required
 def admin_users():
-    if not flask_login.current_user.is_authenticated:
-        flask.abort(404)
-    elif not flask_login.current_user.is_admin():
-        flask.abort(404)
 
     if flask.request.method == 'POST' and 'username' in flask.request.form and 'admin' in flask.request.form:
         username = flask.request.form['username']
@@ -174,12 +170,8 @@ def admin_users():
 
 
 @app.route('/admin/ranks', methods=['GET', 'POST'])
+@admin_required
 def admin_ranks():
-    if not flask_login.current_user.is_authenticated:
-        flask.abort(404)
-    elif not flask_login.current_user.is_admin():
-        flask.abort(404)
-
     form = forms.AdminRankForm()
     if form.validate_on_submit():
         if form.add.data:  # Add rank
@@ -207,12 +199,8 @@ def admin_ranks():
 
 
 @app.route('/admin/user/<string:user_id>')
+@admin_required
 def admin_user(user_id):
-    if not flask_login.current_user.is_authenticated:
-        flask.abort(404)
-    elif not flask_login.current_user.is_admin():
-        flask.abort(404)
-
     u = user.get_user(user_id)
     if u is not None:
         return flask.render_template('admin/user.html', title=user_id+' - Admin', user=u)
@@ -220,11 +208,8 @@ def admin_user(user_id):
 
 
 @app.route('/admin/user/<string:user_id>/remove', methods=['POST'])
+@admin_required
 def remove_user(user_id):
-    if not flask_login.current_user.is_authenticated:
-        flask.abort(404)
-    elif not flask_login.current_user.is_admin():
-        flask.abort(404)
     if 'remove' not in flask.request.form:
         flask.abort(400)
 
@@ -240,11 +225,8 @@ def remove_user(user_id):
 
 
 @app.route('/admin/user/<string:user_id>/removeflag', methods=['POST'])
+@admin_required
 def remove_flag(user_id):
-    if not flask_login.current_user.is_authenticated:
-        flask.abort(404)
-    elif not flask_login.current_user.is_admin():
-        flask.abort(404)
     if 'flag' not in flask.request.form:
         flask.abort(400)
 
