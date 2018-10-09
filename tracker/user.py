@@ -1,4 +1,5 @@
 import logging
+import flask_login
 import werkzeug.security
 import tracker.db as db
 
@@ -116,6 +117,10 @@ class User():
         db.query_db('DELETE FROM flagsfound WHERE user_id = ?', [self.username])
         db.query_db('DELETE FROM teamusers WHERE user_id = ?', [self.username])
         db.query_db('DELETE FROM users WHERE username = ?', [self.username])
+        if flask_login.current_user.get_id() == self.username:
+            logger.info('^%s^ deleted their own account.', self.username)
+        else:
+            logger.info('^%s^ deleted the user ^%s^.', flask_login.current_user.get_id(), self.username)
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -123,7 +128,7 @@ class User():
 
 # Check whether a user exists
 def exists(username):
-    u = db.query_db('SELECT * FROM users WHERE username = ?', [username])
+    u = db.query_db('SELECT * FROM users WHERE username = ?', [username.lower()])
     if u:
         return True
     else:
@@ -131,7 +136,7 @@ def exists(username):
 
 # Get a user from ID
 def get_user(username):
-    u = db.query_db('SELECT * FROM users WHERE username = ?', [username], one=True)
+    u = db.query_db('SELECT * FROM users WHERE username = ?', [username.lower()], one=True)
     if u is None:
         return None
     else:

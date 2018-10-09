@@ -1,6 +1,11 @@
+import logging
+import flask_login
 import tracker.db as db
 import tracker.leaderboard as leaderboard
 import tracker.team as team
+
+logger = logging.getLogger(__name__)
+
 
 class Event():
 
@@ -143,6 +148,8 @@ def create(id, name, teams, active):
         INSERT INTO events (id, name, has_teams, active)
         VALUES (?, ?, ?, ?)
     ''', (id, name, teams, active))
+    logger.info("^%s^ added an event %d:'%s'.", flask_login.current_user.username, id, name)
+
 
 # Update event
 def update(id, name, teams, active):
@@ -154,13 +161,18 @@ def update(id, name, teams, active):
         SET name = ?, has_teams = ?, active = ?
         WHERE id = ?
     ''', (name, teams, active, id))
+    logger.info("^%s^ updated the %d:'%s' event.", flask_login.current_user.username, id, name)
+
 
 # Delete event
 def delete(id):
+    event = get_event(id)
     db.query_db('''
         DELETE FROM events
         WHERE id = ?
     ''', [id])
+    logger.info("^%s^ deleted event %d:'%s'.", flask_login.current_user.username, id, event.name)
+
 
 #TODO Not happy with this being here, it ideally needs to be in user: u.get_events(), but this causes loop on event import.
 # Get list of events attended by user (by looking at flags found)

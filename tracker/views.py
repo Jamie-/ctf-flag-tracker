@@ -26,14 +26,13 @@ def route_register():
         return flask.redirect('/')
     form = forms.RegisterForm()
     if form.validate_on_submit():
-        if user.exists(form.username.data.lower()):
+        if user.exists(form.username.data):
             form.username.errors.append('That username is already taken, please pick another one.')
             return flask.render_template('register.html', title='Register', form=form)
         if form.password.data != form.password2.data:
             form.password2.errors.append('Repeat password does not match.')
             return flask.render_template('register.html', title='Register', form=form)
-        auth.create_user(form.username.data.lower(), form.name.data, form.password.data)
-        logger.info("User account ^%s^ created with display name '%s'.", form.username.data.lower(), form.name.data)
+        auth.create_user(form.username.data, form.name.data, form.password.data)
         flask.flash('User account created successfully.', 'success')
         return flask.redirect('/login')
     return flask.render_template('register.html', title='Register', form=form)
@@ -46,7 +45,7 @@ def login():
         return flask.redirect('/')
     form = forms.LoginForm()
     if form.validate_on_submit():
-        u = auth.check_login(form.username.data.lower(), form.password.data)
+        u = auth.check_login(form.username.data, form.password.data)
         if u:
             flask_login.login_user(u)
             flask.flash('Welcome back, %s.' % flask.escape(u.display_name), 'success')
@@ -230,13 +229,13 @@ def profile_user(username):
 
 @app.route('/profile/<username>/delete', methods=['GET', 'POST'])
 def profile_delete(username):
-    u = user.get_user(username.lower())
+    u = user.get_user(username)
     if flask_login.current_user.get_id() == u.username:
         form = forms.ConfirmPasswordForm()
         if form.validate_on_submit():
             if auth.check_login(u.username, form.password.data):
+                u.remove()  # Must be called before logout to allow event to be logged correctly
                 flask_login.logout_user()
-                u.remove()
                 flask.flash('Account deleted.', 'success')
                 return flask.redirect('/')
             else:
