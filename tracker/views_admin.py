@@ -141,7 +141,7 @@ def admin_flags_bulk():
                     flag_count += 1
                 else:
                     flask.flash("Skipped flag '{}' as it already exists.".format(e[0]), 'warning')
-            logger.info('^%s^ bulk add complete, added %d flags.', flask_login.current_user.get_id()), flag_count
+            logger.info('^%s^ bulk add complete, added %d flags.', flask_login.current_user.get_id(), flag_count)
             if flag_count > 0:
                 flask.flash('Added {} flags successfully.'.format(flag_count), 'success')
         except ValueError as e:
