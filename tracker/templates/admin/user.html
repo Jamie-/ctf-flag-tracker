@@ -18,7 +18,7 @@
                         </thead>
                         {% for f in user.get_flags() %}
                             <tr>
-                                <td>{{ f.flag }}</td>
+                                <td title="{{ f.notes }}">{{ f.flag }}</td>
                                 <td class="center">{{ f.value }}</td>
                                 <td class="center">{{ f.event_id }}</td>
                                 <td class="center">

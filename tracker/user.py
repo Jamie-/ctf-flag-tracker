@@ -93,7 +93,7 @@ class User():
     # Get flags submitted by user
     def get_flags(self):
         return db.query_db('''
-            SELECT f.flag, f.value, f.event_id FROM flags f
+            SELECT f.flag, f.value, f.event_id, f.notes FROM flags f
             LEFT JOIN flagsfound ff ON f.flag = ff.flag_id
             WHERE ff.user_id = ?
         ''', [self.username])
