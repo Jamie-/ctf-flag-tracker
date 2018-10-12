@@ -131,16 +131,21 @@ def admin_flags_bulk():
         try:
             for l in lines:
                 data.append(check_line(l))
+
+            # Add all flags
+            logger.info('^%s^ started a flag bulk add.', flask_login.current_user.get_id())
+            flag_count = 0
+            for e in data:
+                if not flag.exists(e[0]):
+                    flag.add(e[0], e[1], e[2], e[3])
+                    flag_count += 1
+                else:
+                    flask.flash("Skipped flag '{}' as it already exists.".format(e[0]), 'warning')
+            logger.info('^%s^ bulk add complete, added %d flags.', flask_login.current_user.get_id()), flag_count
+            if flag_count > 0:
+                flask.flash('Added {} flags successfully.'.format(flag_count), 'success')
         except ValueError as e:
             form.flags.errors.append(str(e))
-        # Add all flags
-        logger.info('^%s^ started a flag bulk add.', flask_login.current_user.get_id())
-        for e in data:
-            if not flag.exists(e[0]):
-                flag.add(e[0], e[1], e[2], e[3])
-            else:
-                flask.flash("Skipped flag '{}' as it already exists.".format(e[0]), 'warning')
-        logger.info('^%s^ bulk add complete.', flask_login.current_user.get_id())
 
     return flask.render_template('admin/flag_bulk.html', title='Bulk Add Flags - Admin', form=form)
 
