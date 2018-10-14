@@ -92,11 +92,17 @@ class User():
 
     # Get flags submitted by user
     def get_flags(self):
-        return db.query_db('''
+        import tracker.event as event
+        import tracker.flag as flag
+        res = db.query_db('''
             SELECT f.flag, f.value, f.event_id, f.notes FROM flags f
             LEFT JOIN flagsfound ff ON f.flag = ff.flag_id
             WHERE ff.user_id = ?
         ''', [self.username])
+        flags = []
+        for f in res:
+            flags.append(flag.Flag(f['flag'], f['value'], event=event.get_event(f['event_id']), notes=f['notes']))
+        return flags
 
     # Check if user is admin
     def is_admin(self):
