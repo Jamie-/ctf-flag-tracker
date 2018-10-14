@@ -1,7 +1,9 @@
 import logging
+import hashlib
 import re
 import flask_login
 import tracker.db as db
+import tracker.user as user
 import tracker.event as event
 
 logger = logging.getLogger(__name__)
@@ -14,6 +16,10 @@ class Flag():
         self.event = event
         self.notes = notes
 
+    # Generate (URL safe) hash for flag
+    def compute_hash(self):
+        return _compute_hash(self.flag)
+
     # Get number of people who found this flag
     def found_count(self):
         return db.query_db('''
@@ -22,11 +28,27 @@ class Flag():
             WHERE flag_id = ?
         ''', [self.flag], one=True)[0]
 
+    def get_date_found(self):
+        return '-'
+
     # Get name of event flag is part of (or None if not part of an event)
     def get_event_name(self):
         if self.event == None:
             return None
-        return db.query_db('SELECT * FROM events WHERE id = ?', [self.event], one=True)['name']
+        return db.query_db('SELECT * FROM events WHERE id = ?', [self.event.id], one=True)['name']
+
+    # Get list of users who found this flag
+    def get_users_found(self):
+        res = db.query_db('SELECT * FROM flagsfound WHERE flag_id = ?', [self.flag])
+        users = []
+        for u in res:
+            users.append(user.get_user(u['user_id']))
+        return users
+
+
+# Generate (URL safe) hash for flag
+def _compute_hash(flag):
+    return hashlib.sha256(flag.encode('utf-8')).hexdigest()[:16]
 
 def unwrap(flag_str):  # If flag is wrapped in flag{...}, strip it off
     flag_pattern = re.compile('^flag{.+}$')
@@ -72,14 +94,14 @@ def add(flag_str, value, event_id, notes):
     flag = unwrap(flag_str)  # Unwrap flag notation
     if event_id is None:
         db.query_db('''
-          INSERT INTO flags (flag, value, notes)
-          VALUES (?, ?, ?)
-        ''', (flag, value, notes))
+          INSERT INTO flags (flag, hash, value, notes)
+          VALUES (?, ?, ?, ?)
+        ''', (flag, _compute_hash(flag), value, notes))
     else:
         db.query_db('''
-            INSERT INTO flags (flag, value, event_id, notes)
-            VALUES (?, ?, ?, ?)
-        ''', (flag, value, event_id, notes))
+            INSERT INTO flags (flag, hash, value, event_id, notes)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (flag, _compute_hash(flag), value, event_id, notes))
     logger.info("^%s^ added the flag '%s'.", flask_login.current_user.get_id(), flag)
 
 
@@ -117,11 +139,20 @@ def get_flag(flag_str):
             return Flag(f['flag'], f['value'], event.get_event(f['event_id']), f['notes'])
         return Flag(f['flag'], f['value'], notes=f['notes'])
 
+
+# Get flag by hash
+def get_by_hash(hash):
+    f = db.query_db('SELECT * FROM flags WHERE hash = ?', [hash], one=True)
+    if f is None:
+        return None
+    return get_flag(f['flag'])
+
+
 # Get list of all flags
 def get_all():
     flags = db.query_db('SELECT * FROM flags')
     flist = []
     if flags is not None:
         for f in flags:
-            flist.append(Flag(f['flag'], f['value'], f['event_id'], f['notes']))
+            flist.append(Flag(f['flag'], f['value'], event.get_event(f['event_id']), f['notes']))
     return flist

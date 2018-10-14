@@ -89,10 +89,10 @@
                                 {% if f.event is none %}
                                     <td class="edit-event">-</td>
                                 {% else %}
-                                    <td>{{ f.get_event_name() }} <span class="edit-event text-muted">({{ f.event }})</span></td>
+                                    <td>{{ f.event.name }} <span class="edit-event text-muted">({{ f.event.id }})</span></td>
                                 {% endif %}
 
-                                <td class="center">{{ f.found_count() }}</td>
+                                <td class="center"><a href="/admin/flag/{{ f.compute_hash() }}">{{ f.found_count() }}</a></td>
                                 <td class="center edit-value">{{ f.value }}</td>
                             </tr>
                         {% endfor %}

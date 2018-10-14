@@ -1,0 +1,50 @@
+{% extends "admin/template.html" %}
+
+{% block content %}
+    <div class="container" id="admin-flag-users">
+        <div class="row">
+            <div class="col">
+                <div class="container">
+                    <h1 class="text-center bottom-space">{{ flag.flag }}</h1>
+                    {% if flag.get_event_name() is not none %}
+                        <h4 class="text-center"><span class="font-weight-bold">Event:</span> {{ flag.event.name }} <span class="text-muted">({{ flag.event.id }})</span></h4>
+                    {% endif %}
+                    <p><span class="font-weight-bold">Notes:</span> {{ flag.notes }}</p>
+
+                    <table class="table table-striped table-inverse">
+                        <thead>
+                            <tr>
+                                <th style="width: 45%;">User ID</th>
+                                <th style="width: 45%;">Timestamp</th>
+                                <th style="width: 10%;" class="center">Remove</th>
+                            </tr>
+                        </thead>
+                        {% for u in flag.get_users_found() %}
+                            <tr>
+                                <td>{{ u.username }}</td>
+                                <td>
+                                    {% if flag.get_date_found() is not none %}{{ flag.get_date_found() }}{% else %}-{% endif %}
+                                </td>
+                                <td class="center">
+                                    <button onclick="remove('{{ u.username }}')" class="btn btn-danger btn-sm">&times;</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+        function remove(user) {
+            var result = window.confirm("Are you sure you want to remove this flag from '" + user.toString() + "'?");
+            if (result) {
+                $.post("/admin/flag/{{ flag.compute_hash() }}/removeuser", {'user': user.toString()}, function () {
+                    location.reload();
+                });
+            }
+        }
+    </script>
+{% endblock %}

@@ -150,6 +150,28 @@ def admin_flags_bulk():
     return flask.render_template('admin/flag_bulk.html', title='Bulk Add Flags - Admin', form=form)
 
 
+@app.route('/admin/flag/<string:flag_hash>')
+@admin_required
+def admin_flag(flag_hash):
+    f = flag.get_by_hash(flag_hash)
+    return flask.render_template('admin/flag_users.html', title='Flag Info - Admin', flag=f)  # TODO add delete button functionality
+
+
+@app.route('/admin/flag/<string:flag_hash>/removeuser', methods=['POST'])
+@admin_required
+def admin_remove_flag_user(flag_hash):
+    if 'user' not in flask.request.form:
+        flask.abort(400)
+
+    f = flag.get_by_hash(flag_hash)
+    u = user.get_user(flask.request.form['user'])
+    if u is not None and f is not None:
+        flag.remove_flag(f.flag, u.username)
+        flask.flash('Removed flag from user successfully.', 'success')
+
+    return flask.redirect('/admin/flag/{}'.format(flag_hash))
+
+
 @app.route('/admin/users', methods=['GET', 'POST'])
 @admin_required
 def admin_users():
