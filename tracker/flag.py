@@ -55,6 +55,13 @@ class Flag():
             users.append(user.get_user(u['user_id']))
         return users
 
+    # Get owner of flag if specified
+    def get_owner(self):
+        res = db.query_db('SELECT * FROM flags WHERE flag = ?', [self.flag], one=True)
+        if res['user'] is None:
+            return None
+        return user.get_user(res['user'])
+
 
 # Generate (URL safe) hash for flag
 def _compute_hash(flag):
@@ -101,18 +108,18 @@ def exists(flag):
     return True
 
 # Add flag
-def add(flag_str, value, event_id, notes):
+def add(flag_str, value, event_id, notes, user_id):
     flag = unwrap(flag_str)  # Unwrap flag notation
     if event_id is None:
         db.query_db('''
-          INSERT INTO flags (flag, hash, value, notes)
-          VALUES (?, ?, ?, ?)
-        ''', (flag, _compute_hash(flag), value, notes))
+          INSERT INTO flags (flag, hash, value, notes, user)
+          VALUES (?, ?, ?, ?, ?)
+        ''', (flag, _compute_hash(flag), value, notes, user_id))
     else:
         db.query_db('''
-            INSERT INTO flags (flag, hash, value, event_id, notes)
-            VALUES (?, ?, ?, ?, ?)
-        ''', (flag, _compute_hash(flag), value, event_id, notes))
+            INSERT INTO flags (flag, hash, value, event_id, notes, user)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (flag, _compute_hash(flag), value, event_id, notes, user_id))
     logger.info("^%s^ added the flag '%s'.", flask_login.current_user.get_id(), flag)
 
 
@@ -160,10 +167,13 @@ def get_by_hash(hash):
 
 
 # Get list of all flags
-def get_all():
-    flags = db.query_db('SELECT * FROM flags')
-    flist = []
-    if flags is not None:
-        for f in flags:
-            flist.append(Flag(f['flag'], f['value'], event.get_event(f['event_id']), f['notes']))
-    return flist
+def get_all(user=None):
+    if user is None:
+        res = db.query_db('SELECT * FROM flags')
+    else:
+        res = db.query_db('SELECT * FROM flags WHERE user = ?', [user.get_id()])
+    flags = []
+    if res is not None:
+        for f in res:
+            flags.append(Flag(f['flag'], f['value'], event.get_event(f['event_id']), f['notes']))
+    return flags

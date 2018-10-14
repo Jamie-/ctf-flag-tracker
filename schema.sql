@@ -1,10 +1,16 @@
-CREATE TABLE IF NOT EXISTS users(username TEXT PRIMARY KEY, displayname TEXT NOT NULL, password TEXT NOT NULL, admin BOOLEAN);
+CREATE TABLE IF NOT EXISTS users(
+  username TEXT PRIMARY KEY,
+  displayname TEXT NOT NULL,
+  password TEXT NOT NULL,
+  permission INTEGER
+);
 CREATE TABLE IF NOT EXISTS flags(
   flag TEXT PRIMARY KEY,
   hash TEXT NOT NULL,
   value INTEGER NOT NULL,
   event_id INTEGER REFERENCES events(id),
-  notes TEXT
+  notes TEXT,
+  user TEXT REFERENCES users(username)
 );
 CREATE TABLE IF NOT EXISTS flagsfound(
   flag_id TEXT NOT NULL REFERENCES flags(flag),

@@ -12,7 +12,10 @@ def load_user(id):
     user = db.query_db('SELECT * FROM users WHERE username = ?', [id], one=True)
     if user is None:
         return None
-    return User(user['username'], user['displayname'], user['admin'])
+    perm = user['permission']
+    if perm is None:
+        perm = 0
+    return User(user['username'], user['displayname'], perm)
 
 
 def create_user(username_str, display_name, password):

@@ -13,6 +13,7 @@ if 'VIEW_CONFIG' in app.config:
     app.jinja_env.globals['VIEW_CONFIG'] = app.config['VIEW_CONFIG']  # Allow view config access in templates
 else:
     app.jinja_env.globals['VIEW_CONFIG'] = {}
+app.jinja_env.globals['flask_login'] = flask_login
 
 
 # Setup logging

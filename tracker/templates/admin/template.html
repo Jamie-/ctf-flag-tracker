@@ -24,9 +24,11 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/admin/flags">Flags</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/admin/users">Users</a>
-                        </li>
+                        {% if flask_login.current_user.is_super_admin() %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin/users">Users</a>
+                            </li>
+                        {% endif %}
                         <li class="nav-item">
                             <a class="nav-link" href="/admin/ranks">Ranks</a>
                         </li>

@@ -23,6 +23,19 @@ def admin_required(func):
         return func(*args, **kwargs)
     return decorated_function
 
+# Use as decorator to views that must have certain permission level to be accessed
+def perm_required(perm):
+    def decorator(func):
+        @functools.wraps(func)
+        def decorated_function(*args, **kwargs):
+            if not flask_login.current_user.is_authenticated:
+                flask.abort(404)
+            elif flask_login.current_user.perm < perm:
+                flask.abort(404)
+            return func(*args, **kwargs)
+        return decorated_function
+    return decorator
+
 
 @app.route('/admin')
 @admin_required
@@ -34,6 +47,10 @@ def admin():
 @admin_required
 def admin_events():
     form = forms.AdminEventForm()
+    view_only = flask_login.current_user.perm < 3
+    # Disallow modification for users with perms < 3
+    if flask.request.method == 'POST' and view_only:
+        return flask.abort(405)
     if form.validate_on_submit():
         teams = 0
         active = 0
@@ -60,11 +77,11 @@ def admin_events():
                 flask.flash('Event deleted successfully.', 'success')
             else:
                 flask.flash('Unable to delete event as it does not exist.', 'danger')
-    return flask.render_template('admin/events.html', title='Events - Admin', events=event.get_all(), form=form)
+    return flask.render_template('admin/events.html', title='Events - Admin', events=event.get_all(), form=form, view_only=view_only)
 
 
 @app.route('/admin/flags', methods=['GET', 'POST'])
-@admin_required
+@perm_required(2)
 def admin_flags():
     form = forms.AdminFlagForm()
     form.event_id.choices = [('', 'None')] + [(e.id, e.name) for e in event.get_all()]
@@ -75,10 +92,17 @@ def admin_flags():
             elif (form.event_id.data is not None) and not (event.exists(form.event_id.data)):
                 flask.flash('Unable to add flag, that event ID does not exist.', 'danger')
             else:
-                flag.add(form.flag.data, form.value.data, form.event_id.data, form.notes.data)
+                flag.add(form.flag.data, form.value.data, form.event_id.data, form.notes.data, flask_login.current_user.get_id())
                 flask.flash('Added flag successfully.', 'success')
         elif form.update.data:  # Update flag
             if flag.exists(form.flag.data):
+                f = flag.get_flag(form.flag.data)
+                # Check perms
+                if f.get_owner() is None and not flask_login.current_user.is_super_admin():
+                    flask.abort(403)
+                if f.get_owner() is not None and f.get_owner().get_id() != flask_login.current_user.get_id() and flask_login.current_user.perm != 10:
+                    flask.abort(403)
+
                 if (form.event_id.data is None) or (event.exists(form.event_id.data)):
                     flag.update(form.flag.data, form.value.data, form.event_id.data, form.notes.data)
                     flask.flash('Flag updated successfully.', 'success')
@@ -88,15 +112,25 @@ def admin_flags():
                 flask.flash('Unable to update flag as it does not exist.', 'danger')
         elif form.delete.data:  # Delete flag
             if flag.exists(form.flag.data):
+                f = flag.get_flag(form.flag.data)
+                # Check perms
+                if f.get_owner() is None and not flask_login.current_user.is_super_admin():
+                    flask.abort(403)
+                if f.get_owner() is not None and f.get_owner().get_id() != flask_login.current_user.get_id() and flask_login.current_user.perm != 10:
+                    flask.abort(403)
+
                 flag.delete(form.flag.data)
                 flask.flash('Flag deleted successfully.', 'success')
             else:
                 flask.flash('Unable to delete flag as it does not exist.', 'danger')
-    return flask.render_template('admin/flags.html', title='Flags - Admin', flags=flag.get_all(), form=form)
+    if flask_login.current_user.perm == 10:  # Show super admins all flags
+        return flask.render_template('admin/flags.html', title='Flags - Admin', flags=flag.get_all(), form=form)
+    return flask.render_template('admin/flags.html', title='Flags - Admin', flags=flag.get_all(user=flask_login.current_user), form=form)
+
 
 
 @app.route('/admin/flags/bulk', methods=['GET', 'POST'])
-@admin_required
+@perm_required(2)
 def admin_flags_bulk():
     # Check bulk-add line is valid and return parsed data
     def check_line(line):
@@ -137,7 +171,7 @@ def admin_flags_bulk():
             flag_count = 0
             for e in data:
                 if not flag.exists(e[0]):
-                    flag.add(e[0], e[1], e[2], e[3])
+                    flag.add(e[0], e[1], e[2], e[3], flask_login.current_user.get_id())
                     flag_count += 1
                 else:
                     flask.flash("Skipped flag '{}' as it already exists.".format(e[0]), 'warning')
@@ -151,14 +185,14 @@ def admin_flags_bulk():
 
 
 @app.route('/admin/flag/<string:flag_hash>')
-@admin_required
+@perm_required(10)
 def admin_flag(flag_hash):
     f = flag.get_by_hash(flag_hash)
     return flask.render_template('admin/flag_users.html', title='Flag Info - Admin', flag=f)  # TODO add delete button functionality
 
 
 @app.route('/admin/flag/<string:flag_hash>/removeuser', methods=['POST'])
-@admin_required
+@perm_required(10)
 def admin_remove_flag_user(flag_hash):
     if 'user' not in flask.request.form:
         flask.abort(400)
@@ -173,21 +207,21 @@ def admin_remove_flag_user(flag_hash):
 
 
 @app.route('/admin/users', methods=['GET', 'POST'])
-@admin_required
+@perm_required(10)
 def admin_users():
-
-    if flask.request.method == 'POST' and 'username' in flask.request.form and 'admin' in flask.request.form:
+    if flask.request.method == 'POST' and 'username' in flask.request.form and 'perm' in flask.request.form:
         username = flask.request.form['username']
-        admin = False
-        if flask.request.form['admin'] == 'true':  # Handle weird jQuery POST
-            admin = True
+        try:
+            perm = int(flask.request.form['perm'])
+        except ValueError:
+            flask.abort(400)
+            return  # Keep parser happy (flask.abort handles abort for us)
+        if perm < 0 or perm > 10:
+            flask.abort(400)
 
         if user.exists(username):
-            user.get_user(username).set_admin(admin)
-            if admin:
-                logger.info('^%s^ granted admin privileges to ^%s^.', flask_login.current_user.username, username)
-            else:
-                logger.info('^%s^ revoked admin privileges from ^%s^.', flask_login.current_user.username, username)
+            user.get_user(username).set_perm(perm)
+            logger.info('^%s^ set perm to %s for ^%s^.', flask_login.current_user.username, perm, username)
             flask.flash('User updated successfully.', 'success')
         else:
             flask.flash('Unable to update user privileges, that username does not exist.', 'danger')
@@ -198,6 +232,10 @@ def admin_users():
 @admin_required
 def admin_ranks():
     form = forms.AdminRankForm()
+    view_only = flask_login.current_user.perm < 3
+    # Disallow modification for users with perms < 3
+    if flask.request.method == 'POST' and view_only:
+        return flask.abort(405)
     if form.validate_on_submit():
         if form.add.data:  # Add rank
             if rank.exists(form.rank.data):
@@ -217,11 +255,11 @@ def admin_ranks():
                 flask.flash('Rank deleted successfully.', 'success')
             else:
                 flask.flash("Unable to delete that rank, it doesn't exist.", 'danger')
-    return flask.render_template('admin/ranks.html', title='Ranks - Admin', ranks=rank.get_all(), form=form)
+    return flask.render_template('admin/ranks.html', title='Ranks - Admin', ranks=rank.get_all(), form=form, view_only=view_only)
 
 
 @app.route('/admin/user/<string:user_id>')
-@admin_required
+@perm_required(10)
 def admin_user(user_id):
     u = user.get_user(user_id)
     if u is not None:
@@ -230,7 +268,7 @@ def admin_user(user_id):
 
 
 @app.route('/admin/user/<string:user_id>/remove', methods=['POST'])
-@admin_required
+@perm_required(10)
 def remove_user(user_id):
     if 'remove' not in flask.request.form:
         flask.abort(400)
@@ -246,7 +284,7 @@ def remove_user(user_id):
 
 
 @app.route('/admin/user/<string:user_id>/removeflag', methods=['POST'])
-@admin_required
+@perm_required(10)
 def remove_flag(user_id):
     if 'flag' not in flask.request.form:
         flask.abort(400)

@@ -7,7 +7,7 @@ os.chdir('$tracker_path')
 import tracker
 with tracker.app.app_context():
     u = tracker.user.get_user('$1')
-    u.set_admin(True)
+    u.set_perm(10)
 EOF
     )
     RES=$?
@@ -16,13 +16,13 @@ else
 import tracker
 with tracker.app.app_context():
     u = tracker.user.get_user('$1')
-    u.set_admin(True)
+    u.set_perm(10)
 EOF
     )
     RES=$?
 fi
 if [ "$RES" -eq 0 ]; then
-    echo "Set admin privs for $1"
+    echo "Set super-admin privs for $1"
 else
-    echo "Failed to set admin privs for $1"
+    echo "Failed to set super-admin privs for $1"
 fi

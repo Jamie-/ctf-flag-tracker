@@ -8,13 +8,10 @@ logger = logging.getLogger(__name__)
 
 class User():
 
-    def __init__(self, username, display_name, admin):
+    def __init__(self, username, display_name, perm):
         self.username = username
         self.display_name = display_name
-        if admin is not None and (admin or admin == 1):
-            self.admin = 1
-        else:
-            self.admin = 0
+        self.perm = perm
 
     ## FLASK_LOGIN #################
     def is_authenticated(self):
@@ -106,17 +103,22 @@ class User():
 
     # Check if user is admin
     def is_admin(self):
-        u = db.query_db('SELECT * FROM users WHERE username = ?', [self.username], one=True)
-        if u['admin'] is 1:
-            return True
-        return False
+        return self.perm >= 2
 
-    # Set user admin privs
-    def set_admin(self, admin):
-        if admin:
-            db.query_db('UPDATE users SET admin = 1 WHERE username = ?', [self.username])
-        else:
-            db.query_db('UPDATE users SET admin = 0 WHERE username = ?', [self.username])
+    # Check if user is super-admin
+    def is_super_admin(self):
+        return self.perm == 10
+
+    # Set user's permission
+    def set_perm(self, perm):
+        if perm is None:
+            db.query_db('UPDATE users SET permission = NULL WHERE username = ?', [self.username])
+            self.perm = None
+            return
+        if perm < 0 or perm > 10:
+            raise ValueError('Permission value out of range (0-10).')
+        db.query_db('UPDATE users SET permission = ? WHERE username = ?', (perm, self.username))
+        self.perm = perm
 
     # Remove user and all data
     def remove(self):
@@ -146,13 +148,13 @@ def get_user(username):
     if u is None:
         return None
     else:
-        return User(u['username'], u['displayname'], u['admin'])
+        return User(u['username'], u['displayname'], u['permission'])
 
 # Get list of all users
 def get_all(sort_asc=False, admin_first=False):
     query_string = 'SELECT * FROM users'
     if admin_first:
-        query_string += ' ORDER BY admin DESC'
+        query_string += ' ORDER BY permission DESC'
         if sort_asc:
             query_string += ', username ASC'
     elif sort_asc:
@@ -160,5 +162,5 @@ def get_all(sort_asc=False, admin_first=False):
     users = db.query_db(query_string)
     ulist = []
     for u in users:
-        ulist.append(User(u['username'], u['displayname'], u['admin']))
+        ulist.append(User(u['username'], u['displayname'], u['permission']))
     return ulist

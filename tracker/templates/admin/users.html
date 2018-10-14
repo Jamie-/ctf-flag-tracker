@@ -10,10 +10,10 @@
                     <table class="table table-striped table-inverse vertical-center">
                         <thead>
                             <tr>
-                                <th style="width: 35%;">ID</th>
-                                <th style="width: 35%;">Name</th>
-                                <th style="width: 10%;" class="center">Admin?</th>
-                                <th style="width: 10%;" class="center">Remove</th>
+                                <th style="width: 30%;">ID</th>
+                                <th style="width: 45%;">Name</th>
+                                <th style="width: 25%;">Permission</th>
+                                <th class="center"></th>
                             </tr>
                         </thead>
                         {% for u in users %}
@@ -22,8 +22,13 @@
                                     <a href="/admin/user/{{ u.username }}">{{ u.username }}</a>
                                 </td>
                                 <td>{{ u.display_name }}</td>
-                                <td class="center">
-                                    <input class="form-control edit-admin" type="checkbox" data-username="{{ u.username }}" {% if u.is_admin() %}checked{% endif %}>
+                                <td>
+                                    <select class="form-control" data-user="{{ u.username }}">
+                                        <option value="0" {% if u.perm == 0 or u.perm is none %}selected{% endif %}>None</option>
+                                        <option value="2" {% if u.perm == 2 %}selected{% endif %}>Read Only</option>
+                                        <option value="3" {% if u.perm == 3 %}selected{% endif %}>Admin</option>
+                                        <option value="10" {% if u.perm == 10%}selected{% endif %}>Super Admin</option>
+                                    </select>
                                 </td>
                                 <td class="center">
                                     <button type="submit" onclick="deleteUser('{{ u.username }}')" class="btn btn-danger btn-sm">&times;</button>
@@ -39,10 +44,10 @@
 {% endblock %}
 {% block script %}
     <script>
-        $('input.edit-admin').on('change', function() {
-            $.post('/admin/users', {'username': $(this).data('username'), 'admin': $(this).is(':checked')}, function () {
+        $('select').on('change', function() {
+            $.post('/admin/users', {'username': $(this).data('user'), 'perm': $(this).val()}, function () {
                 console.log('Updated OK');
-            })
+            });
         });
 
         function deleteUser(username) {
