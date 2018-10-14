@@ -21,7 +21,7 @@
                             <tr>
                                 <td title="{{ f.notes }}">{{ f.flag }}</td>
                                 <td>
-                                    {% if f.get_date_found() is not none %}{{ f.get_date_found() }}{% else %}-{% endif %}
+                                    {% if f.get_timestamp(user.username) is not none %}{{ f.get_timestamp_str(user.username) }}{% else %}-{% endif %}
                                 </td>
                                 <td class="center">{{ f.value }}</td>
                                 {% if f.event is not none %}

@@ -1,5 +1,6 @@
 import logging
 import hashlib
+import datetime
 import re
 import flask_login
 import tracker.db as db
@@ -28,8 +29,17 @@ class Flag():
             WHERE flag_id = ?
         ''', [self.flag], one=True)[0]
 
-    def get_date_found(self):
-        return '-'
+    def get_timestamp(self, username):
+        res = db.query_db('SELECT * FROM flagsfound WHERE flag_id = ? AND user_id = ?', (self.flag, username), one=True)
+        if res is None or res['timestamp'] is None:
+            return None
+        return datetime.datetime.strptime(res['timestamp'], '%Y-%m-%d %H:%M:%S')
+
+    def get_timestamp_str(self, username):
+        t = self.get_timestamp(username)
+        if t is None:
+            return None
+        return t.strftime('%d-%m-%Y %H:%M:%S UTC')
 
     # Get name of event flag is part of (or None if not part of an event)
     def get_event_name(self):
@@ -73,7 +83,8 @@ def check(flag_str, user):
         return None
 
     # If above complete, mark user as having found the flag
-    db.query_db('INSERT INTO flagsfound (flag_id, user_id) VALUES (?, ?)', (flag, user))
+    ts = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    db.query_db('INSERT INTO flagsfound (flag_id, user_id, timestamp) VALUES (?, ?, ?)', (flag, user, ts))
     logger.info("^%s^ found flag '%s'.", user, flag)
     return True
 

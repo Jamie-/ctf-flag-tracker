@@ -23,7 +23,7 @@
                             <tr>
                                 <td>{{ u.username }}</td>
                                 <td>
-                                    {% if flag.get_date_found() is not none %}{{ flag.get_date_found() }}{% else %}-{% endif %}
+                                    {% if flag.get_timestamp(u.username) is not none %}{{ flag.get_timestamp_str(u.username) }}{% else %}-{% endif %}
                                 </td>
                                 <td class="center">
                                     <button onclick="remove('{{ u.username }}')" class="btn btn-danger btn-sm">&times;</button>

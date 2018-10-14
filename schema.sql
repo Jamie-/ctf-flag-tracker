@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS flags(
 CREATE TABLE IF NOT EXISTS flagsfound(
   flag_id TEXT NOT NULL REFERENCES flags(flag),
   user_id TEXT NOT NULL REFERENCES users(username),
+  timestamp TEXT,
   PRIMARY KEY (flag_id, user_id)
 );
 CREATE TABLE IF NOT EXISTS events(id INTEGER PRIMARY KEY, name TEXT NOT NULL, active BOOLEAN, has_teams BOOLEAN);
