@@ -277,8 +277,12 @@ def remove_user(user_id):
         flask.flash("You can't delete your own user here, you need to go to your profile page.", 'danger')
     else:
         u = user.get_user(user_id)
-        u.remove()
-        flask.flash('User removed.', 'success')
+        if u:
+            u.remove()
+            flask.flash('User removed.', 'success')
+            logger.info('^%s^ deleted the user ^%s^.', flask_login.current_user.get_id(), user_id)
+        else:
+            flask.abort(404)
 
     return flask.redirect('/admin/users')
 
@@ -289,7 +293,7 @@ def remove_flag(user_id):
     if 'flag' not in flask.request.form:
         flask.abort(400)
 
-    flag.remove_flag(flask.request.form['flag'], user_id)
+    flag.remove_flag(flask.request.form['flag'], user_id.lower())
     flask.flash('Flag removed.', 'success')
 
-    return flask.redirect("/admin/user/{}".format(user_id))
+    return flask.redirect("/admin/user/{}".format(user_id.lower()))
