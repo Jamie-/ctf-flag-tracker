@@ -12,7 +12,7 @@ WORKDIR /opt/tracker
 RUN pip install -r requirements.txt
 
 # Setup app
-RUN ln -s /opt/tracker/setadmin.sh /usr/bin/setadmin
+RUN ln -s /opt/tracker/setadmin.py /usr/bin/setadmin
 
 EXPOSE 8080
 VOLUME "/srv/tracker"

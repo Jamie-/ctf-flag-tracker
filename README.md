@@ -2,31 +2,38 @@
 
 ## Installation ##
 
-1. [Install docker](https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#install-docker-ce).
+1. [Install docker](https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#install-docker-ce)
 
-2. Build container image from dockerfile:
-```
-docker build -t tracker https://raw.githubusercontent.com/Jamie-/ctf-flag-tracker/master/Dockerfile
-```
+2. Clone repository
 
-3. Create data directory and add config file:
 ```
-mkdir -p /srv/docker/tracker
-wget https://raw.githubusercontent.com/Jamie-/ctf-flag-tracker/master/config.sample.json -O /srv/docker/tracker/config.json
+$ git clone https://github.com/Jamie-/ctf-flag-tracker.git
 ```
 
-4. Edit config file as required - `/srv/docker/tracker/config.json`. All strings available under `VIEW_CONFIG` are shown but none are required. If you want a string to be default or hidden, omit it's entry.
-
-5. Run docker container:
+3. Build container image from dockerfile:
 ```
-docker run --name=tracker --restart=always -p8080:8080 -v /srv/docker/tracker:/srv/tracker -d tracker
+$ cd ctf-flag-tracker
+$ docker build -t tracker .
 ```
 
-6. Create initial admin user:
+4. Create data directory and add config file:
+```
+$ mkdir -p /srv/docker/tracker
+$ cp config.sample.json /srv/docker/tracker/config.json
+```
+
+5. Edit config file as required - `/srv/docker/tracker/config.json`. All strings available under `VIEW_CONFIG` are shown but none are required. If you want a string to be default or hidden, omit it's entry.
+
+6. Run docker container:
+```
+$ docker run --name=tracker --restart=always -p8080:8080 -v /srv/docker/tracker:/srv/tracker -d tracker
+```
+
+7. Create initial admin user:
 Visit the app in your browser and create an account `http://<ip_address>:8080/register`
-After creating an account, grant it admin priviledges as below
+After creating an account, grant it admin priviledges as below:
 ```
-$ docker exec -it tracker /bin/bash
+$ docker exec -it tracker sh
 # setadmin <username>
 # exit
 ```
