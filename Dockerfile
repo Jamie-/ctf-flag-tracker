@@ -2,7 +2,7 @@ FROM python:3.7-alpine
 MAINTAINER Jamie Scott
 
 # Install dependancies
-RUN apk add -U sqlite
+RUN apk add -U sqlite git
 
 # Clone repo
 ADD . /opt/tracker/

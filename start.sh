@@ -1,6 +1,6 @@
 #!/bin/sh
 
 # Check for database existence, create if required
-python setupdb.py
+python setupapp.py
 
 exec $@

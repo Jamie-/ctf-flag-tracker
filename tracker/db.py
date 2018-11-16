@@ -18,7 +18,7 @@ def init_db():
         with tracker.app.open_resource('../ranks.sql', mode='r') as f:
             db.cursor().executescript(f.read())
         db.commit()
-        print('[ OK ] Database setup complete.')
+        logger.info('Database setup complete.')
 
 def get_db():
     db = getattr(flask.g, '_database', None)
