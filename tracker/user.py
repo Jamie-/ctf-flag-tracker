@@ -6,6 +6,10 @@ import tracker.db as db
 logger = logging.getLogger(__name__)
 
 
+class UserError(Exception):
+    pass
+
+
 class User():
 
     def __init__(self, username, display_name, perm):
