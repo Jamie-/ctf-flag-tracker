@@ -94,6 +94,7 @@ def admin_flags():
             else:
                 flag.add(form.flag.data, form.value.data, form.event_id.data, form.notes.data, flask_login.current_user.get_id())
                 flask.flash('Added flag successfully.', 'success')
+                form.flag.data = ''  # Blank out flag after adding
         elif form.update.data:  # Update flag
             if flag.exists(form.flag.data):
                 f = flag.get_flag(form.flag.data)
