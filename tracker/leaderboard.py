@@ -10,9 +10,9 @@ class Position():
         self.score = score
         self.num_flags = num_flags
 
-    # Get rank from user's score
+    # Get rank from user's score - only applied if self.entity is User
     def get_rank(self):
-        return rank.get_rank(self.score)
+        return rank.get_rank(self.entity.get_global_score())
 
 
 # Leaderboard builder for user entities
