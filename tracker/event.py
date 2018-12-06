@@ -87,7 +87,7 @@ class Event():
     # Get event individual leaderboard (from user leaderboard builder)
     def get_leaderboard(self, limit=None):
         q = '''
-            SELECT u.username, u.displayname, SUM(f.value) AS score
+            SELECT u.username, u.displayname, SUM(f.value) AS score, COUNT(f.flag) as num_flags
             FROM flagsfound ff
             LEFT JOIN flags f ON f.flag = ff.flag_id
             LEFT JOIN users u ON u.username = ff.user_id

@@ -4,10 +4,11 @@ import tracker.rank as rank
 
 class Position():
 
-    def __init__(self, pos, entity, score):
+    def __init__(self, pos, entity, score, num_flags):
         self.pos = pos
         self.entity = entity
         self.score = score
+        self.num_flags = num_flags
 
     # Get rank from user's score
     def get_rank(self):
@@ -22,14 +23,14 @@ def make_leaderboard(query, args=()):
         return out
     pos = 1
     for d in data:
-        out.append(Position(pos, user.User(d['username'], d['displayname'], 0), d['score']))  # Using 0 for admin as ignored in this context
+        out.append(Position(pos, user.User(d['username'], d['displayname'], 0), d['score'], d['num_flags']))  # Using 0 for admin as ignored in this context
         pos += 1
     return out
 
 # Get global leaderboard data
 def get_global():
     return make_leaderboard('''
-        SELECT u.username, u.displayname, SUM(f.value) AS score
+        SELECT u.username, u.displayname, SUM(f.value) AS score, COUNT(f.flag) as num_flags
         FROM flagsfound ff
         LEFT JOIN flags f ON f.flag = ff.flag_id
         LEFT JOIN users u ON u.username = ff.user_id

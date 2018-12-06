@@ -10,7 +10,7 @@ class Team():
     # Get leaderboard of all users in this team
     def get_leaderboard(self, limit=None):
         q = '''
-            SELECT u.username AS username, u.displayname AS displayname, SUM(f.value) AS score
+            SELECT u.username AS username, u.displayname AS displayname, SUM(f.value) AS score, COUNT(f.flag) as num_flags
             FROM flagsfound ff
             LEFT JOIN flags f ON f.flag = ff.flag_id
             LEFT JOIN teamusers tu ON ff.user_id = tu.user_id
