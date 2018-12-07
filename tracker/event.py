@@ -38,30 +38,30 @@ class Event():
             return 0
         return num
 
-    # Check to see if current event is active event
+    # Check if this event is the active event
     def is_active(self):
         teams = db.query_db('SELECT active FROM events WHERE id = ?', [self.id], one=True)[0]
         if teams is not None and teams == 1:
             return True
         return False
 
-    # Check to see if teams flag has been set for this event
+    # Check if teams enabled for this event
     def has_teams(self):
         teams = db.query_db('SELECT has_teams FROM events WHERE id = ?', [self.id], one=True)[0]
         if teams is not None and teams == 1:
             return True
         return False
 
-    # Get team given name in this event
+    # Get Team given team_name in this event
     def get_team(self, team_name):
         q = db.query_db('SELECT * FROM teams WHERE name = ? AND event_id = ?', (team_name, self.id), one=True)
         if q is None:
             return None
         return team.Team(q['name'], q['event_id'])
 
-    # Add a user to a team in this event
+    # Add user to team in this event
     def add_user_to_team(self, user_id, team_name):
-        # See if team exists
+        # Check team exists
         t = self.get_team(team_name)
         if t is None:
             return False
@@ -71,7 +71,7 @@ class Event():
             return False
         return True
 
-    # Get team given user is in for this event
+    # Get team from user_id in this event
     def get_users_team(self, user_id):
         q = db.query_db('''
             SELECT t.name AS name, t.event_id AS event_id
@@ -99,7 +99,7 @@ class Event():
             return leaderboard.make_leaderboard(q + ' LIMIT ?', (self.id, limit))
         return leaderboard.make_leaderboard(q, [self.id])
 
-    # Get leaderboard of teams in this event (from team leaderboard builder)
+    # Get team leaderboard (from team leaderboard builder)
     def get_team_leaderboard(self, limit=None):
         q = '''
             SELECT name, event_id, SUM(score) AS score, num_flags
@@ -125,13 +125,13 @@ class Event():
         return team.make_leaderboard(q, (self.id, self.id))
 
 
-# Check event exists
+# Check event exists given ID
 def exists(id):
     if db.query_db('SELECT * FROM events WHERE id = ?', [id], one=True) is None:
         return False
     return True
 
-# Get an event object from an event ID
+# Get event from ID
 def get_event(id):
     return make_event_from_row(db.query_db('''
         SELECT e.id AS id, e.name AS name
@@ -187,11 +187,11 @@ def by_user(user_id):
         GROUP BY e.id
     ''', [user_id]))
 
-# Get currently active event
+# Get active event
 def get_active():
     return make_event_from_row(db.query_db('SELECT * FROM events WHERE active = 1', one=True))
 
-# Get list of all events
+# Get all events
 def get_all():
     return make_list_from_query(db.query_db('''
         SELECT e.id AS id, e.name AS name
