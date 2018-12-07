@@ -13,7 +13,7 @@
                         {% if user is defined %}
                             {% if team is defined %}
                                 <div class="col-sm">
-                                    <h3><a href="/event/{{ event.id }}/team/{{ team.name }}">My Team</a></h3>
+                                    <h3><a href="/event/{{ event.id }}/team/{{ team.get_slug() }}">My Team</a></h3>
                                     <h5>Top 6</h5>
                                     <table class="leaderboard table table-striped table-inverse">
                                         <thead>
@@ -78,7 +78,7 @@
                                 {% for p in team_lb %}
                                     <tr>
                                         <td>{{ p.pos }}</td>
-                                        <td class="name"><a href="/event/{{ event.id }}/team/{{ p.entity.name }}">{{ p.entity.name }}</a></td>
+                                        <td class="name"><a href="/event/{{ event.id }}/team/{{ p.entity.get_slug() }}">{{ p.entity.name }}</a></td>
                                         <td>{{ p.score }}</td>
                                     </tr>
                                 {% endfor %}

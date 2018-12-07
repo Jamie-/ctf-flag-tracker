@@ -20,14 +20,15 @@ CREATE TABLE IF NOT EXISTS flagsfound(
 );
 CREATE TABLE IF NOT EXISTS events(id INTEGER PRIMARY KEY, name TEXT NOT NULL, active BOOLEAN, has_teams BOOLEAN);
 CREATE TABLE IF NOT EXISTS teams(
+  slug TEXT NOT NULL,
   name TEXT NOT NULL,
   event_id INTEGER REFERENCES events(id),
-  PRIMARY KEY (name, event_id)
+  PRIMARY KEY (slug, event_id)
 );
 CREATE TABLE IF NOT EXISTS teamusers(
-  team_name TEXT NOT NULL REFERENCES teams(name),
+  team_slug TEXT NOT NULL REFERENCES teams(slug),
   event_id INTEGER NOT NULL REFERENCES teams(event_id),
   user_id TEXT NOT NULL REFERENCES users(username),
-  PRIMARY KEY (team_name, event_id, user_id)
+  PRIMARY KEY (team_slug, event_id, user_id)
 );
 CREATE TABLE IF NOT EXISTS ranks(rank TEXT PRIMARY KEY, score INTEGER NOT NULL);

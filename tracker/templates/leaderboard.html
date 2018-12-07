@@ -38,7 +38,7 @@
                         {% for p in teams %}
                             <tr>
                                 <td>{{ p.pos }}</td>
-                                <td class="name"><a href="/event/{{ p.entity.event_id }}/team/{{ p.entity.name }}">{{ p.entity.name }}</a></td>
+                                <td class="name"><a href="/event/{{ p.entity.event_id }}/team/{{ p.entity.get_slug() }}">{{ p.entity.name }}</a></td>
                                 <td>{{ p.entity.get_num_members() }}</td>
                                 <td>{{ p.score }}</td>
                                 <td>{{ p.num_flags }}</td>

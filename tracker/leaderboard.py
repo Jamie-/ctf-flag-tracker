@@ -8,7 +8,11 @@ class Position():
         self.pos = pos
         self.entity = entity
         self.score = score
+        if self.score is None:
+            self.score = 0
         self.num_flags = num_flags
+        if self.num_flags is None:
+            self.num_flags = 0
 
     # Get rank from user's score - only applied if self.entity is User
     def get_rank(self):

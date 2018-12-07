@@ -53,20 +53,20 @@ class Event():
         return False
 
     # Get Team given team_name in this event
-    def get_team(self, team_name):
-        q = db.query_db('SELECT * FROM teams WHERE name = ? AND event_id = ?', (team_name, self.id), one=True)
+    def get_team(self, team_slug):
+        q = db.query_db('SELECT * FROM teams WHERE slug = ? AND event_id = ?', (team_slug, self.id), one=True)
         if q is None:
             return None
         return team.Team(q['name'], q['event_id'])
 
     # Add user to team in this event
-    def add_user_to_team(self, user_id, team_name):
+    def add_user_to_team(self, user_id, team_slug):
         # Check team exists
-        t = self.get_team(team_name)
+        t = self.get_team(team_slug)
         if t is None:
             return False
         try:
-            db.query_db('INSERT INTO teamusers (team_name, event_id, user_id) VALUES (?, ?, ?)', (team_name, self.id, user_id))
+            db.query_db('INSERT INTO teamusers (team_slug, event_id, user_id) VALUES (?, ?, ?)', (team_slug, self.id, user_id))
         except db.IntegrityError:
             return False
         return True
@@ -76,7 +76,7 @@ class Event():
         q = db.query_db('''
             SELECT t.name AS name, t.event_id AS event_id
             FROM teams t
-            LEFT JOIN teamusers tu ON t.name = tu.team_name AND t.event_id = tu.event_id
+            LEFT JOIN teamusers tu ON t.slug = tu.team_slug AND t.event_id = tu.event_id
             WHERE tu.user_id = ?
             AND t.event_id = ?
         ''', (user_id, self.id), one=True)
@@ -102,22 +102,22 @@ class Event():
     # Get team leaderboard (from team leaderboard builder)
     def get_team_leaderboard(self, limit=None):
         q = '''
-            SELECT name, event_id, SUM(score) AS score, num_flags
+            SELECT name, event_id, SUM(score) AS score, SUM(num_flags) as num_flags
             FROM (
-                SELECT team_name AS name, event_id as event_id, SUM(value) AS score, COUNT(flag) as num_flags
+                SELECT NULL as name, team_slug AS slug, event_id as event_id, SUM(value) AS score, COUNT(flag) as num_flags
                 FROM (
-                    SELECT DISTINCT flag, value, f.event_id, team_name
+                    SELECT DISTINCT flag, value, f.event_id, team_slug
                     FROM flagsfound ff
                     LEFT JOIN flags f ON f.flag = ff.flag_id
                     LEFT JOIN teamusers tu ON tu.event_id = f.event_id AND tu.user_id = ff.user_id
                     WHERE tu.event_id = ?
                 )
-                GROUP BY team_name
+                GROUP BY team_slug
                 UNION
-                SELECT t.name as name, t.event_id as event_id, NULL AS score, NULL AS num_flags
+                SELECT name, slug, t.event_id as event_id, 0 AS score, 0 AS num_flags
                 FROM teams t
                 WHERE event_id = ?
-            ) GROUP BY name
+            ) GROUP BY slug
             ORDER BY score DESC
         '''
         if limit is not None: # Limit number of teams returned
