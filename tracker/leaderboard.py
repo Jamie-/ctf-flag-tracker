@@ -4,7 +4,7 @@ import tracker.rank as rank
 
 class Position():
 
-    def __init__(self, pos, entity, score, num_flags):
+    def __init__(self, pos, entity, score, num_flags=None):
         self.pos = pos
         self.entity = entity
         self.score = score

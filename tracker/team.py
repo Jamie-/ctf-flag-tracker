@@ -52,6 +52,6 @@ def make_leaderboard(query, args=()):
         return out
     pos = 1
     for d in data:
-        out.append(leaderboard.Position(pos, Team(d['name'], d['event_id']), d['score']))
+        out.append(leaderboard.Position(pos, Team(d['name'], d['event_id']), d['score'], d['num_flags']))
         pos += 1
     return out

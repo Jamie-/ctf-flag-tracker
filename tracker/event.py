@@ -102,9 +102,9 @@ class Event():
     # Get leaderboard of teams in this event (from team leaderboard builder)
     def get_team_leaderboard(self, limit=None):
         q = '''
-            SELECT name, event_id, SUM(score) AS score
+            SELECT name, event_id, SUM(score) AS score, num_flags
             FROM (
-                SELECT team_name AS name, event_id as event_id, SUM(value) AS score
+                SELECT team_name AS name, event_id as event_id, SUM(value) AS score, COUNT(flag) as num_flags
                 FROM (
                     SELECT DISTINCT flag, value, f.event_id, team_name
                     FROM flagsfound ff
@@ -114,7 +114,7 @@ class Event():
                 )
                 GROUP BY team_name
                 UNION
-                SELECT t.name as name, t.event_id as event_id, 0 AS score
+                SELECT t.name as name, t.event_id as event_id, NULL AS score, NULL AS num_flags
                 FROM teams t
                 WHERE event_id = ?
             ) GROUP BY name
