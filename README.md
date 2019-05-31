@@ -1,5 +1,14 @@
 # CTF Flag Tracker #
 
+A CTF flag tracker for long-term tracking of multiple events or sessions for a group of people.
+Designed and built for the [University of Southampton Cyber Security Society (SUCSS)](https://www.sucss.org/) to keep track of flags found by members during the academic year of events and sessions.
+
+Has support for muliple events, teams per event and variable administration permissions so a user can be granted access to creating flags for their event.
+
+Designed to run in Docker with Nginx up front.
+
+No longer officially maintained but PRs and forks welcome!
+
 ## Installation ##
 
 1. [Install docker](https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#install-docker-ce)
