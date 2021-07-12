@@ -7,7 +7,7 @@ Has support for muliple events, teams per event and variable administration perm
 
 Designed to run in Docker with Nginx up front.
 
-No longer officially maintained but PRs and forks welcome!
+No longer maintained.
 
 ## Installation ##
 
